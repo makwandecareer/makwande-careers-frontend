@@ -22,6 +22,7 @@ import {
 } from "@/lib/template-process";
 import type { ProfileBundle } from "@/lib/types";
 
+import "./cv-studio.css";
 import { DesignPanel } from "./DesignPanel";
 import { EditorPanel } from "./EditorPanel";
 import { PreviewPanel } from "./PreviewPanel";
