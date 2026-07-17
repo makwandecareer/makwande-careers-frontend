@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/client-api";
 import type { ProfileForm, User } from "@/lib/types";
 
@@ -24,7 +24,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     setError("");
 
@@ -37,14 +37,41 @@ export default function ProfilePage() {
       setUser(currentUser);
       setForm(profile || emptyProfile);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Unable to load profile");
+      setError(
+        reason instanceof Error ? reason.message : "Unable to load profile",
+      );
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
-    load();
+    let cancelled = false;
+
+    void Promise.all([
+      api<User>("/api/users/me"),
+      api<ProfileForm | null>("/api/profile"),
+    ])
+      .then(([currentUser, profile]) => {
+        if (cancelled) return;
+        setUser(currentUser);
+        setForm(profile || emptyProfile);
+      })
+      .catch((reason: unknown) => {
+        if (cancelled) return;
+        setError(
+          reason instanceof Error ? reason.message : "Unable to load profile",
+        );
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function submit(event: FormEvent) {

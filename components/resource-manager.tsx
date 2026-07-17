@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/client-api";
 
 type Field = {
@@ -46,21 +46,45 @@ export function ResourceManager({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
       setItems(await api<Record<string, unknown>[]>(endpoint));
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Unable to load records");
+      setError(
+        reason instanceof Error ? reason.message : "Unable to load records",
+      );
     } finally {
       setLoading(false);
     }
-  }
+  }, [endpoint]);
 
   useEffect(() => {
-    load();
+    let cancelled = false;
+
+    void api<Record<string, unknown>[]>(endpoint)
+      .then((records) => {
+        if (!cancelled) {
+          setItems(records);
+        }
+      })
+      .catch((reason: unknown) => {
+        if (cancelled) return;
+        setError(
+          reason instanceof Error ? reason.message : "Unable to load records",
+        );
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [endpoint]);
 
   function startEdit(item: Record<string, unknown>) {

@@ -78,6 +78,16 @@ export function useCVBackendAutosave(
   const requestSequenceRef = useRef(0);
   const mountedRef = useRef(true);
   const savedCVRef = useRef<SavedCV | null>(null);
+  const scheduleSaveFeedback = useCallback(
+    (state: BackendSaveState, error = "") => {
+      queueMicrotask(() => {
+        if (!mountedRef.current) return;
+        setBackendSaveState(state);
+        setBackendSaveError(error);
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     latestDraftRef.current = draft;
@@ -261,8 +271,7 @@ export function useCVBackendAutosave(
     const snapshot = serializeDraft(draft);
 
     if (snapshot === lastSavedSnapshotRef.current) {
-      setBackendSaveState("saved");
-      setBackendSaveError("");
+      scheduleSaveFeedback("saved");
       return;
     }
 
@@ -270,16 +279,15 @@ export function useCVBackendAutosave(
       typeof navigator !== "undefined" &&
       !navigator.onLine;
 
-    setBackendSaveState(isOffline ? "offline" : "unsaved");
-
     if (isOffline) {
-      setBackendSaveError(
+      scheduleSaveFeedback(
+        "offline",
         "You are offline. Your CV is saved on this device and will sync when you reconnect.",
       );
       return;
     }
 
-    setBackendSaveError("");
+    scheduleSaveFeedback("unsaved");
 
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -294,7 +302,7 @@ export function useCVBackendAutosave(
         clearTimeout(timerRef.current);
       }
     };
-  }, [draft, delay, saveDraft]);
+  }, [draft, delay, saveDraft, scheduleSaveFeedback]);
 
   useEffect(() => {
     function handleOnline(): void {
