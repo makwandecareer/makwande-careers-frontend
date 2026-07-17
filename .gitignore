@@ -4,3 +4,5 @@ out/
 .env
 .env.local
 *.log
+cookies.txt
+test-cookies.txt
