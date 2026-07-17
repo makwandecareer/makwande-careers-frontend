@@ -2,126 +2,330 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { StudioDraft } from "@/lib/cv-studio";
-import { createSavedCV, updateSavedCV, type SavedCV } from "@/lib/cv-backend";
+import {
+  createSavedCV,
+  updateSavedCV,
+  type SavedCV,
+} from "@/lib/cv-backend";
 
-const ACTIVE_CV_KEY = "makwande_active_cv_id";
+const ACTIVE_CV_ID_KEY = "makwande_active_cv_id";
+const ACTIVE_CV_VERSION_KEY = "makwande_active_cv_version";
 
-export type BackendSaveState = "idle" | "unsaved" | "saving" | "saved" | "error" | "offline";
+export type BackendSaveState =
+  | "idle"
+  | "unsaved"
+  | "saving"
+  | "saved"
+  | "offline"
+  | "error";
+
+type UseCVBackendAutosaveResult = {
+  savedCV: SavedCV | null;
+  backendSaveState: BackendSaveState;
+  backendSaveError: string;
+  lastSavedAt: Date | null;
+  saveNow: () => Promise<SavedCV | null>;
+};
 
 function serializeDraft(draft: StudioDraft): string {
   return JSON.stringify(draft);
 }
 
-function isMissingCVError(reason: unknown): boolean {
-  const message = reason instanceof Error ? reason.message.toLowerCase() : String(reason).toLowerCase();
-  return message.includes("404") || message.includes("not found") || message.includes("does not exist");
+function getStoredVersion(): number {
+  if (typeof window === "undefined") return 1;
+
+  const value = Number(
+    window.localStorage.getItem(ACTIVE_CV_VERSION_KEY),
+  );
+
+  return Number.isFinite(value) && value > 0 ? value : 1;
 }
 
-export function useCVBackendAutosave(draft: StudioDraft | null, delay = 2500) {
+function isMissingCVError(reason: unknown): boolean {
+  const message =
+    reason instanceof Error
+      ? reason.message.toLowerCase()
+      : String(reason).toLowerCase();
+
+  return (
+    message.includes("404") ||
+    message.includes("not found") ||
+    message.includes("does not exist")
+  );
+}
+
+function getErrorMessage(reason: unknown): string {
+  if (reason instanceof Error && reason.message.trim()) {
+    return reason.message;
+  }
+
+  return "Unable to save your CV to the server.";
+}
+
+export function useCVBackendAutosave(
+  draft: StudioDraft | null,
+  delay = 2500,
+): UseCVBackendAutosaveResult {
   const [savedCV, setSavedCV] = useState<SavedCV | null>(null);
-  const [state, setState] = useState<BackendSaveState>("idle");
-  const [error, setError] = useState("");
+  const [backendSaveState, setBackendSaveState] =
+    useState<BackendSaveState>("idle");
+  const [backendSaveError, setBackendSaveError] = useState("");
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestDraftRef = useRef<StudioDraft | null>(draft);
   const lastSavedSnapshotRef = useRef("");
   const requestSequenceRef = useRef(0);
   const mountedRef = useRef(true);
+  const savedCVRef = useRef<SavedCV | null>(null);
 
-  useEffect(() => { latestDraftRef.current = draft; }, [draft]);
+  useEffect(() => {
+    latestDraftRef.current = draft;
+  }, [draft]);
 
-  useEffect(() => () => {
-    mountedRef.current = false;
-    if (timerRef.current) clearTimeout(timerRef.current);
-  }, []);
-
-  const saveDraft = useCallback(async (candidate?: StudioDraft | null) => {
-    const currentDraft = candidate ?? latestDraftRef.current;
-    if (!currentDraft) return null;
-
-    const snapshot = serializeDraft(currentDraft);
-    if (snapshot === lastSavedSnapshotRef.current) {
-      if (mountedRef.current) { setState("saved"); setError(""); }
-      return savedCV;
-    }
-
-    if (typeof navigator !== "undefined" && !navigator.onLine) {
-      if (mountedRef.current) {
-        setState("offline");
-        setError("You are offline. Your CV is saved on this device and will sync when you reconnect.");
-      }
-      return null;
-    }
-
-    const requestSequence = ++requestSequenceRef.current;
-    if (mountedRef.current) { setState("saving"); setError(""); }
-
-    try {
-      const activeId = typeof window !== "undefined" ? window.localStorage.getItem(ACTIVE_CV_KEY) : null;
-      let result: SavedCV;
-
-      if (activeId) {
-        try {
-          result = await updateSavedCV(activeId, currentDraft);
-        } catch (reason) {
-          if (!isMissingCVError(reason)) throw reason;
-          window.localStorage.removeItem(ACTIVE_CV_KEY);
-          result = await createSavedCV(currentDraft);
-        }
-      } else {
-        result = await createSavedCV(currentDraft);
-      }
-
-      if (requestSequence !== requestSequenceRef.current) return result;
-
-      window.localStorage.setItem(ACTIVE_CV_KEY, result.id);
-      lastSavedSnapshotRef.current = snapshot;
-      if (mountedRef.current) {
-        setSavedCV(result);
-        setLastSavedAt(new Date());
-        setState("saved");
-        setError("");
-      }
-      return result;
-    } catch (reason) {
-      if (requestSequence !== requestSequenceRef.current) return null;
-      if (mountedRef.current) {
-        setState("error");
-        setError(reason instanceof Error ? reason.message : "Unable to save your CV to the server.");
-      }
-      return null;
-    }
+  useEffect(() => {
+    savedCVRef.current = savedCV;
   }, [savedCV]);
 
-  const saveNow = useCallback(async () => {
-    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  const persistSuccessfulSave = useCallback(
+    (result: SavedCV, snapshot: string) => {
+      window.localStorage.setItem(ACTIVE_CV_ID_KEY, result.id);
+      window.localStorage.setItem(
+        ACTIVE_CV_VERSION_KEY,
+        String(result.version),
+      );
+
+      lastSavedSnapshotRef.current = snapshot;
+      savedCVRef.current = result;
+
+      if (!mountedRef.current) return;
+
+      setSavedCV(result);
+      setLastSavedAt(new Date());
+      setBackendSaveState("saved");
+      setBackendSaveError("");
+    },
+    [],
+  );
+
+  const createNewCV = useCallback(
+    async (
+      currentDraft: StudioDraft,
+      snapshot: string,
+    ): Promise<SavedCV> => {
+      const result = await createSavedCV(currentDraft);
+
+      persistSuccessfulSave(result, snapshot);
+
+      return result;
+    },
+    [persistSuccessfulSave],
+  );
+
+  const saveDraft = useCallback(
+    async (
+      candidate?: StudioDraft | null,
+    ): Promise<SavedCV | null> => {
+      const currentDraft = candidate ?? latestDraftRef.current;
+
+      if (!currentDraft) {
+        return null;
+      }
+
+      const snapshot = serializeDraft(currentDraft);
+
+      if (snapshot === lastSavedSnapshotRef.current) {
+        if (mountedRef.current) {
+          setBackendSaveState("saved");
+          setBackendSaveError("");
+        }
+
+        return savedCVRef.current;
+      }
+
+      if (
+        typeof navigator !== "undefined" &&
+        !navigator.onLine
+      ) {
+        if (mountedRef.current) {
+          setBackendSaveState("offline");
+          setBackendSaveError(
+            "You are offline. Your CV is saved on this device and will sync when you reconnect.",
+          );
+        }
+
+        return null;
+      }
+
+      const requestSequence = ++requestSequenceRef.current;
+
+      if (mountedRef.current) {
+        setBackendSaveState("saving");
+        setBackendSaveError("");
+      }
+
+      try {
+        const activeCVId =
+          typeof window !== "undefined"
+            ? window.localStorage.getItem(ACTIVE_CV_ID_KEY)
+            : null;
+
+        if (!activeCVId) {
+          const created = await createNewCV(
+            currentDraft,
+            snapshot,
+          );
+
+          return requestSequence === requestSequenceRef.current
+            ? created
+            : null;
+        }
+
+        const currentVersion =
+          savedCVRef.current?.version ?? getStoredVersion();
+
+        try {
+          const updated = await updateSavedCV(
+            activeCVId,
+            currentDraft,
+            currentVersion,
+          );
+
+          if (requestSequence !== requestSequenceRef.current) {
+            return updated;
+          }
+
+          persistSuccessfulSave(updated, snapshot);
+
+          return updated;
+        } catch (reason) {
+          if (!isMissingCVError(reason)) {
+            throw reason;
+          }
+
+          window.localStorage.removeItem(ACTIVE_CV_ID_KEY);
+          window.localStorage.removeItem(ACTIVE_CV_VERSION_KEY);
+          savedCVRef.current = null;
+
+          if (mountedRef.current) {
+            setSavedCV(null);
+          }
+
+          const recreated = await createNewCV(
+            currentDraft,
+            snapshot,
+          );
+
+          return requestSequence === requestSequenceRef.current
+            ? recreated
+            : null;
+        }
+      } catch (reason) {
+        if (requestSequence !== requestSequenceRef.current) {
+          return null;
+        }
+
+        if (mountedRef.current) {
+          setBackendSaveState("error");
+          setBackendSaveError(getErrorMessage(reason));
+        }
+
+        return null;
+      }
+    },
+    [createNewCV, persistSuccessfulSave],
+  );
+
+  const saveNow = useCallback(async (): Promise<SavedCV | null> => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
     return saveDraft();
   }, [saveDraft]);
 
   useEffect(() => {
     if (!draft) return;
-    const snapshot = serializeDraft(draft);
-    if (snapshot === lastSavedSnapshotRef.current) { setState("saved"); return; }
 
-    setState(typeof navigator !== "undefined" && !navigator.onLine ? "offline" : "unsaved");
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => { void saveDraft(draft); }, delay);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    const snapshot = serializeDraft(draft);
+
+    if (snapshot === lastSavedSnapshotRef.current) {
+      setBackendSaveState("saved");
+      setBackendSaveError("");
+      return;
+    }
+
+    const isOffline =
+      typeof navigator !== "undefined" &&
+      !navigator.onLine;
+
+    setBackendSaveState(isOffline ? "offline" : "unsaved");
+
+    if (isOffline) {
+      setBackendSaveError(
+        "You are offline. Your CV is saved on this device and will sync when you reconnect.",
+      );
+      return;
+    }
+
+    setBackendSaveError("");
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    timerRef.current = setTimeout(() => {
+      void saveDraft(draft);
+    }, delay);
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
   }, [draft, delay, saveDraft]);
 
   useEffect(() => {
-    function handleOnline() { if (latestDraftRef.current) void saveNow(); }
-    function handleOffline() {
-      setState("offline");
-      setError("You are offline. Your CV is saved on this device and will sync when you reconnect.");
+    function handleOnline(): void {
+      setBackendSaveError("");
+
+      if (latestDraftRef.current) {
+        void saveNow();
+      }
     }
+
+    function handleOffline(): void {
+      setBackendSaveState("offline");
+      setBackendSaveError(
+        "You are offline. Your CV is saved on this device and will sync when you reconnect.",
+      );
+    }
+
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
+
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
   }, [saveNow]);
 
-  return { savedCV, backendSaveState: state, backendSaveError: error, lastSavedAt, saveNow };
+  return {
+    savedCV,
+    backendSaveState,
+    backendSaveError,
+    lastSavedAt,
+    saveNow,
+  };
 }
