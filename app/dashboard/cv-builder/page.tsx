@@ -7,9 +7,9 @@ import {
   useState,
 } from "react";
 
-import { ATSIntelligencePanel } from "@/components/cv-builder/ATSIntelligencePanel";
 import { BuilderControls } from "@/components/cv-builder/BuilderControls";
 import { BuilderPreview } from "@/components/cv-builder/BuilderPreview";
+import { CareerIntelligencePanel } from "@/components/cv-builder/CareerIntelligencePanel";
 import { api } from "@/lib/client-api";
 import {
   defaultCVSettings,
@@ -112,6 +112,23 @@ export default function CVBuilderPage() {
       .map(([name]) => name);
   }, [bundle]);
 
+  const currentCVContent = generated?.content ?? (
+    bundle
+      ? {
+          user: bundle.user,
+          profile: bundle.profile,
+          education: bundle.education,
+          experience: bundle.experience,
+          skills: bundle.skills,
+          projects: bundle.projects,
+          certifications: bundle.certifications,
+          languages: bundle.languages,
+          references: bundle.references,
+          target_role: targetRole,
+        }
+      : {}
+  );
+
   async function generate(event: FormEvent): Promise<void> {
     event.preventDefault();
     if (!bundle) return;
@@ -161,17 +178,7 @@ export default function CVBuilderPage() {
         method: "POST",
         body: JSON.stringify({
           job_description: jobDescription,
-          cv_content: generated?.content ?? {
-            user: bundle.user,
-            profile: bundle.profile,
-            education: bundle.education,
-            experience: bundle.experience,
-            skills: bundle.skills,
-            projects: bundle.projects,
-            certifications: bundle.certifications,
-            languages: bundle.languages,
-            references: bundle.references,
-          },
+          cv_content: currentCVContent,
         }),
       });
 
@@ -201,19 +208,7 @@ export default function CVBuilderPage() {
           template_key: template,
           settings,
           section_order: sectionOrder,
-          cv_content:
-            generated?.content ?? {
-              user: bundle.user,
-              profile: bundle.profile,
-              education: bundle.education,
-              experience: bundle.experience,
-              skills: bundle.skills,
-              projects: bundle.projects,
-              certifications: bundle.certifications,
-              languages: bundle.languages,
-              references: bundle.references,
-              target_role: targetRole,
-            },
+          cv_content: currentCVContent,
         }),
       });
 
@@ -251,12 +246,12 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 5 · World-class ATS CV Builder
+          Phase 6 · AI Career Intelligence
         </span>
-        <h1>Create, tailor and export your professional CV</h1>
+        <h1>Create, optimise and validate your professional CV</h1>
         <p className="muted">
-          One source of truth, flexible design controls, live preview
-          and job-specific ATS intelligence.
+          World-class CV creation with ATS matching, KPI evidence,
+          measurable results and deep recruiter analysis.
         </p>
       </div>
 
@@ -285,14 +280,16 @@ export default function CVBuilderPage() {
           className={tab === "ats" ? "active" : ""}
           onClick={() => setTab("ats")}
         >
-          ATS Intelligence
+          Career Intelligence
         </button>
       </div>
 
       <div className="builder-layout">
         {tab === "ats" ? (
-          <ATSIntelligencePanel
+          <CareerIntelligencePanel
             jobDescription={jobDescription}
+            targetRole={targetRole}
+            cvContent={currentCVContent}
             ats={ats}
             busy={busy}
             onJobDescriptionChange={setJobDescription}
