@@ -1,0 +1,461 @@
+.dashboard {
+  display: grid;
+  gap: 1.4rem;
+  min-width: 0;
+}
+
+.hero,
+.settingsCard,
+.exercisePanel,
+.exerciseCard,
+.reportSection {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.3rem;
+  background: #ffffff;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.07);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  padding: 1.7rem;
+  background:
+    radial-gradient(circle at top right, rgba(14, 116, 144, 0.15), transparent 42%),
+    #ffffff;
+}
+
+.hero h1 {
+  margin: 0.45rem 0 0.7rem;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.08;
+}
+
+.hero p {
+  max-width: 900px;
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.eyebrow {
+  color: #0e7490;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.heroScore {
+  display: grid;
+  min-width: 205px;
+  place-content: center;
+  padding: 1.2rem;
+  border-radius: 1.1rem;
+  background: #cffafe;
+  text-align: center;
+}
+
+.heroScore span,
+.heroScore small {
+  color: #64748b;
+}
+
+.heroScore strong {
+  color: #0e7490;
+  font-size: 2.55rem;
+  line-height: 1;
+}
+
+.settingsCard,
+.reportSection {
+  padding: 1.4rem;
+}
+
+.settingsHeader,
+.exerciseHeader,
+.responseActions,
+.feedbackHeader,
+.reportHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.settingsHeader h2,
+.exerciseHeader h2,
+.reportHeader h2 {
+  margin: 0.35rem 0 0;
+}
+
+.settingsHeader > span,
+.exerciseHeader > span {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.formGrid label,
+.responseField {
+  display: grid;
+  gap: 0.4rem;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.formGrid input,
+.formGrid select,
+.formGrid textarea,
+.responseField textarea {
+  width: 100%;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.formGrid input:focus,
+.formGrid select:focus,
+.formGrid textarea:focus,
+.responseField textarea:focus {
+  border-color: #0891b2;
+  outline: 3px solid rgba(8, 145, 178, 0.12);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.toggleGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.72rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.8rem;
+  background: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.profileStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.profileStrip span {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #a5f3fc;
+  border-radius: 999px;
+  background: #ecfeff;
+  color: #0e7490;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.68fr) minmax(0, 1.7fr);
+  gap: 1rem;
+}
+
+.exercisePanel,
+.exerciseCard {
+  padding: 1.35rem;
+}
+
+.exercisePanel {
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+}
+
+.exercisePanel h2 {
+  margin: 0.35rem 0 1rem;
+}
+
+.exerciseList {
+  display: grid;
+  gap: 0.55rem;
+  max-height: 900px;
+  overflow: auto;
+  padding-right: 0.15rem;
+}
+
+.exerciseList button {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.exerciseList button:hover,
+.exerciseList .activeExercise {
+  border-color: #06b6d4;
+  background: #ecfeff;
+}
+
+.exerciseList button > span {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #cffafe;
+  color: #0e7490;
+  font-weight: 850;
+}
+
+.exerciseList button > div {
+  display: grid;
+}
+
+.exerciseList small {
+  color: #64748b;
+}
+
+.exerciseHeader h2 {
+  max-width: 860px;
+  font-size: 1.45rem;
+  line-height: 1.35;
+}
+
+.scenarioBox,
+.instructionsBox,
+.intentBox,
+.followUp,
+.coachingNote,
+.summaryBox {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.9rem;
+  background: #ecfeff;
+}
+
+.scenarioBox p,
+.instructionsBox p,
+.intentBox p,
+.followUp p,
+.coachingNote p,
+.summaryBox p {
+  margin: 0.45rem 0;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.responseField {
+  margin-top: 1rem;
+}
+
+.responseField textarea {
+  min-height: 330px;
+  resize: vertical;
+}
+
+.responseActions {
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.responseActions span {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.responseActions button {
+  padding: 0.72rem 1rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: #0891b2;
+  color: #ffffff;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.responseActions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feedback {
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.feedbackHeader h3 {
+  margin: 0.3rem 0 0;
+  color: #0e7490;
+  font-size: 1.45rem;
+}
+
+.scoreGrid,
+.dimensionGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.scoreGrid article {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: #ecfeff;
+  text-transform: capitalize;
+}
+
+.scoreGrid span {
+  color: #64748b;
+  font-size: 0.7rem;
+}
+
+.scoreGrid strong {
+  color: #0e7490;
+}
+
+.feedbackColumns,
+.reportColumns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.feedbackColumns section,
+.reportColumns article {
+  padding: 0.95rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.feedbackColumns h4,
+.reportColumns h3 {
+  margin: 0 0 0.55rem;
+}
+
+.feedbackColumns p,
+.reportColumns p {
+  margin: 0.5rem 0;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.reportHeader {
+  align-items: center;
+}
+
+.reportHeader > strong {
+  color: #0e7490;
+  font-size: 2rem;
+}
+
+.dimensionGrid article {
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+}
+
+.dimensionGrid article > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+  text-transform: capitalize;
+}
+
+.track {
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #06b6d4;
+}
+
+@media (max-width: 1120px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .exercisePanel {
+    position: static;
+  }
+
+  .toggleGrid,
+  .scoreGrid,
+  .dimensionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .hero,
+  .formGrid,
+  .feedbackColumns,
+  .reportColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: auto;
+  }
+
+  .heroScore {
+    justify-self: start;
+  }
+
+  .settingsHeader,
+  .exerciseHeader,
+  .reportHeader {
+    display: grid;
+  }
+}
+
+@media (max-width: 520px) {
+  .toggleGrid,
+  .scoreGrid,
+  .dimensionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .settingsCard,
+  .exercisePanel,
+  .exerciseCard,
+  .reportSection {
+    padding: 1rem;
+  }
+}
