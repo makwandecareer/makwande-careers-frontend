@@ -12,6 +12,7 @@ import { BuilderControls } from "@/components/cv-builder/BuilderControls";
 import { BuilderPreview } from "@/components/cv-builder/BuilderPreview";
 import { CareerIntelligencePanel } from "@/components/cv-builder/CareerIntelligencePanel";
 import { RecruiterSimulationPanel } from "@/components/cv-builder/RecruiterSimulationPanel";
+import { JobMatchingPanel } from "@/components/cv-builder/JobMatchingPanel";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
 import {
@@ -33,7 +34,8 @@ type BuilderTab =
   | "ats"
   | "copilot"
   | "recruiter"
-  | "writer";
+  | "writer"
+  | "matching";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -298,6 +300,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "matching" ? "active" : ""}
+          onClick={() => setTab("matching")}
+        >
+          Job Matching
+        </button>
+        <button
+          type="button"
           className={tab === "ats" ? "active" : ""}
           onClick={() => setTab("ats")}
         >
@@ -320,7 +329,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "writer" ? (
+        {tab === "matching" ? (
+          <JobMatchingPanel
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            onJobDescriptionChange={setJobDescription}
+          />
+        ) : tab === "writer" ? (
           <ResumeWriterPanel
             targetRole={targetRole}
             jobDescription={jobDescription}
