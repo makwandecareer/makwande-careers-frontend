@@ -11,6 +11,7 @@ import { ApplicationCopilotPanel } from "@/components/cv-builder/ApplicationCopi
 import { BuilderControls } from "@/components/cv-builder/BuilderControls";
 import { BuilderPreview } from "@/components/cv-builder/BuilderPreview";
 import { CareerIntelligencePanel } from "@/components/cv-builder/CareerIntelligencePanel";
+import { RecruiterSimulationPanel } from "@/components/cv-builder/RecruiterSimulationPanel";
 import { api } from "@/lib/client-api";
 import {
   defaultCVSettings,
@@ -25,7 +26,12 @@ import type {
   ProfileBundle,
 } from "@/lib/types";
 
-type BuilderTab = "build" | "design" | "ats" | "copilot";
+type BuilderTab =
+  | "build"
+  | "design"
+  | "ats"
+  | "copilot"
+  | "recruiter";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -243,16 +249,21 @@ export default function CVBuilderPage() {
     return <div className="error">{error}</div>;
   }
 
+  const atsScore =
+    ats && typeof ats === "object" && "score" in ats
+      ? Number((ats as { score?: unknown }).score ?? 0)
+      : null;
+
   return (
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 7 · World-class Application Copilot
+          Phase 8 · AI Recruiter Simulation
         </span>
-        <h1>Create, optimise and complete the application journey</h1>
+        <h1>Create, optimise and evaluate the complete application</h1>
         <p className="muted">
-          Build the CV, validate role alignment, prepare the cover
-          letter and get ready for interviews and offer discussions.
+          Build the CV, test role alignment, prepare the application and
+          simulate a structured hiring-panel review.
         </p>
       </div>
 
@@ -290,6 +301,13 @@ export default function CVBuilderPage() {
         >
           Application Copilot
         </button>
+        <button
+          type="button"
+          className={tab === "recruiter" ? "active" : ""}
+          onClick={() => setTab("recruiter")}
+        >
+          Recruiter Simulation
+        </button>
       </div>
 
       <div className="builder-layout">
@@ -308,6 +326,14 @@ export default function CVBuilderPage() {
             cvContent={currentCVContent}
             jobDescription={jobDescription}
             targetRole={targetRole}
+            onJobDescriptionChange={setJobDescription}
+          />
+        ) : tab === "recruiter" ? (
+          <RecruiterSimulationPanel
+            cvContent={currentCVContent}
+            jobDescription={jobDescription}
+            targetRole={targetRole}
+            atsScore={atsScore}
             onJobDescriptionChange={setJobDescription}
           />
         ) : (
