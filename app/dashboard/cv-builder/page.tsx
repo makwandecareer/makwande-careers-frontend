@@ -19,6 +19,8 @@ import { SkillGapAnalyzerPanel } from "@/components/cv-builder/SkillGapAnalyzerP
 import { CareerFitExplanationsPanel } from "@/components/cv-builder/CareerFitExplanationsPanel";
 import { CareerCoachDashboard } from "@/components/cv-builder/CareerCoachDashboard";
 import { CareerProgressDashboard } from "@/components/cv-builder/CareerProgressDashboard";
+import { CareerGoalPlanner } from "@/components/cv-builder/CareerGoalPlanner";
+import { InterviewPreparationStudio } from "@/components/cv-builder/InterviewPreparationStudio";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -47,7 +49,9 @@ type BuilderTab =
   | "skill-gaps"
   | "career-fit"
   | "coach"
-  | "progress";
+  | "progress"
+  | "career-goals"
+  | "interview-studio";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -151,6 +155,22 @@ export default function CVBuilderPage() {
           target_role: targetRole,
         }
       : {}
+  );
+
+  const atsScore =
+    ats && typeof ats === "object" && "score" in ats
+      ? Number((ats as { score?: unknown }).score ?? 0)
+      : null;
+
+  const careerCoachDashboard = useMemo(
+    () =>
+      createCareerCoachDashboard(
+        currentCVContent,
+        targetRole,
+        opportunities,
+        atsScore,
+      ),
+    [atsScore, currentCVContent, opportunities, targetRole],
   );
 
   async function generate(event: FormEvent): Promise<void> {
@@ -266,28 +286,11 @@ export default function CVBuilderPage() {
     return <div className="error">{error}</div>;
   }
 
-  const atsScore =
-    ats && typeof ats === "object" && "score" in ats
-      ? Number((ats as { score?: unknown }).score ?? 0)
-      : null;
-
-
-  const careerCoachDashboard = useMemo(
-    () =>
-      createCareerCoachDashboard(
-        currentCVContent,
-        targetRole,
-        opportunities,
-        atsScore,
-      ),
-    [atsScore, currentCVContent, opportunities, targetRole],
-  );
-
   return (
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 11.1 · AI Career Coach
+          Phase 11.4 · AI Interview Preparation Studio
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
@@ -315,6 +318,20 @@ export default function CVBuilderPage() {
           onClick={() => setTab("progress")}
         >
           Progress
+        </button>
+        <button
+          type="button"
+          className={tab === "career-goals" ? "active" : ""}
+          onClick={() => setTab("career-goals")}
+        >
+          Career Goals
+        </button>
+        <button
+          type="button"
+          className={tab === "interview-studio" ? "active" : ""}
+          onClick={() => setTab("interview-studio")}
+        >
+          Interview Studio
         </button>
         <button
           type="button"
@@ -389,7 +406,22 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "progress" ? (
+        {tab === "interview-studio" ? (
+          <InterviewPreparationStudio
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "career-goals" ? (
+          <CareerGoalPlanner
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            atsScore={atsScore}
+            opportunities={opportunities}
+            dashboard={careerCoachDashboard}
+          />
+        ) : tab === "progress" ? (
           <CareerProgressDashboard
             dashboard={careerCoachDashboard}
             opportunities={opportunities}
