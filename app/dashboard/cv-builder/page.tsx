@@ -23,6 +23,7 @@ import { CareerGoalPlanner } from "@/components/cv-builder/CareerGoalPlanner";
 import { InterviewPreparationStudio } from "@/components/cv-builder/InterviewPreparationStudio";
 import { RecruitmentIntelligenceCore } from "@/components/cv-builder/RecruitmentIntelligenceCore";
 import { CompanyIntelligenceEngine } from "@/components/cv-builder/CompanyIntelligenceEngine";
+import { DynamicInterviewBuilder } from "@/components/cv-builder/DynamicInterviewBuilder";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -55,7 +56,8 @@ type BuilderTab =
   | "career-goals"
   | "interview-studio"
   | "recruitment-intelligence"
-  | "company-intelligence";
+  | "company-intelligence"
+  | "dynamic-interview";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -294,7 +296,7 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 12.2 · AI Company Intelligence & Research Engine
+          Phase 12.3 · AI Dynamic Interview Builder
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
@@ -350,6 +352,13 @@ export default function CVBuilderPage() {
           onClick={() => setTab("company-intelligence")}
         >
           Company Intelligence
+        </button>
+        <button
+          type="button"
+          className={tab === "dynamic-interview" ? "active" : ""}
+          onClick={() => setTab("dynamic-interview")}
+        >
+          Dynamic Interview
         </button>
         <button
           type="button"
@@ -424,7 +433,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "company-intelligence" ? (
+        {tab === "dynamic-interview" ? (
+          <DynamicInterviewBuilder
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "company-intelligence" ? (
           <CompanyIntelligenceEngine
             cvContent={currentCVContent}
             targetRole={targetRole}
