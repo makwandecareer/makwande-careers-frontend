@@ -21,6 +21,7 @@ import { CareerCoachDashboard } from "@/components/cv-builder/CareerCoachDashboa
 import { CareerProgressDashboard } from "@/components/cv-builder/CareerProgressDashboard";
 import { CareerGoalPlanner } from "@/components/cv-builder/CareerGoalPlanner";
 import { InterviewPreparationStudio } from "@/components/cv-builder/InterviewPreparationStudio";
+import { RecruitmentIntelligenceCore } from "@/components/cv-builder/RecruitmentIntelligenceCore";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -51,7 +52,8 @@ type BuilderTab =
   | "coach"
   | "progress"
   | "career-goals"
-  | "interview-studio";
+  | "interview-studio"
+  | "recruitment-intelligence";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -290,7 +292,7 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 11.4 · AI Interview Preparation Studio
+          Phase 12.1 · AI Recruitment Intelligence Core
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
@@ -332,6 +334,13 @@ export default function CVBuilderPage() {
           onClick={() => setTab("interview-studio")}
         >
           Interview Studio
+        </button>
+        <button
+          type="button"
+          className={tab === "recruitment-intelligence" ? "active" : ""}
+          onClick={() => setTab("recruitment-intelligence")}
+        >
+          Recruitment Intelligence
         </button>
         <button
           type="button"
@@ -406,7 +415,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "interview-studio" ? (
+        {tab === "recruitment-intelligence" ? (
+          <RecruitmentIntelligenceCore
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "interview-studio" ? (
           <InterviewPreparationStudio
             cvContent={currentCVContent}
             targetRole={targetRole}

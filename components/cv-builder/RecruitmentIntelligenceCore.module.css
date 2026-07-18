@@ -1,0 +1,525 @@
+.dashboard {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.hero,
+.card,
+.inputCard,
+.personaPanel,
+.recruiterBrief {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: var(--surface, #ffffff);
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.07);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  padding: 1.75rem;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at top right, rgba(16, 185, 129, 0.18), transparent 40%),
+    var(--surface, #ffffff);
+}
+
+.hero h1 {
+  max-width: 820px;
+  margin: 0.45rem 0 0.7rem;
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  line-height: 1.08;
+}
+
+.hero p {
+  max-width: 820px;
+  margin: 0;
+  color: var(--muted, #64748b);
+  line-height: 1.7;
+}
+
+.eyebrow {
+  display: inline-block;
+  color: #059669;
+  font-size: 0.73rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.heroMetrics {
+  display: grid;
+  min-width: 220px;
+  gap: 0.65rem;
+}
+
+.heroMetrics article {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.25rem 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.heroMetrics span,
+.heroMetrics small {
+  color: var(--muted, #64748b);
+}
+
+.heroMetrics strong {
+  grid-row: span 2;
+  font-size: 1.35rem;
+}
+
+.inputCard {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  align-items: start;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 1.2rem;
+}
+
+.inputCard label {
+  display: grid;
+  gap: 0.45rem;
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+
+.inputCard input,
+.inputCard textarea {
+  width: 100%;
+  padding: 0.75rem 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.78rem;
+  color: #0f172a;
+  font: inherit;
+  line-height: 1.55;
+}
+
+.inputCard input:focus,
+.inputCard textarea:focus {
+  border-color: #10b981;
+  outline: 3px solid rgba(16, 185, 129, 0.13);
+}
+
+.roleSummary {
+  display: grid;
+  min-width: 180px;
+  gap: 0.35rem;
+  padding: 1rem;
+  border-radius: 0.9rem;
+  background: #f0fdf4;
+}
+
+.roleSummary span,
+.roleSummary small {
+  color: var(--muted, #64748b);
+}
+
+.roleSummary strong {
+  text-transform: capitalize;
+}
+
+.scoreGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.scoreGrid article {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.15rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1rem;
+  background: var(--surface, #ffffff);
+}
+
+.scoreGrid span,
+.scoreGrid small {
+  color: var(--muted, #64748b);
+}
+
+.scoreGrid strong {
+  font-size: 1.55rem;
+}
+
+.card,
+.personaPanel,
+.recruiterBrief {
+  padding: 1.5rem;
+  border-radius: 1.3rem;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.15rem;
+}
+
+.sectionHeading h2,
+.card h2,
+.personaPanel h2 {
+  margin: 0.35rem 0 0;
+  font-size: 1.25rem;
+}
+
+.requirementList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.requirementList article {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-left-width: 4px;
+  border-radius: 0.9rem;
+}
+
+.requirementList article > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.7rem;
+  color: var(--muted, #64748b);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.requirementList small {
+  color: var(--muted, #64748b);
+  line-height: 1.5;
+}
+
+.requirementMatched {
+  border-left-color: #22c55e !important;
+  background: #f0fdf4;
+}
+
+.requirementGap {
+  border-left-color: #f59e0b !important;
+  background: #fffbeb;
+}
+
+.emptyState {
+  padding: 1.5rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.9rem;
+  color: var(--muted, #64748b);
+  text-align: center;
+}
+
+.competencyGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.competencyGrid article {
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.95rem;
+}
+
+.competencyGrid article > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.competencyGrid article > div:first-child span {
+  color: #059669;
+  font-weight: 850;
+}
+
+.progressTrack {
+  height: 0.45rem;
+  margin: 0.7rem 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.progressTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #10b981;
+}
+
+.competencyGrid p {
+  min-height: 4.5em;
+  margin: 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.competencyGrid small {
+  display: block;
+  margin-top: 0.65rem;
+  color: var(--muted, #64748b);
+}
+
+.recruiterLayout {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.7fr) minmax(0, 2fr);
+  gap: 1rem;
+}
+
+.personaPanel {
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+}
+
+.personaPanel button {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.personaPanel button:hover,
+.personaActive {
+  border-color: #6ee7b7 !important;
+  background: #ecfdf5 !important;
+}
+
+.personaPanel small {
+  color: var(--muted, #64748b);
+  line-height: 1.4;
+}
+
+.objective {
+  padding: 1rem;
+  border-left: 4px solid #10b981;
+  border-radius: 0.7rem;
+  background: #ecfdf5;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.briefColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.briefColumns > div {
+  padding: 1rem;
+  border-radius: 0.9rem;
+  background: #f8fafc;
+}
+
+.briefColumns h3,
+.questionBank h3,
+.scenarioCard h3,
+.scenarioCard h4 {
+  margin: 0 0 0.65rem;
+}
+
+.briefColumns p,
+.questionBank p {
+  margin: 0.45rem 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.questionBank {
+  margin-top: 1rem;
+}
+
+.questionBank article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.questionBank article span {
+  display: grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #d1fae5;
+  color: #047857;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.scenarioTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.scenarioTabs button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.scenarioActive {
+  border-color: #10b981 !important;
+  background: #10b981 !important;
+  color: #ffffff;
+}
+
+.scenarioCard {
+  padding: 1.25rem;
+  border: 1px solid #d1fae5;
+  border-radius: 1rem;
+  background:
+    linear-gradient(135deg, rgba(236, 253, 245, 0.8), rgba(255, 255, 255, 0.95));
+}
+
+.scenarioHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.scenarioHeader span {
+  color: #059669;
+  font-size: 0.72rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.scenarioHeader b {
+  color: #047857;
+}
+
+.scenarioBody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.scenarioBody > div {
+  padding: 1rem;
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.scenarioBody p,
+.followUpList p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.signalGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.signalGrid span {
+  padding: 0.4rem 0.6rem;
+  border-radius: 999px;
+  background: #d1fae5;
+  color: #047857;
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.followUpList {
+  margin-top: 1.1rem;
+}
+
+.followUpList p {
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.insightGrid .card p {
+  margin: 0.65rem 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+@media (max-width: 1100px) {
+  .inputCard {
+    grid-template-columns: 1fr 1.5fr;
+  }
+
+  .roleSummary {
+    grid-column: 1 / -1;
+  }
+
+  .scoreGrid,
+  .competencyGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .insightGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .hero,
+  .recruiterLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .heroMetrics {
+    min-width: 0;
+  }
+
+  .scenarioBody,
+  .briefColumns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .inputCard,
+  .scoreGrid,
+  .competencyGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionHeading,
+  .scenarioHeader {
+    display: grid;
+  }
+
+  .hero,
+  .card,
+  .inputCard,
+  .personaPanel,
+  .recruiterBrief {
+    padding: 1.1rem;
+  }
+}
