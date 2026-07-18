@@ -15,6 +15,8 @@ import styles from "./OpportunityDashboardPanel.module.css";
 type OpportunityDashboardPanelProps = {
   cvContent: unknown;
   targetRole: string;
+  opportunities?: OpportunityInput[];
+  onOpportunitiesChange?: (value: OpportunityInput[]) => void;
 };
 
 const EMPTY_FORM = {
@@ -45,8 +47,28 @@ function scoreClass(score: number): string {
 export function OpportunityDashboardPanel({
   cvContent,
   targetRole,
+  opportunities: controlledOpportunities,
+  onOpportunitiesChange,
 }: OpportunityDashboardPanelProps) {
-  const [opportunities, setOpportunities] = useState<OpportunityInput[]>([]);
+  const [localOpportunities, setLocalOpportunities] = useState<OpportunityInput[]>([]);
+  const opportunities = controlledOpportunities ?? localOpportunities;
+
+  function setOpportunities(
+    updater:
+      | OpportunityInput[]
+      | ((current: OpportunityInput[]) => OpportunityInput[]),
+  ): void {
+    const next =
+      typeof updater === "function"
+        ? updater(opportunities)
+        : updater;
+
+    if (onOpportunitiesChange) {
+      onOpportunitiesChange(next);
+    } else {
+      setLocalOpportunities(next);
+    }
+  }
   const [form, setForm] = useState(EMPTY_FORM);
   const [batch, setBatch] = useState("");
   const [selectedId, setSelectedId] = useState("");

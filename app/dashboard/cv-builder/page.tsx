@@ -14,6 +14,8 @@ import { CareerIntelligencePanel } from "@/components/cv-builder/CareerIntellige
 import { RecruiterSimulationPanel } from "@/components/cv-builder/RecruiterSimulationPanel";
 import { JobMatchingPanel } from "@/components/cv-builder/JobMatchingPanel";
 import { OpportunityDashboardPanel } from "@/components/cv-builder/OpportunityDashboardPanel";
+import type { OpportunityInput } from "@/lib/opportunity-dashboard";
+import { SkillGapAnalyzerPanel } from "@/components/cv-builder/SkillGapAnalyzerPanel";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
 import {
@@ -37,7 +39,8 @@ type BuilderTab =
   | "recruiter"
   | "writer"
   | "matching"
-  | "opportunities";
+  | "opportunities"
+  | "skill-gaps";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -58,6 +61,7 @@ export default function CVBuilderPage() {
   const [targetRole, setTargetRole] = useState("");
   const [title, setTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
+  const [opportunities, setOpportunities] = useState<OpportunityInput[]>([]);
   const [template, setTemplate] =
     useState<CVTemplateKey>("ats-standard");
   const [settings, setSettings] =
@@ -302,6 +306,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "skill-gaps" ? "active" : ""}
+          onClick={() => setTab("skill-gaps")}
+        >
+          Skill Gaps
+        </button>
+        <button
+          type="button"
           className={tab === "opportunities" ? "active" : ""}
           onClick={() => setTab("opportunities")}
         >
@@ -338,10 +349,18 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "opportunities" ? (
+        {tab === "skill-gaps" ? (
+          <SkillGapAnalyzerPanel
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            opportunities={opportunities}
+          />
+        ) : tab === "opportunities" ? (
           <OpportunityDashboardPanel
             cvContent={currentCVContent}
             targetRole={targetRole}
+            opportunities={opportunities}
+            onOpportunitiesChange={setOpportunities}
           />
         ) : tab === "matching" ? (
           <JobMatchingPanel
