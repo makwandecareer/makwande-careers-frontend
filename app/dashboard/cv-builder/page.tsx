@@ -1,17 +1,336 @@
 "use client";
-import {FormEvent,useEffect,useMemo,useState} from "react";
-import {api} from "@/lib/client-api";
-import {CVPreview} from "@/components/cv-preview";
-import {CVBuilderSettings} from "@/components/cv-builder-settings";
-import {defaultCVSettings,defaultSectionOrder,type CVSectionKey,type CVSettings,type CVTemplateKey} from "@/lib/cv-builder";
-import type {ATSResult,GeneratedCV,ProfileBundle} from "@/lib/types";
-export default function CVBuilderPage(){
- const[bundle,setBundle]=useState<ProfileBundle|null>(null),[targetRole,setTargetRole]=useState(""),[title,setTitle]=useState(""),[jobDescription,setJobDescription]=useState(""),[template,setTemplate]=useState<CVTemplateKey>("ats-standard"),[settings,setSettings]=useState<CVSettings>(defaultCVSettings),[sectionOrder,setSectionOrder]=useState<CVSectionKey[]>(defaultSectionOrder),[generated,setGenerated]=useState<GeneratedCV|null>(null),[ats,setAts]=useState<ATSResult|null>(null),[zoom,setZoom]=useState(.85),[loading,setLoading]=useState(true),[busy,setBusy]=useState(""),[error,setError]=useState(""),[message,setMessage]=useState(""),[tab,setTab]=useState<"build"|"design"|"ats">("build");
- useEffect(()=>{api<ProfileBundle>("/api/profile/source-of-truth").then(d=>{setBundle(d);const r=d.profile?.professional_title||"";setTargetRole(r);setTitle(r?`${d.user.full_name} — ${r} CV`:`${d.user.full_name} CV`)}).catch(e=>setError(e instanceof Error?e.message:"Unable to load profile")).finally(()=>setLoading(false))},[]);
- const missing=useMemo(()=>bundle?Object.entries(bundle.completion.sections).filter(([s,c])=>!c&&s!=="cv").map(([s])=>s):[],[bundle]);
- async function generate(e:FormEvent){e.preventDefault();if(!bundle)return;setBusy("generate");setError("");setMessage("");try{const r=await api<GeneratedCV>("/api/ai-cv/generate",{method:"POST",body:JSON.stringify({title,target_role:targetRole,template_key:template,save_snapshot:true,job_description:jobDescription||null,settings,section_order:sectionOrder})});setGenerated(r);setMessage("Professional CV generated and saved successfully.")}catch(e){setError(e instanceof Error?e.message:"CV generation failed")}finally{setBusy("")}}
- async function analyse(){if(!bundle||!jobDescription.trim()){setError("Paste a job description before running ATS analysis.");setTab("ats");return}setBusy("ats");setError("");try{setAts(await api<ATSResult>("/api/ai-cv/ats-score",{method:"POST",body:JSON.stringify({job_description:jobDescription,cv_content:generated?.content||{user:bundle.user,profile:bundle.profile,education:bundle.education,experience:bundle.experience,skills:bundle.skills,projects:bundle.projects,certifications:bundle.certifications,languages:bundle.languages,references:bundle.references}})}))}catch(e){setError(e instanceof Error?e.message:"ATS analysis failed")}finally{setBusy("")}}
- async function download(format:"pdf"|"docx"){if(!bundle)return;setBusy(format);try{const blob=await api<Blob>(`/api/ai-cv/export/${format}`,{method:"POST",body:JSON.stringify({filename:title,template_key:template,settings,section_order:sectionOrder,cv_content:generated?.content||{user:bundle.user,profile:bundle.profile,education:bundle.education,experience:bundle.experience,skills:bundle.skills,projects:bundle.projects,certifications:bundle.certifications,languages:bundle.languages,references:bundle.references,target_role:targetRole}})});const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`${title.replace(/[^a-z0-9]+/gi,"-").toLowerCase()}.${format}`;a.click();URL.revokeObjectURL(u)}catch(e){setError(e instanceof Error?e.message:"Export failed")}finally{setBusy("")}}
- if(loading)return <div className="loading"><span className="spinner"/>Loading your career profile...</div>;if(!bundle)return <div className="error">{error}</div>;
- return <><header className="page-header builder-header"><div><span className="eyebrow">Phase 2.1 · Global-standard CV Studio</span><h1>Create, tailor and export your professional CV</h1><p className="muted">One source of truth, flexible design controls, live preview and job-specific ATS optimisation.</p></div><div className="builder-status"><span>Profile readiness</span><strong>{bundle.completion.percentage}%</strong></div></header>{missing.length>0&&<div className="notice">Complete <strong>{missing.join(", ")}</strong> to strengthen your CV.</div>}<div className="cv-studio-tabs"><button className={tab==="build"?"active":""} onClick={()=>setTab("build")}>Build</button><button className={tab==="design"?"active":""} onClick={()=>setTab("design")}>Design</button><button className={tab==="ats"?"active":""} onClick={()=>setTab("ats")}>ATS Match</button></div><div className="builder-layout"><aside className="builder-panel">{tab==="build"&&<form className="card form" onSubmit={generate}><div className="field"><label>CV title</label><input className="input" value={title} onChange={e=>setTitle(e.target.value)}/></div><div className="field"><label>Target role</label><input className="input" value={targetRole} onChange={e=>setTargetRole(e.target.value)} required/></div><div className="source-summary-grid"><span>Education <strong>{bundle.education.length}</strong></span><span>Experience <strong>{bundle.experience.length}</strong></span><span>Skills <strong>{bundle.skills.length}</strong></span><span>Projects <strong>{bundle.projects.length}</strong></span></div>{error&&<div className="error">{error}</div>}{message&&<div className="success">{message}</div>}<button className="button button-primary button-wide">{busy==="generate"?"Generating...":"Generate and save CV"}</button><div className="export-grid"><button type="button" className="button button-secondary" onClick={()=>download("pdf")}>Download PDF</button><button type="button" className="button button-secondary" onClick={()=>download("docx")}>Download DOCX</button></div></form>}{tab==="design"&&<CVBuilderSettings template={template} setTemplate={setTemplate} settings={settings} setSettings={setSettings} sectionOrder={sectionOrder} setSectionOrder={setSectionOrder}/>} {tab==="ats"&&<section className="card form"><h3>Job-specific ATS matching</h3><div className="field"><label>Paste job description</label><textarea className="input ats-job-description" value={jobDescription} onChange={e=>setJobDescription(e.target.value)}/></div><button className="button button-primary" onClick={analyse}>{busy==="ats"?"Analysing...":"Analyse CV against job"}</button>{ats&&<div className="ats-result-card"><div className="ats-score-ring"><strong>{ats.score}%</strong><span>ATS Match</span></div><div><h4>Missing keywords</h4><div className="tag-list">{ats.missing_keywords?.map(k=><span className="tag" key={k}>{k}</span>)}</div><h4>Recommendations</h4><ul>{ats.recommendations?.map(x=><li key={x}>{x}</li>)}</ul></div></div>}</section>}</aside><section className="builder-preview-shell"><div className="preview-toolbar"><div><strong>Live CV preview</strong><span>{template}</span></div><div className="zoom-controls"><button onClick={()=>setZoom(Math.max(.5,zoom-.1))}>−</button><span>{Math.round(zoom*100)}%</span><button onClick={()=>setZoom(Math.min(1.2,zoom+.1))}>+</button><button onClick={()=>setZoom(.85)}>Fit</button></div></div><div className="preview-canvas"><CVPreview bundle={bundle} generated={generated} targetRole={targetRole} template={template} settings={settings} sectionOrder={sectionOrder} zoom={zoom}/></div></section></div></>
+
+import {
+  type FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import { ATSIntelligencePanel } from "@/components/cv-builder/ATSIntelligencePanel";
+import { BuilderControls } from "@/components/cv-builder/BuilderControls";
+import { BuilderPreview } from "@/components/cv-builder/BuilderPreview";
+import { api } from "@/lib/client-api";
+import {
+  defaultCVSettings,
+  defaultSectionOrder,
+  type CVSectionKey,
+  type CVSettings,
+  type CVTemplateKey,
+} from "@/lib/cv-builder";
+import type {
+  ATSResult,
+  GeneratedCV,
+  ProfileBundle,
+} from "@/lib/types";
+
+type BuilderTab = "build" | "design" | "ats";
+type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
+
+function downloadBlob(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export default function CVBuilderPage() {
+  const [bundle, setBundle] = useState<ProfileBundle | null>(null);
+  const [targetRole, setTargetRole] = useState("");
+  const [title, setTitle] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [template, setTemplate] =
+    useState<CVTemplateKey>("ats-standard");
+  const [settings, setSettings] =
+    useState<CVSettings>(defaultCVSettings);
+  const [sectionOrder, setSectionOrder] =
+    useState<CVSectionKey[]>(defaultSectionOrder);
+  const [generated, setGenerated] =
+    useState<GeneratedCV | null>(null);
+  const [ats, setAts] = useState<ATSResult | null>(null);
+  const [zoom, setZoom] = useState(0.85);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState<BusyState>("");
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [tab, setTab] = useState<BuilderTab>("build");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProfile(): Promise<void> {
+      try {
+        const profile = await api<ProfileBundle>(
+          "/api/profile/source-of-truth",
+        );
+
+        if (cancelled) return;
+
+        setBundle(profile);
+        setTargetRole(profile.profile?.professional_title ?? "");
+        setTitle(`${profile.user.full_name} CV`);
+      } catch (reason) {
+        if (cancelled) return;
+
+        setError(
+          reason instanceof Error
+            ? reason.message
+            : "Unable to load profile",
+        );
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void loadProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const missingSections = useMemo(() => {
+    if (!bundle) return [];
+
+    const sections: Array<[string, unknown[]]> = [
+      ["education", bundle.education],
+      ["experience", bundle.experience],
+      ["skills", bundle.skills],
+      ["projects", bundle.projects],
+      ["certifications", bundle.certifications],
+      ["languages", bundle.languages],
+    ];
+
+    return sections
+      .filter(([, entries]) => !entries.length)
+      .map(([name]) => name);
+  }, [bundle]);
+
+  async function generate(event: FormEvent): Promise<void> {
+    event.preventDefault();
+    if (!bundle) return;
+
+    setBusy("generate");
+    setError("");
+    setMessage("");
+
+    try {
+      const result = await api<GeneratedCV>("/api/ai-cv/generate", {
+        method: "POST",
+        body: JSON.stringify({
+          title,
+          target_role: targetRole,
+          template_key: template,
+          save_snapshot: true,
+          job_description: jobDescription || null,
+          settings,
+          section_order: sectionOrder,
+        }),
+      });
+
+      setGenerated(result);
+      setMessage("Professional CV generated and saved successfully.");
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : "CV generation failed",
+      );
+    } finally {
+      setBusy("");
+    }
+  }
+
+  async function analyse(): Promise<void> {
+    if (!bundle || !jobDescription.trim()) {
+      setError("Paste a job description before running ATS analysis.");
+      return;
+    }
+
+    setBusy("ats");
+    setError("");
+
+    try {
+      const result = await api<ATSResult>("/api/ai-cv/ats-score", {
+        method: "POST",
+        body: JSON.stringify({
+          job_description: jobDescription,
+          cv_content: generated?.content ?? {
+            user: bundle.user,
+            profile: bundle.profile,
+            education: bundle.education,
+            experience: bundle.experience,
+            skills: bundle.skills,
+            projects: bundle.projects,
+            certifications: bundle.certifications,
+            languages: bundle.languages,
+            references: bundle.references,
+          },
+        }),
+      });
+
+      setAts(result);
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : "ATS analysis failed",
+      );
+    } finally {
+      setBusy("");
+    }
+  }
+
+  async function download(format: "pdf" | "docx"): Promise<void> {
+    if (!bundle) return;
+
+    setBusy(format);
+    setError("");
+
+    try {
+      const blob = await api<Blob>(`/api/ai-cv/export/${format}`, {
+        method: "POST",
+        body: JSON.stringify({
+          filename: title,
+          template_key: template,
+          settings,
+          section_order: sectionOrder,
+          cv_content:
+            generated?.content ?? {
+              user: bundle.user,
+              profile: bundle.profile,
+              education: bundle.education,
+              experience: bundle.experience,
+              skills: bundle.skills,
+              projects: bundle.projects,
+              certifications: bundle.certifications,
+              languages: bundle.languages,
+              references: bundle.references,
+              target_role: targetRole,
+            },
+        }),
+      });
+
+      const safeTitle = title
+        .replace(/[^a-z0-9]+/gi, "-")
+        .replace(/^-+|-+$/g, "")
+        .toLowerCase();
+
+      downloadBlob(blob, `${safeTitle || "cv"}.${format}`);
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : "Export failed",
+      );
+    } finally {
+      setBusy("");
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="loading">
+        <span className="spinner" />
+        Loading your career profile...
+      </div>
+    );
+  }
+
+  if (!bundle) {
+    return <div className="error">{error}</div>;
+  }
+
+  return (
+    <div className="page-header builder-header">
+      <div>
+        <span className="eyebrow">
+          Phase 5 · World-class ATS CV Builder
+        </span>
+        <h1>Create, tailor and export your professional CV</h1>
+        <p className="muted">
+          One source of truth, flexible design controls, live preview
+          and job-specific ATS intelligence.
+        </p>
+      </div>
+
+      <div className="builder-status">
+        <span>Profile readiness</span>
+        <strong>{Math.max(0, 100 - missingSections.length * 8)}%</strong>
+      </div>
+
+      <div className="builder-tabs" role="tablist">
+        <button
+          type="button"
+          className={tab === "build" ? "active" : ""}
+          onClick={() => setTab("build")}
+        >
+          Build
+        </button>
+        <button
+          type="button"
+          className={tab === "design" ? "active" : ""}
+          onClick={() => setTab("design")}
+        >
+          Design
+        </button>
+        <button
+          type="button"
+          className={tab === "ats" ? "active" : ""}
+          onClick={() => setTab("ats")}
+        >
+          ATS Intelligence
+        </button>
+      </div>
+
+      <div className="builder-layout">
+        {tab === "ats" ? (
+          <ATSIntelligencePanel
+            jobDescription={jobDescription}
+            ats={ats}
+            busy={busy}
+            onJobDescriptionChange={setJobDescription}
+            onAnalyse={() => void analyse()}
+          />
+        ) : (
+          <BuilderControls
+            bundle={bundle}
+            title={title}
+            targetRole={targetRole}
+            template={template}
+            settings={settings}
+            sectionOrder={sectionOrder}
+            busy={busy}
+            error={error}
+            message={message}
+            onTitleChange={setTitle}
+            onTargetRoleChange={setTargetRole}
+            onTemplateChange={setTemplate}
+            onSettingsChange={setSettings}
+            onSectionOrderChange={setSectionOrder}
+            onGenerate={generate}
+            onDownloadPDF={() => void download("pdf")}
+            onDownloadDOCX={() => void download("docx")}
+          />
+        )}
+
+        <BuilderPreview
+          bundle={bundle}
+          generated={generated}
+          targetRole={targetRole}
+          template={template}
+          settings={settings}
+          sectionOrder={sectionOrder}
+          zoom={zoom}
+          onZoomChange={setZoom}
+        />
+      </div>
+    </div>
+  );
 }
