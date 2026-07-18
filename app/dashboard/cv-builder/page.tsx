@@ -16,6 +16,7 @@ import { JobMatchingPanel } from "@/components/cv-builder/JobMatchingPanel";
 import { OpportunityDashboardPanel } from "@/components/cv-builder/OpportunityDashboardPanel";
 import type { OpportunityInput } from "@/lib/opportunity-dashboard";
 import { SkillGapAnalyzerPanel } from "@/components/cv-builder/SkillGapAnalyzerPanel";
+import { CareerFitExplanationsPanel } from "@/components/cv-builder/CareerFitExplanationsPanel";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
 import {
@@ -40,7 +41,8 @@ type BuilderTab =
   | "writer"
   | "matching"
   | "opportunities"
-  | "skill-gaps";
+  | "skill-gaps"
+  | "career-fit";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -306,6 +308,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "career-fit" ? "active" : ""}
+          onClick={() => setTab("career-fit")}
+        >
+          Career Fit
+        </button>
+        <button
+          type="button"
           className={tab === "skill-gaps" ? "active" : ""}
           onClick={() => setTab("skill-gaps")}
         >
@@ -349,7 +358,13 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "skill-gaps" ? (
+        {tab === "career-fit" ? (
+          <CareerFitExplanationsPanel
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            opportunities={opportunities}
+          />
+        ) : tab === "skill-gaps" ? (
           <SkillGapAnalyzerPanel
             cvContent={currentCVContent}
             targetRole={targetRole}
