@@ -1,0 +1,536 @@
+.dashboard {
+  display: grid;
+  gap: 1.4rem;
+  min-width: 0;
+}
+
+.hero,
+.settingsCard,
+.emptyState,
+.questionPanel,
+.interviewCard,
+.reportSection {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.3rem;
+  background: #ffffff;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.07);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  padding: 1.7rem;
+  background:
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 42%),
+    #ffffff;
+}
+
+.hero h1 {
+  margin: 0.45rem 0 0.7rem;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.08;
+}
+
+.hero p {
+  max-width: 880px;
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.eyebrow {
+  color: #0369a1;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.heroScore {
+  display: grid;
+  min-width: 205px;
+  place-content: center;
+  padding: 1.2rem;
+  border-radius: 1.1rem;
+  background: #e0f2fe;
+  text-align: center;
+}
+
+.heroScore span,
+.heroScore small {
+  color: #64748b;
+}
+
+.heroScore strong {
+  color: #0369a1;
+  font-size: 2.55rem;
+  line-height: 1;
+}
+
+.settingsCard,
+.reportSection,
+.emptyState {
+  padding: 1.4rem;
+}
+
+.settingsHeader,
+.questionHeader,
+.answerActions,
+.feedbackHeader,
+.reportHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.settingsHeader h2,
+.questionHeader h2,
+.reportHeader h2 {
+  margin: 0.35rem 0 0;
+}
+
+.settingsHeader > span,
+.questionHeader > span {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.formGrid label,
+.answerField {
+  display: grid;
+  gap: 0.4rem;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.formGrid input,
+.formGrid select,
+.formGrid textarea,
+.answerField textarea {
+  width: 100%;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.formGrid input:focus,
+.formGrid select:focus,
+.formGrid textarea:focus,
+.answerField textarea:focus {
+  border-color: #0ea5e9;
+  outline: 3px solid rgba(14, 165, 233, 0.12);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.toggleGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.72rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.8rem;
+  background: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.skillGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.skillGrid button {
+  display: grid;
+  gap: 0.65rem;
+  min-height: 132px;
+  padding: 1rem;
+  border: 1px solid #bae6fd;
+  border-radius: 1rem;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.skillGrid button:hover,
+.skillGrid .activeSkill {
+  border-color: #0ea5e9;
+  background: #f0f9ff;
+}
+
+.skillGrid button > div:first-child {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.skillGrid button > div > span {
+  color: #0c4a6e;
+  font-weight: 850;
+  text-transform: capitalize;
+}
+
+.skillGrid button small {
+  color: #64748b;
+}
+
+.skillMetrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.skillMetrics strong {
+  padding: 0.28rem 0.45rem;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 0.66rem;
+}
+
+.skillGrid button p {
+  margin: 0;
+  color: #b45309;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: minmax(245px, 0.65fr) minmax(0, 1.7fr);
+  gap: 1rem;
+}
+
+.questionPanel,
+.interviewCard {
+  padding: 1.35rem;
+}
+
+.questionPanel {
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+}
+
+.questionPanel h2 {
+  margin: 0.35rem 0 1rem;
+  text-transform: capitalize;
+}
+
+.questionList {
+  display: grid;
+  gap: 0.55rem;
+  max-height: 850px;
+  overflow: auto;
+  padding-right: 0.15rem;
+}
+
+.questionList button {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.questionList button:hover,
+.questionList .activeQuestion {
+  border-color: #0ea5e9;
+  background: #f0f9ff;
+}
+
+.questionList button > span {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 850;
+}
+
+.questionList button > div {
+  display: grid;
+}
+
+.questionList small {
+  color: #64748b;
+}
+
+.questionHeader h2 {
+  max-width: 860px;
+  font-size: 1.45rem;
+  line-height: 1.35;
+}
+
+.intentBox,
+.followUp,
+.structureBox,
+.redFlagBox {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.9rem;
+  background: #f0f9ff;
+}
+
+.intentBox p,
+.followUp p,
+.structureBox p,
+.redFlagBox p,
+.interviewCard details p {
+  margin: 0.45rem 0 0;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.redFlagBox {
+  background: #fff7ed;
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.interviewCard details {
+  padding: 0.85rem;
+  border: 1px solid #bae6fd;
+  border-radius: 0.8rem;
+}
+
+.answerField {
+  margin-top: 1rem;
+}
+
+.answerField textarea {
+  min-height: 280px;
+  resize: vertical;
+}
+
+.answerActions {
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.answerActions span {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.answerActions button {
+  padding: 0.72rem 1rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: #0284c7;
+  color: #ffffff;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.answerActions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feedback {
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.feedbackHeader h3 {
+  margin: 0.3rem 0 0;
+  color: #0369a1;
+  font-size: 1.45rem;
+}
+
+.scoreGrid,
+.dimensionGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.scoreGrid article {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: #f0f9ff;
+  text-transform: capitalize;
+}
+
+.scoreGrid span {
+  color: #64748b;
+  font-size: 0.7rem;
+}
+
+.scoreGrid strong {
+  color: #0369a1;
+}
+
+.feedbackColumns,
+.reportColumns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.feedbackColumns section,
+.reportColumns article {
+  padding: 0.95rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.feedbackColumns h4,
+.reportColumns h3 {
+  margin: 0 0 0.55rem;
+}
+
+.feedbackColumns p,
+.reportColumns p {
+  margin: 0.5rem 0;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.reportHeader {
+  align-items: center;
+}
+
+.reportHeader > strong {
+  color: #0369a1;
+  font-size: 2rem;
+}
+
+.dimensionGrid article {
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+}
+
+.dimensionGrid article > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+  text-transform: capitalize;
+}
+
+.track {
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #0ea5e9;
+}
+
+.emptyState {
+  text-align: center;
+}
+
+.emptyState p {
+  color: #64748b;
+}
+
+@media (max-width: 1120px) {
+  .skillGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .questionPanel {
+    position: static;
+  }
+
+  .toggleGrid,
+  .scoreGrid,
+  .dimensionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .hero,
+  .formGrid,
+  .feedbackColumns,
+  .reportColumns,
+  .insightGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: auto;
+  }
+
+  .heroScore {
+    justify-self: start;
+  }
+
+  .settingsHeader,
+  .questionHeader,
+  .reportHeader {
+    display: grid;
+  }
+}
+
+@media (max-width: 520px) {
+  .skillGrid,
+  .toggleGrid,
+  .scoreGrid,
+  .dimensionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .settingsCard,
+  .questionPanel,
+  .interviewCard,
+  .reportSection {
+    padding: 1rem;
+  }
+}

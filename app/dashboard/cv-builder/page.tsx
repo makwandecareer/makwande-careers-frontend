@@ -26,6 +26,7 @@ import { CompanyIntelligenceEngine } from "@/components/cv-builder/CompanyIntell
 import { DynamicInterviewBuilder } from "@/components/cv-builder/DynamicInterviewBuilder";
 import { InterviewSimulationEngine } from "@/components/cv-builder/InterviewSimulationEngine";
 import { ExperienceInterviewEngine } from "@/components/cv-builder/ExperienceInterviewEngine";
+import { TechnicalDeepDiveEngine } from "@/components/cv-builder/TechnicalDeepDiveEngine";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -61,7 +62,8 @@ type BuilderTab =
   | "company-intelligence"
   | "dynamic-interview"
   | "interview-simulation"
-  | "experience-interview";
+  | "experience-interview"
+  | "technical-deep-dive";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -300,7 +302,7 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 12.5 · Experience-Based Interview Engine
+          Phase 12.6 · Technical Deep Dive Engine
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
@@ -380,6 +382,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "technical-deep-dive" ? "active" : ""}
+          onClick={() => setTab("technical-deep-dive")}
+        >
+          Technical Deep Dive
+        </button>
+        <button
+          type="button"
           className={tab === "build" ? "active" : ""}
           onClick={() => setTab("build")}
         >
@@ -451,7 +460,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "experience-interview" ? (
+        {tab === "technical-deep-dive" ? (
+          <TechnicalDeepDiveEngine
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "experience-interview" ? (
           <ExperienceInterviewEngine
             cvContent={currentCVContent}
             targetRole={targetRole}
