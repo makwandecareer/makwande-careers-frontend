@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 
+import { ApplicationCopilotPanel } from "@/components/cv-builder/ApplicationCopilotPanel";
 import { BuilderControls } from "@/components/cv-builder/BuilderControls";
 import { BuilderPreview } from "@/components/cv-builder/BuilderPreview";
 import { CareerIntelligencePanel } from "@/components/cv-builder/CareerIntelligencePanel";
@@ -24,7 +25,7 @@ import type {
   ProfileBundle,
 } from "@/lib/types";
 
-type BuilderTab = "build" | "design" | "ats";
+type BuilderTab = "build" | "design" | "ats" | "copilot";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -246,12 +247,12 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 6 · AI Career Intelligence
+          Phase 7 · World-class Application Copilot
         </span>
-        <h1>Create, optimise and validate your professional CV</h1>
+        <h1>Create, optimise and complete the application journey</h1>
         <p className="muted">
-          World-class CV creation with ATS matching, KPI evidence,
-          measurable results and deep recruiter analysis.
+          Build the CV, validate role alignment, prepare the cover
+          letter and get ready for interviews and offer discussions.
         </p>
       </div>
 
@@ -282,6 +283,13 @@ export default function CVBuilderPage() {
         >
           Career Intelligence
         </button>
+        <button
+          type="button"
+          className={tab === "copilot" ? "active" : ""}
+          onClick={() => setTab("copilot")}
+        >
+          Application Copilot
+        </button>
       </div>
 
       <div className="builder-layout">
@@ -294,6 +302,13 @@ export default function CVBuilderPage() {
             busy={busy}
             onJobDescriptionChange={setJobDescription}
             onAnalyse={() => void analyse()}
+          />
+        ) : tab === "copilot" ? (
+          <ApplicationCopilotPanel
+            cvContent={currentCVContent}
+            jobDescription={jobDescription}
+            targetRole={targetRole}
+            onJobDescriptionChange={setJobDescription}
           />
         ) : (
           <BuilderControls
