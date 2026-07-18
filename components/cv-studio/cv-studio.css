@@ -78,6 +78,12 @@
   color: #fff;
 }
 
+
+.cv-studio-shell .studio-zoom-controls button.active {
+  border-color: var(--brand);
+  background: #eef8f2;
+  color: var(--brand);
+}
 .cv-studio-shell .studio-save-state {
   display: flex;
   gap: 8px;
@@ -411,17 +417,25 @@
 .cv-studio-shell .studio-preview-canvas {
   height: calc(100vh - 128px);
   overflow: auto;
-  padding: 32px max(24px, calc((100% - var(--studio-page-width)) / 2));
+  padding: 32px 24px 48px;
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
+}
+
+.cv-studio-shell .studio-preview-canvas.fit-mode {
+  overflow-x: hidden;
+}
+
+.cv-studio-shell .studio-preview-scale-shell {
+  position: relative;
+  margin: 0 auto;
 }
 
 .cv-studio-shell .studio-preview-pages {
   display: grid;
   gap: var(--studio-page-gap);
   width: var(--studio-page-width);
-  margin: 0 auto;
-  padding-bottom: 48px;
+  margin: 0;
   will-change: transform;
 }
 
@@ -481,10 +495,17 @@
 .cv-studio-shell .studio-cv-contact {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 13px;
+  gap: 5px 12px;
   color: #5b6c61;
   font-size: 10px;
+  line-height: 1.35;
+}
+
+.cv-studio-shell .studio-cv-contact span {
+  min-width: 0;
+  max-width: 100%;
   overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .cv-studio-shell .studio-cv-photo {
@@ -956,5 +977,71 @@
   .cv-studio-shell .studio-cv-page:last-child {
     break-after: auto;
     page-break-after: auto;
+  }
+}
+
+/* Phase 4.2 — DOM pagination and preview polish */
+.cv-studio-shell .studio-pagination-block .studio-cv-section {
+  margin-top: 0;
+}
+
+.cv-studio-shell .studio-pagination-block.has-heading .studio-cv-section {
+  margin-top: var(--studio-section-spacing);
+}
+
+.cv-studio-shell .studio-pagination-block .studio-cv-entry {
+  margin-bottom: 14px;
+}
+
+.cv-studio-shell .studio-compact-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.cv-studio-shell .studio-reference-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.cv-studio-shell .studio-reference-item p {
+  margin: 3px 0;
+}
+
+.cv-studio-shell .studio-pagination-measurer {
+  position: fixed;
+  top: 0;
+  left: -20000px;
+  z-index: -1000;
+  width: var(--studio-page-width);
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  contain: layout style;
+}
+
+.cv-studio-shell .studio-pagination-measurer .studio-cv-page {
+  box-shadow: none;
+}
+
+.cv-studio-shell .studio-measure-blocks {
+  width: var(--studio-page-width);
+}
+
+.cv-studio-shell .studio-measure-blocks .studio-cv-page {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+.cv-studio-shell .studio-measure-blocks .studio-cv-content {
+  flex: none;
+  overflow: visible;
+}
+
+@media print {
+  .cv-studio-shell .studio-pagination-measurer {
+    display: none !important;
   }
 }
