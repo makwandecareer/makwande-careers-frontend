@@ -17,6 +17,7 @@ import { OpportunityDashboardPanel } from "@/components/cv-builder/OpportunityDa
 import type { OpportunityInput } from "@/lib/opportunity-dashboard";
 import { SkillGapAnalyzerPanel } from "@/components/cv-builder/SkillGapAnalyzerPanel";
 import { CareerFitExplanationsPanel } from "@/components/cv-builder/CareerFitExplanationsPanel";
+import { CareerCoachDashboard } from "@/components/cv-builder/CareerCoachDashboard";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
 import {
@@ -42,7 +43,8 @@ type BuilderTab =
   | "matching"
   | "opportunities"
   | "skill-gaps"
-  | "career-fit";
+  | "career-fit"
+  | "coach";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -270,12 +272,12 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 9 · AI Resume Writer
+          Phase 11.1 · AI Career Coach
         </span>
-        <h1>Create, optimise and strengthen the complete application</h1>
+        <h1>Your intelligent career command centre</h1>
         <p className="muted">
-          Build the CV, improve the writing, test role alignment, prepare the
-          application and simulate a structured hiring-panel review.
+          Build a stronger career profile, prioritise the right opportunities
+          and complete personalised actions guided by your readiness data.
         </p>
       </div>
 
@@ -285,6 +287,13 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-tabs" role="tablist">
+        <button
+          type="button"
+          className={tab === "coach" ? "active" : ""}
+          onClick={() => setTab("coach")}
+        >
+          AI Career Coach
+        </button>
         <button
           type="button"
           className={tab === "build" ? "active" : ""}
@@ -358,7 +367,15 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "career-fit" ? (
+        {tab === "coach" ? (
+          <CareerCoachDashboard
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            opportunities={opportunities}
+            atsScore={atsScore}
+            onNavigate={setTab}
+          />
+        ) : tab === "career-fit" ? (
           <CareerFitExplanationsPanel
             cvContent={currentCVContent}
             targetRole={targetRole}

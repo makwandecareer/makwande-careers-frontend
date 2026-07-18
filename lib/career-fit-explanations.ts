@@ -140,8 +140,12 @@ export function explainCareerFit(
           label: dimension.label,
           score: dimension.score,
           explanation:
-            dimension.evidence?.slice(0, 2).join(" ") ||
-            `The supplied CV shows comparatively stronger alignment in ${dimension.label.toLowerCase()}.`,
+            dimension.matched.length > 0
+              ? `The CV contains relevant evidence for ${dimension.matched
+                  .slice(0, 3)
+                  .join(", ")}. ${dimension.explanation}`
+              : dimension.explanation ||
+                `The supplied CV shows comparatively stronger alignment in ${dimension.label.toLowerCase()}.`,
         }),
       );
 
