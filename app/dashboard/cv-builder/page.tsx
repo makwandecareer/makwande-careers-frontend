@@ -24,6 +24,7 @@ import { InterviewPreparationStudio } from "@/components/cv-builder/InterviewPre
 import { RecruitmentIntelligenceCore } from "@/components/cv-builder/RecruitmentIntelligenceCore";
 import { CompanyIntelligenceEngine } from "@/components/cv-builder/CompanyIntelligenceEngine";
 import { DynamicInterviewBuilder } from "@/components/cv-builder/DynamicInterviewBuilder";
+import { InterviewSimulationEngine } from "@/components/cv-builder/InterviewSimulationEngine";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -57,7 +58,8 @@ type BuilderTab =
   | "interview-studio"
   | "recruitment-intelligence"
   | "company-intelligence"
-  | "dynamic-interview";
+  | "dynamic-interview"
+  | "interview-simulation";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -296,7 +298,7 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 12.3 · AI Dynamic Interview Builder
+          Phase 12.4 · AI Interview Simulation & Scenario Engine
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
@@ -359,6 +361,13 @@ export default function CVBuilderPage() {
           onClick={() => setTab("dynamic-interview")}
         >
           Dynamic Interview
+        </button>
+        <button
+          type="button"
+          className={tab === "interview-simulation" ? "active" : ""}
+          onClick={() => setTab("interview-simulation")}
+        >
+          Interview Simulation
         </button>
         <button
           type="button"
@@ -433,7 +442,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "dynamic-interview" ? (
+        {tab === "interview-simulation" ? (
+          <InterviewSimulationEngine
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "dynamic-interview" ? (
           <DynamicInterviewBuilder
             cvContent={currentCVContent}
             targetRole={targetRole}
