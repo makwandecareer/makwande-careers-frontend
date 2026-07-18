@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  useCallback,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -40,7 +41,13 @@ type Page = PaginatedBlock[];
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 1.2;
 const ZOOM_STEP = 0.1;
-const FIT_ZOOM = 0.82;
+const PAGE_WIDTH = 794;
+const PAGE_HEIGHT = 1123;
+const PAGE_GAP = 32;
+const MIN_FIT_ZOOM = 0.65;
+const MAX_FIT_ZOOM = 1;
+const FIT_HORIZONTAL_GUTTER = 48;
+const SAFE_PAGE_BOTTOM_BUFFER = 40;
 const FALLBACK_FIRST_PAGE_HEIGHT = 870;
 const FALLBACK_CONTINUATION_HEIGHT = 960;
 
@@ -381,11 +388,41 @@ function pageClassName(draft: StudioDraft): string {
 export function PreviewPanel({ draft, zoom, setZoom }: PreviewPanelProps) {
   const blocks = useMemo(() => buildPreviewBlocks(draft), [draft]);
   const pageStyle = useMemo(() => getPageStyle(draft), [draft]);
+  const canvasRef = useRef<HTMLDivElement | null>(null);
   const measurerRef = useRef<HTMLDivElement | null>(null);
   const firstContentRef = useRef<HTMLDivElement | null>(null);
   const continuationContentRef = useRef<HTMLDivElement | null>(null);
   const [pages, setPages] = useState<Page[]>([[]]);
   const [isMeasuring, setIsMeasuring] = useState(true);
+  const [fitMode, setFitMode] = useState(true);
+
+  const fitPreview = useCallback((): void => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const availableWidth = Math.max(0, canvas.clientWidth - FIT_HORIZONTAL_GUTTER);
+    const nextZoom = Math.min(
+      MAX_FIT_ZOOM,
+      Math.max(MIN_FIT_ZOOM, availableWidth / PAGE_WIDTH),
+    );
+
+    setZoom(clampZoom(nextZoom));
+    setFitMode(true);
+  }, [setZoom]);
+
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (fitMode) fitPreview();
+    });
+
+    resizeObserver.observe(canvas);
+    fitPreview();
+
+    return () => resizeObserver.disconnect();
+  }, [fitMode, fitPreview]);
 
   useLayoutEffect(() => {
     const root = measurerRef.current;
@@ -412,12 +449,16 @@ export function PreviewPanel({ draft, zoom, setZoom }: PreviewPanelProps) {
           });
         });
 
-        const firstHeight =
-          firstContentRef.current?.getBoundingClientRect().height ??
-          FALLBACK_FIRST_PAGE_HEIGHT;
-        const continuationHeight =
-          continuationContentRef.current?.getBoundingClientRect().height ??
-          FALLBACK_CONTINUATION_HEIGHT;
+        const firstHeight = Math.max(
+          0,
+          (firstContentRef.current?.getBoundingClientRect().height ??
+            FALLBACK_FIRST_PAGE_HEIGHT) - SAFE_PAGE_BOTTOM_BUFFER,
+        );
+        const continuationHeight = Math.max(
+          0,
+          (continuationContentRef.current?.getBoundingClientRect().height ??
+            FALLBACK_CONTINUATION_HEIGHT) - SAFE_PAGE_BOTTOM_BUFFER,
+        );
 
         setPages(
           paginateMeasuredBlocks(
@@ -466,7 +507,10 @@ export function PreviewPanel({ draft, zoom, setZoom }: PreviewPanelProps) {
         <div className="studio-zoom-controls">
           <button
             type="button"
-            onClick={() => setZoom(clampZoom(zoom - ZOOM_STEP))}
+            onClick={() => {
+              setFitMode(false);
+              setZoom(clampZoom(zoom - ZOOM_STEP));
+            }}
             disabled={zoom <= MIN_ZOOM}
             aria-label="Zoom out"
           >
@@ -475,24 +519,48 @@ export function PreviewPanel({ draft, zoom, setZoom }: PreviewPanelProps) {
           <span>{Math.round(zoom * 100)}%</span>
           <button
             type="button"
-            onClick={() => setZoom(clampZoom(zoom + ZOOM_STEP))}
+            onClick={() => {
+              setFitMode(false);
+              setZoom(clampZoom(zoom + ZOOM_STEP));
+            }}
             disabled={zoom >= MAX_ZOOM}
             aria-label="Zoom in"
           >
             +
           </button>
-          <button type="button" onClick={() => setZoom(FIT_ZOOM)}>
+          <button
+            type="button"
+            className={fitMode ? "active" : ""}
+            onClick={fitPreview}
+          >
             Fit
           </button>
         </div>
       </header>
 
-      <div className="studio-preview-canvas">
+      <div
+        ref={canvasRef}
+        className={`studio-preview-canvas ${fitMode ? "fit-mode" : ""}`}
+      >
         <div
-          className="studio-preview-pages"
-          style={{ transform: `scale(${zoom})`, transformOrigin: "top center" }}
+          className="studio-preview-scale-shell"
+          style={{
+            width: `${PAGE_WIDTH * zoom}px`,
+            height: `${
+              (pages.length * PAGE_HEIGHT +
+                Math.max(0, pages.length - 1) * PAGE_GAP) *
+              zoom
+            }px`,
+          }}
         >
-          {pages.map((page, pageIndex) => (
+          <div
+            className="studio-preview-pages"
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: "top left",
+            }}
+          >
+            {pages.map((page, pageIndex) => (
             <article
               className={pageClassName(draft)}
               style={pageStyle}
@@ -523,7 +591,8 @@ export function PreviewPanel({ draft, zoom, setZoom }: PreviewPanelProps) {
                 </span>
               </footer>
             </article>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
