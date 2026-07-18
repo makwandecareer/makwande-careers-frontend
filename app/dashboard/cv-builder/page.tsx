@@ -12,6 +12,7 @@ import { BuilderControls } from "@/components/cv-builder/BuilderControls";
 import { BuilderPreview } from "@/components/cv-builder/BuilderPreview";
 import { CareerIntelligencePanel } from "@/components/cv-builder/CareerIntelligencePanel";
 import { RecruiterSimulationPanel } from "@/components/cv-builder/RecruiterSimulationPanel";
+import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
 import {
   defaultCVSettings,
@@ -31,7 +32,8 @@ type BuilderTab =
   | "design"
   | "ats"
   | "copilot"
-  | "recruiter";
+  | "recruiter"
+  | "writer";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -258,12 +260,12 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 8 · AI Recruiter Simulation
+          Phase 9 · AI Resume Writer
         </span>
-        <h1>Create, optimise and evaluate the complete application</h1>
+        <h1>Create, optimise and strengthen the complete application</h1>
         <p className="muted">
-          Build the CV, test role alignment, prepare the application and
-          simulate a structured hiring-panel review.
+          Build the CV, improve the writing, test role alignment, prepare the
+          application and simulate a structured hiring-panel review.
         </p>
       </div>
 
@@ -289,6 +291,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "writer" ? "active" : ""}
+          onClick={() => setTab("writer")}
+        >
+          AI Resume Writer
+        </button>
+        <button
+          type="button"
           className={tab === "ats" ? "active" : ""}
           onClick={() => setTab("ats")}
         >
@@ -311,7 +320,13 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "ats" ? (
+        {tab === "writer" ? (
+          <ResumeWriterPanel
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            onJobDescriptionChange={setJobDescription}
+          />
+        ) : tab === "ats" ? (
           <CareerIntelligencePanel
             jobDescription={jobDescription}
             targetRole={targetRole}
