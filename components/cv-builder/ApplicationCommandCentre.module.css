@@ -1,0 +1,594 @@
+.commandCentre {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.hero,
+.analytics,
+.insights,
+.addPanel,
+.pipeline,
+.detail {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.07);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.4rem;
+  padding: 1.55rem;
+  background:
+    radial-gradient(circle at top right, rgba(99, 102, 241, 0.18), transparent 42%),
+    linear-gradient(135deg, #ffffff, #f8fafc);
+}
+
+.hero h1 {
+  max-width: 850px;
+  margin: 0.4rem 0 0.7rem;
+  font-size: clamp(1.75rem, 3vw, 2.55rem);
+  line-height: 1.08;
+}
+
+.hero p {
+  max-width: 900px;
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.eyebrow {
+  color: #4338ca;
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.heroMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(110px, 1fr));
+  gap: 0.65rem;
+  align-self: center;
+}
+
+.heroMetrics article {
+  display: grid;
+  min-height: 95px;
+  place-content: center;
+  padding: 0.8rem;
+  border: 1px solid #c7d2fe;
+  border-radius: 0.95rem;
+  background: rgba(238, 242, 255, 0.92);
+  text-align: center;
+}
+
+.heroMetrics span {
+  color: #64748b;
+  font-size: 0.71rem;
+  font-weight: 750;
+}
+
+.heroMetrics strong {
+  color: #4338ca;
+  font-size: 1.65rem;
+}
+
+.analytics,
+.insights,
+.addPanel,
+.pipeline,
+.detail {
+  padding: 1.2rem;
+}
+
+.sectionHeading,
+.detailHeader,
+.detailFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionHeading h2,
+.sectionHeading h3,
+.detailHeader h2 {
+  margin: 0.28rem 0 0;
+}
+
+.sectionHeading > span {
+  align-self: center;
+  color: #64748b;
+  font-size: 0.76rem;
+  font-weight: 760;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.metricGrid article {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.82rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.metricGrid span {
+  color: #64748b;
+  font-size: 0.69rem;
+  font-weight: 700;
+}
+
+.metricGrid strong {
+  color: #1e293b;
+  font-size: 1.35rem;
+}
+
+.funnel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.funnel article {
+  padding: 0.82rem;
+  border-radius: 0.85rem;
+  background: #eef2ff;
+}
+
+.funnel article > div:first-child {
+  display: flex;
+  justify-content: space-between;
+}
+
+.funnel strong,
+.funnel span {
+  color: #3730a3;
+}
+
+.funnel small {
+  color: #64748b;
+}
+
+.track {
+  height: 0.46rem;
+  margin: 0.55rem 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #c7d2fe;
+}
+
+.track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #4f46e5;
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.insightGrid article {
+  padding: 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.insightGrid article[data-type="success"] {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.insightGrid article[data-type="warning"] {
+  border-color: #fed7aa;
+  background: #fff7ed;
+}
+
+.insightGrid article[data-type="action"] {
+  border-color: #c7d2fe;
+  background: #eef2ff;
+}
+
+.insightGrid p {
+  margin: 0.45rem 0 0;
+  color: #475569;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.formGrid,
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.formGrid label,
+.detailGrid label {
+  display: grid;
+  gap: 0.35rem;
+  color: #334155;
+  font-size: 0.77rem;
+  font-weight: 760;
+}
+
+.formGrid input,
+.formGrid select,
+.formGrid textarea,
+.detailGrid input,
+.detailGrid select,
+.detailGrid textarea,
+.filters input,
+.filters select,
+.inlineForm input,
+.inlineForm select,
+.contactForm input,
+.contactForm select {
+  width: 100%;
+  padding: 0.7rem 0.76rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.72rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+.formGrid input:focus,
+.formGrid select:focus,
+.formGrid textarea:focus,
+.detailGrid input:focus,
+.detailGrid select:focus,
+.detailGrid textarea:focus,
+.filters input:focus,
+.filters select:focus,
+.inlineForm input:focus,
+.inlineForm select:focus,
+.contactForm input:focus,
+.contactForm select:focus {
+  border-color: #6366f1;
+  outline: 3px solid rgba(99, 102, 241, 0.12);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.primaryButton,
+.inlineForm button,
+.contactForm button,
+.stageBar button,
+.detailFooter button,
+.taskList button,
+.contactList button {
+  border: 1px solid #c7d2fe;
+  border-radius: 0.7rem;
+  background: #ffffff;
+  color: #3730a3;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primaryButton {
+  margin-top: 1rem;
+  padding: 0.68rem 0.95rem;
+  border-color: #4f46e5;
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.72fr) minmax(0, 1.55fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.applicationList {
+  display: grid;
+  gap: 0.62rem;
+  margin-top: 0.8rem;
+}
+
+.applicationList article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  padding: 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.applicationList article:hover,
+.applicationList article.selected {
+  border-color: #818cf8;
+  background: #eef2ff;
+}
+
+.applicationList article > div:first-child > span,
+.applicationList p {
+  color: #64748b;
+  font-size: 0.72rem;
+}
+
+.applicationList h3 {
+  margin: 0.12rem 0 0.35rem;
+}
+
+.applicationList p {
+  margin: 0;
+}
+
+.applicationScores {
+  display: grid;
+  align-content: center;
+  text-align: right;
+}
+
+.applicationScores strong {
+  color: #4338ca;
+  font-size: 1.35rem;
+}
+
+.applicationScores span {
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 760;
+}
+
+.detailHeader p {
+  margin: 0.35rem 0 0;
+  color: #64748b;
+}
+
+.nextAction {
+  display: grid;
+  max-width: 360px;
+  padding: 0.82rem;
+  border-radius: 0.85rem;
+  background: #eef2ff;
+}
+
+.nextAction span {
+  color: #6366f1;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.nextAction strong {
+  margin-top: 0.28rem;
+  color: #312e81;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.stageBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  margin-top: 1rem;
+}
+
+.stageBar button {
+  padding: 0.48rem 0.62rem;
+  border-radius: 999px;
+}
+
+.stageBar button:hover,
+.stageBar button.activeStage {
+  border-color: #4f46e5;
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.subsection {
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.inlineForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(120px, 0.7fr) minmax(130px, 0.6fr) auto;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+
+.inlineForm button,
+.contactForm button {
+  padding: 0.65rem 0.8rem;
+}
+
+.taskList,
+.contactList {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+
+.taskList article,
+.contactList article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.7rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+}
+
+.taskList article > button:first-child {
+  width: 2rem;
+  height: 2rem;
+}
+
+.taskList div,
+.contactList div {
+  display: grid;
+  gap: 0.16rem;
+}
+
+.taskList span,
+.contactList span,
+.contactList small {
+  color: #64748b;
+  font-size: 0.69rem;
+}
+
+.taskList button,
+.contactList button {
+  padding: 0.42rem 0.58rem;
+}
+
+.taskList button.completedTask {
+  border-color: #10b981;
+  background: #d1fae5;
+  color: #047857;
+}
+
+.contactForm {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+
+.detailFooter {
+  align-items: center;
+  margin-top: 1.15rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid #e2e8f0;
+  color: #64748b;
+  font-size: 0.72rem;
+}
+
+.detailFooter button {
+  padding: 0.5rem 0.7rem;
+}
+
+.emptyState {
+  display: grid;
+  min-height: 220px;
+  place-content: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.emptyState p {
+  max-width: 420px;
+  color: #64748b;
+}
+
+@media (max-width: 1180px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .heroMetrics {
+    justify-self: start;
+  }
+
+  .metricGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .formGrid,
+  .detailGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .contactForm {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .funnel,
+  .insightGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detailHeader,
+  .sectionHeading {
+    display: grid;
+  }
+
+  .inlineForm,
+  .contactForm {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .heroMetrics,
+  .metricGrid,
+  .funnel,
+  .insightGrid,
+  .formGrid,
+  .detailGrid,
+  .inlineForm,
+  .contactForm {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: auto;
+  }
+
+  .hero,
+  .analytics,
+  .insights,
+  .addPanel,
+  .pipeline,
+  .detail {
+    padding: 1rem;
+  }
+
+  .taskList article,
+  .contactList article {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .taskList article > button:last-child,
+  .contactList article > button {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
