@@ -28,6 +28,7 @@ import { InterviewSimulationEngine } from "@/components/cv-builder/InterviewSimu
 import { ExperienceInterviewEngine } from "@/components/cv-builder/ExperienceInterviewEngine";
 import { TechnicalDeepDiveEngine } from "@/components/cv-builder/TechnicalDeepDiveEngine";
 import { PressureInterviewEngine } from "@/components/cv-builder/PressureInterviewEngine";
+import { ExecutiveInterviewEngine } from "@/components/cv-builder/ExecutiveInterviewEngine";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -65,7 +66,8 @@ type BuilderTab =
   | "interview-simulation"
   | "experience-interview"
   | "technical-deep-dive"
-  | "pressure-interview";
+  | "pressure-interview"
+  | "executive-interview";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -304,7 +306,7 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 12.7 · Pressure Interview Engine
+          Phase 12.8 · Executive Interview Engine
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
@@ -398,6 +400,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "executive-interview" ? "active" : ""}
+          onClick={() => setTab("executive-interview")}
+        >
+          Executive Interview
+        </button>
+        <button
+          type="button"
           className={tab === "build" ? "active" : ""}
           onClick={() => setTab("build")}
         >
@@ -469,7 +478,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "pressure-interview" ? (
+        {tab === "executive-interview" ? (
+          <ExecutiveInterviewEngine
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "pressure-interview" ? (
           <PressureInterviewEngine
             cvContent={currentCVContent}
             targetRole={targetRole}
