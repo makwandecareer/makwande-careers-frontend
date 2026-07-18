@@ -1,0 +1,522 @@
+.engine {
+  display: grid;
+  gap: 1.3rem;
+  min-width: 0;
+}
+
+.hero,
+.preferencePanel,
+.addPanel,
+.rankingPanel,
+.analysisPanel {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.07);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.4rem;
+  padding: 1.6rem;
+  background:
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.18), transparent 42%),
+    linear-gradient(135deg, #ffffff, #f8fafc);
+}
+
+.hero h1 {
+  max-width: 880px;
+  margin: 0.45rem 0 0.7rem;
+  font-size: clamp(1.8rem, 3vw, 2.65rem);
+  line-height: 1.07;
+}
+
+.hero p {
+  max-width: 930px;
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.eyebrow {
+  color: #0369a1;
+  font-size: 0.71rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.heroMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(105px, 1fr));
+  gap: 0.65rem;
+  align-self: center;
+}
+
+.heroMetrics article {
+  display: grid;
+  gap: 0.2rem;
+  min-height: 105px;
+  place-content: center;
+  padding: 0.85rem;
+  border: 1px solid #bae6fd;
+  border-radius: 1rem;
+  background: rgba(240, 249, 255, 0.9);
+  text-align: center;
+}
+
+.heroMetrics span,
+.heroMetrics small {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.heroMetrics strong {
+  color: #0369a1;
+  font-size: 1.75rem;
+}
+
+.preferencePanel,
+.addPanel,
+.rankingPanel,
+.analysisPanel {
+  padding: 1.25rem;
+}
+
+.sectionHeading,
+.analysisHeader,
+.actionBar,
+.preferenceChoices,
+.dimensionGrid article > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionHeading h2,
+.analysisHeader h2 {
+  margin: 0.3rem 0 0;
+}
+
+.sectionHeading > span {
+  align-self: center;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.preferenceGrid,
+.addGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.preferenceGrid label,
+.addGrid label {
+  display: grid;
+  gap: 0.35rem;
+  color: #334155;
+  font-size: 0.78rem;
+  font-weight: 760;
+}
+
+.preferenceGrid input,
+.preferenceGrid select,
+.addGrid input,
+.addGrid select,
+.addGrid textarea {
+  width: 100%;
+  padding: 0.72rem 0.78rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.72rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.preferenceGrid input:focus,
+.preferenceGrid select:focus,
+.addGrid input:focus,
+.addGrid select:focus,
+.addGrid textarea:focus {
+  border-color: #0284c7;
+  outline: 3px solid rgba(14, 165, 233, 0.13);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.preferenceChoices {
+  margin-top: 1rem;
+}
+
+.preferenceChoices > div {
+  flex: 1;
+}
+
+.preferenceChoices strong {
+  color: #334155;
+  font-size: 0.8rem;
+}
+
+.preferenceChoices > div > div,
+.badgeRow,
+.skillClouds > div > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+}
+
+.preferenceChoices button,
+.actionBar button,
+.secondaryButton,
+.primaryButton {
+  border: 1px solid #bae6fd;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #075985;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.preferenceChoices button,
+.actionBar button {
+  padding: 0.5rem 0.72rem;
+}
+
+.preferenceChoices button:hover,
+.preferenceChoices button.activeChoice,
+.actionBar button:hover {
+  border-color: #0284c7;
+  background: #e0f2fe;
+}
+
+.secondaryButton,
+.primaryButton {
+  padding: 0.62rem 0.9rem;
+}
+
+.primaryButton {
+  margin-top: 1rem;
+  border-color: #0369a1;
+  background: #0369a1;
+  color: #ffffff;
+}
+
+.secondaryButton:disabled,
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.78fr) minmax(0, 1.6fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.rankingList {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.rankingList article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.rankingList article:hover,
+.rankingList article.selectedOpportunity {
+  border-color: #38bdf8;
+  background: #f0f9ff;
+}
+
+.rankNumber {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 0.6rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 900;
+}
+
+.opportunitySummary > span,
+.opportunitySummary p {
+  color: #64748b;
+  font-size: 0.74rem;
+}
+
+.opportunitySummary h3 {
+  margin: 0.12rem 0 0.35rem;
+}
+
+.opportunitySummary p {
+  margin: 0;
+}
+
+.badgeRow span {
+  padding: 0.32rem 0.48rem;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #075985;
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.matchScore {
+  display: grid;
+  align-content: center;
+  text-align: right;
+}
+
+.matchScore strong {
+  color: #0369a1;
+  font-size: 1.45rem;
+}
+
+.matchScore small {
+  color: #64748b;
+}
+
+.analysisHeader p {
+  margin: 0.35rem 0 0;
+  color: #64748b;
+}
+
+.decisionCard {
+  display: grid;
+  min-width: 190px;
+  place-content: center;
+  padding: 0.85rem;
+  border-radius: 0.9rem;
+  background: #e0f2fe;
+  text-align: center;
+}
+
+.decisionCard strong {
+  color: #0369a1;
+  font-size: 2rem;
+}
+
+.decisionCard span {
+  color: #0c4a6e;
+  font-weight: 850;
+}
+
+.decisionCard small {
+  margin-top: 0.25rem;
+  color: #64748b;
+}
+
+.actionBar {
+  justify-content: flex-start;
+  margin-top: 0.9rem;
+}
+
+.dimensionGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.dimensionGrid article {
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.8rem;
+  background: #f8fafc;
+}
+
+.dimensionGrid strong {
+  font-size: 0.78rem;
+}
+
+.dimensionGrid article > div:first-child span {
+  color: #0369a1;
+  font-weight: 900;
+}
+
+.track {
+  height: 0.45rem;
+  margin-top: 0.55rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #0284c7;
+}
+
+.dimensionGrid p {
+  margin: 0.55rem 0 0;
+  color: #64748b;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.insightGrid article {
+  padding: 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #ffffff;
+}
+
+.insightGrid h3 {
+  margin: 0.3rem 0 0.7rem;
+}
+
+.insightGrid p {
+  margin: 0.5rem 0;
+  color: #475569;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.skillClouds {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.skillClouds > div {
+  padding: 0.9rem;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.skillClouds strong {
+  color: #334155;
+  font-size: 0.8rem;
+}
+
+.skillClouds span {
+  padding: 0.34rem 0.5rem;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #075985;
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.analysisFooter {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid #e2e8f0;
+  color: #64748b;
+  font-size: 0.72rem;
+}
+
+.emptyState {
+  display: grid;
+  min-height: 210px;
+  place-content: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.emptyState strong {
+  font-size: 1.1rem;
+}
+
+.emptyState p {
+  max-width: 430px;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+@media (max-width: 1180px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .heroMetrics {
+    justify-self: start;
+  }
+
+  .preferenceGrid,
+  .addGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .heroMetrics,
+  .dimensionGrid,
+  .insightGrid,
+  .skillClouds {
+    grid-template-columns: 1fr;
+  }
+
+  .preferenceChoices,
+  .sectionHeading,
+  .analysisHeader {
+    display: grid;
+  }
+
+  .decisionCard {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 520px) {
+  .preferenceGrid,
+  .addGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: auto;
+  }
+
+  .rankingList article {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .matchScore {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .hero,
+  .preferencePanel,
+  .addPanel,
+  .rankingPanel,
+  .analysisPanel {
+    padding: 1rem;
+  }
+}

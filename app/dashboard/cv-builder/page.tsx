@@ -31,6 +31,7 @@ import { PressureInterviewEngine } from "@/components/cv-builder/PressureIntervi
 import { ExecutiveInterviewEngine } from "@/components/cv-builder/ExecutiveInterviewEngine";
 import { AssessmentCentreEngine } from "@/components/cv-builder/AssessmentCentreEngine";
 import { CareerCopilotEngine } from "@/components/cv-builder/CareerCopilotEngine";
+import { OpportunityIntelligenceEngine } from "@/components/cv-builder/OpportunityIntelligenceEngine";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -71,7 +72,8 @@ type BuilderTab =
   | "pressure-interview"
   | "executive-interview"
   | "assessment-centre"
-  | "career-copilot";
+  | "career-copilot"
+  | "opportunity-intelligence";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -425,6 +427,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "opportunity-intelligence" ? "active" : ""}
+          onClick={() => setTab("opportunity-intelligence")}
+        >
+          Opportunity Intelligence
+        </button>
+        <button
+          type="button"
           className={tab === "build" ? "active" : ""}
           onClick={() => setTab("build")}
         >
@@ -496,7 +505,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "career-copilot" ? (
+        {tab === "opportunity-intelligence" ? (
+          <OpportunityIntelligenceEngine
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "career-copilot" ? (
           <CareerCopilotEngine
             cvContent={currentCVContent}
             targetRole={targetRole}
