@@ -34,6 +34,7 @@ import { CareerCopilotEngine } from "@/components/cv-builder/CareerCopilotEngine
 import { OpportunityIntelligenceEngine } from "@/components/cv-builder/OpportunityIntelligenceEngine";
 import { ApplicationCommandCentre } from "@/components/cv-builder/ApplicationCommandCentre";
 import { RecruiterEmployerPortal } from "@/components/cv-builder/RecruiterEmployerPortal";
+import { CareerOperatingSystem } from "@/components/cv-builder/CareerOperatingSystem";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -77,7 +78,8 @@ type BuilderTab =
   | "career-copilot"
   | "opportunity-intelligence"
   | "application-command-centre"
-  | "recruiter-employer-portal";
+  | "recruiter-employer-portal"
+  | "career-operating-system";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -452,6 +454,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "career-operating-system" ? "active" : ""}
+          onClick={() => setTab("career-operating-system")}
+        >
+          Career OS
+        </button>
+        <button
+          type="button"
           className={tab === "build" ? "active" : ""}
           onClick={() => setTab("build")}
         >
@@ -523,7 +532,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "recruiter-employer-portal" ? (
+        {tab === "career-operating-system" ? (
+          <CareerOperatingSystem
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "recruiter-employer-portal" ? (
           <RecruiterEmployerPortal
             cvContent={currentCVContent}
             targetRole={targetRole}
