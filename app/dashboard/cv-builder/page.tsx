@@ -18,6 +18,8 @@ import type { OpportunityInput } from "@/lib/opportunity-dashboard";
 import { SkillGapAnalyzerPanel } from "@/components/cv-builder/SkillGapAnalyzerPanel";
 import { CareerFitExplanationsPanel } from "@/components/cv-builder/CareerFitExplanationsPanel";
 import { CareerCoachDashboard } from "@/components/cv-builder/CareerCoachDashboard";
+import { CareerProgressDashboard } from "@/components/cv-builder/CareerProgressDashboard";
+import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
 import {
@@ -44,7 +46,8 @@ type BuilderTab =
   | "opportunities"
   | "skill-gaps"
   | "career-fit"
-  | "coach";
+  | "coach"
+  | "progress";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -268,6 +271,18 @@ export default function CVBuilderPage() {
       ? Number((ats as { score?: unknown }).score ?? 0)
       : null;
 
+
+  const careerCoachDashboard = useMemo(
+    () =>
+      createCareerCoachDashboard(
+        currentCVContent,
+        targetRole,
+        opportunities,
+        atsScore,
+      ),
+    [atsScore, currentCVContent, opportunities, targetRole],
+  );
+
   return (
     <div className="page-header builder-header">
       <div>
@@ -293,6 +308,13 @@ export default function CVBuilderPage() {
           onClick={() => setTab("coach")}
         >
           AI Career Coach
+        </button>
+        <button
+          type="button"
+          className={tab === "progress" ? "active" : ""}
+          onClick={() => setTab("progress")}
+        >
+          Progress
         </button>
         <button
           type="button"
@@ -367,7 +389,12 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "coach" ? (
+        {tab === "progress" ? (
+          <CareerProgressDashboard
+            dashboard={careerCoachDashboard}
+            opportunities={opportunities}
+          />
+        ) : tab === "coach" ? (
           <CareerCoachDashboard
             cvContent={currentCVContent}
             targetRole={targetRole}
