@@ -1,0 +1,439 @@
+.dashboard {
+  display: grid;
+  gap: 1.4rem;
+  min-width: 0;
+}
+
+.hero,
+.settingsCard,
+.dimensionSection,
+.recommendationSection,
+.roadmapSection,
+.insightGrid > article {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.3rem;
+  background: #ffffff;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.07);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  padding: 1.7rem;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.16), transparent 42%),
+    #ffffff;
+}
+
+.hero h1 {
+  margin: 0.45rem 0 0.7rem;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.08;
+}
+
+.hero p {
+  max-width: 920px;
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.eyebrow {
+  color: #1d4ed8;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.heroScore {
+  display: grid;
+  min-width: 210px;
+  place-content: center;
+  padding: 1.2rem;
+  border-radius: 1.1rem;
+  background: #dbeafe;
+  text-align: center;
+}
+
+.heroScore span,
+.heroScore small {
+  color: #64748b;
+}
+
+.heroScore strong {
+  color: #1d4ed8;
+  font-size: 2.55rem;
+  line-height: 1;
+}
+
+.settingsCard,
+.dimensionSection,
+.recommendationSection,
+.roadmapSection {
+  padding: 1.4rem;
+}
+
+.settingsHeader,
+.sectionHeading,
+.dimensionHeader,
+.recommendationHeader,
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.settingsHeader h2,
+.sectionHeading h2,
+.nextAction h2 {
+  margin: 0.35rem 0 0;
+}
+
+.settingsHeader > span,
+.sectionHeading > span {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.formGrid label {
+  display: grid;
+  gap: 0.4rem;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.formGrid input,
+.formGrid select,
+.formGrid textarea {
+  width: 100%;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.formGrid input:focus,
+.formGrid select:focus,
+.formGrid textarea:focus {
+  border-color: #2563eb;
+  outline: 3px solid rgba(37, 99, 235, 0.12);
+}
+
+.formGrid small {
+  color: #64748b;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.sliderGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.sliderCard {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.sliderCard > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sliderCard span {
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.sliderCard strong {
+  color: #1d4ed8;
+}
+
+.sliderCard input {
+  width: 100%;
+}
+
+.nextAction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 1.15rem;
+  background: #eff6ff;
+}
+
+.nextAction > strong {
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
+  background: #1d4ed8;
+  color: #ffffff;
+  font-size: 0.78rem;
+}
+
+.dimensionGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.dimensionGrid article {
+  padding: 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.dimensionHeader small {
+  display: block;
+  margin-top: 0.25rem;
+  color: #64748b;
+}
+
+.dimensionHeader > span {
+  color: #1d4ed8;
+  font-size: 1.2rem;
+  font-weight: 850;
+}
+
+.track {
+  height: 0.5rem;
+  margin-top: 0.7rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #2563eb;
+}
+
+.dimensionGrid p {
+  margin: 0.75rem 0 0;
+  color: #64748b;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.recommendationList {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.recommendationList > article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  background: #ffffff;
+}
+
+.recommendationList > article > button {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 2px solid #93c5fd;
+  border-radius: 0.55rem;
+  background: #ffffff;
+  color: #ffffff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.completedCard {
+  opacity: 0.72;
+  background: #f8fafc !important;
+}
+
+.completedCard > button {
+  border-color: #16a34a !important;
+  background: #16a34a !important;
+}
+
+.recommendationHeader span {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.recommendationHeader h3 {
+  margin: 0.2rem 0 0;
+}
+
+.recommendationHeader > strong {
+  align-self: start;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.72rem;
+}
+
+.recommendationHeader > strong[data-priority="Critical"] {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.recommendationHeader > strong[data-priority="High"] {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.recommendationBody > p {
+  margin: 0.65rem 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.metaRow {
+  color: #64748b;
+  font-size: 0.74rem;
+}
+
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.weekGrid article {
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  background: #f8fafc;
+}
+
+.weekBadge {
+  display: inline-flex;
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.weekGrid h3 {
+  margin: 0.65rem 0 0.35rem;
+}
+
+.weekGrid > article > strong {
+  color: #1d4ed8;
+  font-size: 0.78rem;
+}
+
+.weekGrid p {
+  margin: 0.6rem 0;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.weekGrid small {
+  display: block;
+  margin-top: 0.8rem;
+  color: #64748b;
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.insightGrid > article {
+  padding: 1.3rem;
+}
+
+.insightGrid h2 {
+  margin: 0.35rem 0 0.8rem;
+}
+
+.insightGrid p {
+  margin: 0.55rem 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+@media (max-width: 1120px) {
+  .dimensionGrid,
+  .sliderGrid,
+  .weekGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .hero,
+  .formGrid,
+  .insightGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: auto;
+  }
+
+  .heroScore {
+    justify-self: start;
+  }
+
+  .settingsHeader,
+  .sectionHeading,
+  .nextAction,
+  .recommendationHeader,
+  .metaRow {
+    display: grid;
+  }
+}
+
+@media (max-width: 520px) {
+  .dimensionGrid,
+  .sliderGrid,
+  .weekGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .settingsCard,
+  .dimensionSection,
+  .recommendationSection,
+  .roadmapSection,
+  .insightGrid > article {
+    padding: 1rem;
+  }
+}
