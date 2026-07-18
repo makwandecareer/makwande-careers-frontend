@@ -22,6 +22,7 @@ import { CareerProgressDashboard } from "@/components/cv-builder/CareerProgressD
 import { CareerGoalPlanner } from "@/components/cv-builder/CareerGoalPlanner";
 import { InterviewPreparationStudio } from "@/components/cv-builder/InterviewPreparationStudio";
 import { RecruitmentIntelligenceCore } from "@/components/cv-builder/RecruitmentIntelligenceCore";
+import { CompanyIntelligenceEngine } from "@/components/cv-builder/CompanyIntelligenceEngine";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -53,7 +54,8 @@ type BuilderTab =
   | "progress"
   | "career-goals"
   | "interview-studio"
-  | "recruitment-intelligence";
+  | "recruitment-intelligence"
+  | "company-intelligence";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -292,7 +294,7 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 12.1 · AI Recruitment Intelligence Core
+          Phase 12.2 · AI Company Intelligence & Research Engine
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
@@ -341,6 +343,13 @@ export default function CVBuilderPage() {
           onClick={() => setTab("recruitment-intelligence")}
         >
           Recruitment Intelligence
+        </button>
+        <button
+          type="button"
+          className={tab === "company-intelligence" ? "active" : ""}
+          onClick={() => setTab("company-intelligence")}
+        >
+          Company Intelligence
         </button>
         <button
           type="button"
@@ -415,7 +424,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "recruitment-intelligence" ? (
+        {tab === "company-intelligence" ? (
+          <CompanyIntelligenceEngine
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "recruitment-intelligence" ? (
           <RecruitmentIntelligenceCore
             cvContent={currentCVContent}
             targetRole={targetRole}
