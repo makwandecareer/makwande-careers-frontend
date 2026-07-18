@@ -33,6 +33,7 @@ import { AssessmentCentreEngine } from "@/components/cv-builder/AssessmentCentre
 import { CareerCopilotEngine } from "@/components/cv-builder/CareerCopilotEngine";
 import { OpportunityIntelligenceEngine } from "@/components/cv-builder/OpportunityIntelligenceEngine";
 import { ApplicationCommandCentre } from "@/components/cv-builder/ApplicationCommandCentre";
+import { RecruiterEmployerPortal } from "@/components/cv-builder/RecruiterEmployerPortal";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -75,7 +76,8 @@ type BuilderTab =
   | "assessment-centre"
   | "career-copilot"
   | "opportunity-intelligence"
-  | "application-command-centre";
+  | "application-command-centre"
+  | "recruiter-employer-portal";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -443,6 +445,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "recruiter-employer-portal" ? "active" : ""}
+          onClick={() => setTab("recruiter-employer-portal")}
+        >
+          Recruiter Portal
+        </button>
+        <button
+          type="button"
           className={tab === "build" ? "active" : ""}
           onClick={() => setTab("build")}
         >
@@ -514,7 +523,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "application-command-centre" ? (
+        {tab === "recruiter-employer-portal" ? (
+          <RecruiterEmployerPortal
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "application-command-centre" ? (
           <ApplicationCommandCentre
             cvContent={currentCVContent}
             targetRole={targetRole}

@@ -1,0 +1,756 @@
+.portal {
+  display: grid;
+  gap: 1.2rem;
+  min-width: 0;
+}
+
+.hero,
+.analytics,
+.companyPanel,
+.panel {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.07);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.4rem;
+  padding: 1.6rem;
+  background:
+    radial-gradient(circle at top right, rgba(16, 185, 129, 0.18), transparent 42%),
+    linear-gradient(135deg, #ffffff, #f8fafc);
+}
+
+.hero h1 {
+  max-width: 880px;
+  margin: 0.42rem 0 0.72rem;
+  font-size: clamp(1.8rem, 3vw, 2.65rem);
+  line-height: 1.07;
+}
+
+.hero p {
+  max-width: 920px;
+  margin: 0;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.eyebrow {
+  color: #047857;
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.heroMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(110px, 1fr));
+  gap: 0.65rem;
+  align-self: center;
+}
+
+.heroMetrics article {
+  display: grid;
+  min-height: 96px;
+  place-content: center;
+  padding: 0.8rem;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.95rem;
+  background: rgba(236, 253, 245, 0.92);
+  text-align: center;
+}
+
+.heroMetrics span {
+  color: #64748b;
+  font-size: 0.71rem;
+  font-weight: 750;
+}
+
+.heroMetrics strong {
+  color: #047857;
+  font-size: 1.7rem;
+}
+
+.portalNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.55rem;
+  border: 1px solid #d1fae5;
+  border-radius: 1rem;
+  background: #f0fdf4;
+}
+
+.portalNav button {
+  padding: 0.62rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: #166534;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.portalNav button:hover,
+.portalNav button.activeNav {
+  border-color: #10b981;
+  background: #ffffff;
+  color: #047857;
+}
+
+.analytics,
+.companyPanel,
+.panel {
+  padding: 1.2rem;
+}
+
+.sectionHeading,
+.candidateHeader,
+.detailFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionHeading h2,
+.sectionHeading h3,
+.candidateHeader h2 {
+  margin: 0.3rem 0 0;
+}
+
+.sectionHeading > span {
+  align-self: center;
+  color: #64748b;
+  font-size: 0.76rem;
+  font-weight: 760;
+}
+
+.sectionHeading > select {
+  min-width: 230px;
+  align-self: center;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.metricGrid article {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.84rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.metricGrid span {
+  color: #64748b;
+  font-size: 0.69rem;
+  font-weight: 700;
+}
+
+.metricGrid strong {
+  color: #1e293b;
+  font-size: 1.35rem;
+}
+
+.overviewGrid,
+.governanceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.overviewGrid > article,
+.governanceGrid > article {
+  padding: 0.95rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  background: #ffffff;
+}
+
+.overviewGrid h3,
+.governanceGrid h3 {
+  margin: 0.3rem 0 0.75rem;
+}
+
+.overviewGrid p,
+.governanceGrid p {
+  color: #64748b;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.overviewGrid button {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.7rem 0;
+  border: 0;
+  border-bottom: 1px solid #e2e8f0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.overviewGrid button div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.overviewGrid button span,
+.overviewGrid button small {
+  color: #64748b;
+  font-size: 0.68rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.78rem;
+  margin-top: 1rem;
+}
+
+.formGrid label,
+.jobControls label {
+  display: grid;
+  gap: 0.35rem;
+  color: #334155;
+  font-size: 0.76rem;
+  font-weight: 760;
+}
+
+.formGrid input,
+.formGrid select,
+.formGrid textarea,
+.sectionHeading select,
+.jobControls select,
+.filters input,
+.filters select,
+.inlineForm input,
+.inlineForm select,
+.interviewList select,
+.interviewList input,
+.noteForm textarea {
+  width: 100%;
+  padding: 0.7rem 0.76rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.72rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+.formGrid input:focus,
+.formGrid select:focus,
+.formGrid textarea:focus,
+.sectionHeading select:focus,
+.jobControls select:focus,
+.filters input:focus,
+.filters select:focus,
+.inlineForm input:focus,
+.inlineForm select:focus,
+.interviewList select:focus,
+.interviewList input:focus,
+.noteForm textarea:focus {
+  border-color: #10b981;
+  outline: 3px solid rgba(16, 185, 129, 0.12);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.primaryButton,
+.jobControls button,
+.stageBar button,
+.flagBar button,
+.inlineForm button,
+.noteForm button,
+.detailFooter button,
+.teamGrid button {
+  border: 1px solid #a7f3d0;
+  border-radius: 0.72rem;
+  background: #ffffff;
+  color: #047857;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primaryButton {
+  margin-top: 1rem;
+  padding: 0.68rem 0.95rem;
+  border-color: #059669;
+  background: #059669;
+  color: #ffffff;
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.twoColumn,
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.workspace {
+  grid-template-columns: minmax(310px, 0.72fr) minmax(0, 1.55fr);
+}
+
+.jobList,
+.candidateList {
+  display: grid;
+  gap: 0.62rem;
+  margin-top: 1rem;
+}
+
+.jobList article,
+.candidateList article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  padding: 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.candidateList article {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.jobList article:hover,
+.candidateList article:hover,
+.jobList article.selectedCard,
+.candidateList article.selectedCard {
+  border-color: #34d399;
+  background: #ecfdf5;
+}
+
+.jobList span,
+.jobList p,
+.candidateList span,
+.candidateList p {
+  color: #64748b;
+  font-size: 0.72rem;
+}
+
+.jobList h3,
+.candidateList h3 {
+  margin: 0.12rem 0 0.35rem;
+}
+
+.jobList p,
+.candidateList p {
+  margin: 0;
+}
+
+.jobList article > div:last-child,
+.score {
+  display: grid;
+  align-content: center;
+  text-align: right;
+}
+
+.jobList article > div:last-child strong,
+.score strong {
+  color: #047857;
+  font-size: 1.35rem;
+}
+
+.jobList article > div:last-child small,
+.score small {
+  color: #64748b;
+}
+
+.rank {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 0.6rem;
+  background: #d1fae5;
+  color: #047857;
+  font-weight: 900;
+}
+
+.jobControls {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.jobControls button,
+.inlineForm button,
+.noteForm button,
+.detailFooter button {
+  padding: 0.62rem 0.78rem;
+  align-self: end;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.candidateHeader p {
+  margin: 0.35rem 0 0;
+  color: #64748b;
+}
+
+.recommendationCard {
+  display: grid;
+  min-width: 190px;
+  place-content: center;
+  padding: 0.85rem;
+  border-radius: 0.9rem;
+  background: #ecfdf5;
+  text-align: center;
+}
+
+.recommendationCard strong {
+  color: #047857;
+  font-size: 2rem;
+}
+
+.recommendationCard span {
+  color: #065f46;
+  font-weight: 850;
+}
+
+.recommendationCard small {
+  margin-top: 0.25rem;
+  color: #64748b;
+}
+
+.stageBar,
+.flagBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  margin-top: 1rem;
+}
+
+.stageBar button,
+.flagBar button {
+  padding: 0.48rem 0.62rem;
+  border-radius: 999px;
+}
+
+.stageBar button:hover,
+.stageBar button.activeStage,
+.flagBar button:hover,
+.flagBar button.activeFlag {
+  border-color: #059669;
+  background: #059669;
+  color: #ffffff;
+}
+
+.flagBar {
+  margin-top: 0.65rem;
+}
+
+.dimensionGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.dimensionGrid article {
+  padding: 0.78rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.8rem;
+  background: #f8fafc;
+}
+
+.dimensionGrid article > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.dimensionGrid strong {
+  font-size: 0.75rem;
+}
+
+.dimensionGrid article > div:first-child span {
+  color: #047857;
+  font-weight: 900;
+}
+
+.track {
+  height: 0.45rem;
+  margin-top: 0.55rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #d1fae5;
+}
+
+.track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #10b981;
+}
+
+.dimensionGrid p {
+  margin: 0.55rem 0 0;
+  color: #64748b;
+  font-size: 0.69rem;
+  line-height: 1.4;
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.insightGrid article {
+  padding: 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+}
+
+.insightGrid h3 {
+  margin: 0.3rem 0 0.65rem;
+}
+
+.insightGrid p {
+  margin: 0.48rem 0;
+  color: #475569;
+  font-size: 0.77rem;
+  line-height: 1.45;
+}
+
+.subsection {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.inlineForm {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+
+.interviewList,
+.noteList {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+
+.interviewList article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px 90px;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.72rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+}
+
+.interviewList article > div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.interviewList span {
+  color: #64748b;
+  font-size: 0.69rem;
+}
+
+.noteForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.noteList article {
+  padding: 0.78rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+}
+
+.noteList p {
+  margin: 0.35rem 0;
+  color: #475569;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.noteList small {
+  color: #94a3b8;
+}
+
+.detailFooter {
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #e2e8f0;
+  color: #64748b;
+  font-size: 0.72rem;
+}
+
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.teamGrid article {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.teamGrid span,
+.teamGrid p {
+  color: #64748b;
+  font-size: 0.7rem;
+}
+
+.teamGrid h3 {
+  margin: 0.15rem 0 0.3rem;
+}
+
+.teamGrid p {
+  margin: 0;
+}
+
+.teamGrid button {
+  padding: 0.48rem 0.62rem;
+  align-self: center;
+}
+
+.emptyState {
+  display: grid;
+  min-height: 220px;
+  place-content: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.emptyState p {
+  max-width: 420px;
+  color: #64748b;
+}
+
+@media (max-width: 1180px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .heroMetrics {
+    justify-self: start;
+  }
+
+  .metricGrid,
+  .dimensionGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .formGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .twoColumn,
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .teamGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .overviewGrid,
+  .governanceGrid,
+  .insightGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .candidateHeader,
+  .sectionHeading {
+    display: grid;
+  }
+
+  .inlineForm {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .heroMetrics,
+  .metricGrid,
+  .dimensionGrid,
+  .formGrid,
+  .teamGrid,
+  .inlineForm,
+  .jobControls {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: auto;
+  }
+
+  .candidateList article {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .score {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .interviewList article,
+  .noteForm {
+    grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .analytics,
+  .companyPanel,
+  .panel {
+    padding: 1rem;
+  }
+}
