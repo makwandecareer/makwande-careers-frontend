@@ -25,6 +25,7 @@ import { RecruitmentIntelligenceCore } from "@/components/cv-builder/Recruitment
 import { CompanyIntelligenceEngine } from "@/components/cv-builder/CompanyIntelligenceEngine";
 import { DynamicInterviewBuilder } from "@/components/cv-builder/DynamicInterviewBuilder";
 import { InterviewSimulationEngine } from "@/components/cv-builder/InterviewSimulationEngine";
+import { ExperienceInterviewEngine } from "@/components/cv-builder/ExperienceInterviewEngine";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -59,7 +60,8 @@ type BuilderTab =
   | "recruitment-intelligence"
   | "company-intelligence"
   | "dynamic-interview"
-  | "interview-simulation";
+  | "interview-simulation"
+  | "experience-interview";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -298,7 +300,7 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 12.4 · AI Interview Simulation & Scenario Engine
+          Phase 12.5 · Experience-Based Interview Engine
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
@@ -368,6 +370,13 @@ export default function CVBuilderPage() {
           onClick={() => setTab("interview-simulation")}
         >
           Interview Simulation
+        </button>
+        <button
+          type="button"
+          className={tab === "experience-interview" ? "active" : ""}
+          onClick={() => setTab("experience-interview")}
+        >
+          Experience Interview
         </button>
         <button
           type="button"
@@ -442,7 +451,14 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "interview-simulation" ? (
+        {tab === "experience-interview" ? (
+          <ExperienceInterviewEngine
+            cvContent={currentCVContent}
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            atsScore={atsScore}
+          />
+        ) : tab === "interview-simulation" ? (
           <InterviewSimulationEngine
             cvContent={currentCVContent}
             targetRole={targetRole}
