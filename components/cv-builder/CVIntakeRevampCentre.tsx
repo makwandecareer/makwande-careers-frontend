@@ -1,0 +1,402 @@
+"use client";
+
+import { DragEvent, useMemo, useRef, useState } from "react";
+import {
+  analyseCV,
+  formatFileSize,
+  revampDescription,
+  type CVAnalysisReport,
+  type IntakeStage,
+  type RevampLevel,
+  type UploadedCVRecord,
+} from "@/lib/cv-intake-revamp";
+import styles from "./CVIntakeRevampCentre.module.css";
+
+interface Props {
+  targetRole: string;
+  jobDescription: string;
+  currentAtsScore: number | null;
+  onStartFromScratch: () => void;
+  onContinueToBuilder: () => void;
+  onOpenAts: () => void;
+}
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ACCEPTED_EXTENSIONS = [".pdf", ".docx", ".doc", ".txt"];
+const REVAMP_LEVELS: RevampLevel[] = [
+  "Basic ATS Optimisation",
+  "Professional Rewrite",
+  "Executive Rewrite",
+  "Recruiter Optimised",
+];
+
+function extension(name: string): string {
+  const index = name.lastIndexOf(".");
+  return index >= 0 ? name.slice(index).toLowerCase() : "";
+}
+
+export function CVIntakeRevampCentre({
+  targetRole,
+  jobDescription,
+  currentAtsScore,
+  onStartFromScratch,
+  onContinueToBuilder,
+  onOpenAts,
+}: Props) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [stage, setStage] = useState<IntakeStage>("choice");
+  const [uploaded, setUploaded] = useState<UploadedCVRecord | null>(null);
+  const [report, setReport] = useState<CVAnalysisReport | null>(null);
+  const [revampLevel, setRevampLevel] = useState<RevampLevel>("Professional Rewrite");
+  const [error, setError] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+
+  const topIssues = useMemo(() => report?.issues.slice(0, 6) ?? [], [report]);
+
+  async function processFile(file: File): Promise<void> {
+    setError("");
+    const ext = extension(file.name);
+
+    if (!ACCEPTED_EXTENSIONS.includes(ext)) {
+      setError("Upload a PDF, DOCX, DOC or TXT CV.");
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setError("The CV is larger than 10 MB. Upload a smaller file.");
+      return;
+    }
+
+    let extractedText = "";
+    if (ext === ".txt") {
+      extractedText = await file.text();
+    } else {
+      extractedText = [
+        file.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " "),
+        targetRole,
+        jobDescription,
+      ]
+        .filter(Boolean)
+        .join("\n");
+    }
+
+    const record: UploadedCVRecord = {
+      id: `cv-${Date.now()}`,
+      name: file.name,
+      size: file.size,
+      type: file.type || ext,
+      uploadedAt: new Date().toISOString(),
+      textPreview: extractedText.slice(0, 900),
+    };
+
+    setUploaded(record);
+    setStage("analysing");
+
+    window.setTimeout(() => {
+      setReport(
+        analyseCV(
+          extractedText,
+          targetRole,
+          jobDescription,
+          currentAtsScore ?? 0,
+        ),
+      );
+      setStage("report");
+    }, 900);
+  }
+
+  function handleDrop(event: DragEvent<HTMLDivElement>): void {
+    event.preventDefault();
+    setIsDragging(false);
+    const file = event.dataTransfer.files?.[0];
+    if (file) void processFile(file);
+  }
+
+  function resetUpload(): void {
+    setUploaded(null);
+    setReport(null);
+    setError("");
+    setStage("choice");
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
+  return (
+    <div className={styles.centre}>
+      <header className={styles.hero}>
+        <div>
+          <span className={styles.eyebrow}>Phase 21 · AI CV Intake & Revamp Centre</span>
+          <h1>Start from scratch or improve an existing CV</h1>
+          <p>
+            Candidates can build a new professional CV or upload their original
+            CV for ATS analysis, professional rewriting and structured improvement.
+          </p>
+        </div>
+        <div className={styles.flow}>
+          <span>Choose</span>
+          <b>→</b>
+          <span>Analyse</span>
+          <b>→</b>
+          <span>Improve</span>
+          <b>→</b>
+          <span>ATS Ready</span>
+        </div>
+      </header>
+
+      {stage === "choice" ? (
+        <section className={styles.choiceGrid}>
+          <article>
+            <div className={styles.icon}>＋</div>
+            <span className={styles.eyebrow}>New CV</span>
+            <h2>Start a CV from scratch</h2>
+            <p>
+              Best for graduates, first-time job seekers or candidates who want
+              to rebuild their career profile using the structured CV Builder.
+            </p>
+            <ul>
+              <li>Step-by-step professional CV creation</li>
+              <li>ATS-safe sections and structure</li>
+              <li>Career profile, skills and experience guidance</li>
+              <li>Templates, ATS tools and CV Studio integration</li>
+            </ul>
+            <button type="button" onClick={onStartFromScratch}>
+              Create a new CV
+            </button>
+          </article>
+
+          <article className={styles.featuredChoice}>
+            <div className={styles.icon}>⇧</div>
+            <span className={styles.eyebrow}>Existing CV</span>
+            <h2>Upload a CV for improvement</h2>
+            <p>
+              Best for candidates who already have a CV and want it reviewed,
+              rewritten and optimised to meet ATS and recruiter standards.
+            </p>
+
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.txt"
+              hidden
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void processFile(file);
+              }}
+            />
+
+            <div
+              className={`${styles.dropZone} ${isDragging ? styles.dragging : ""}`}
+              onDragOver={(event) => {
+                event.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
+              onClick={() => inputRef.current?.click()}
+              role="button"
+              tabIndex={0}
+            >
+              <strong>Drag and drop the original CV here</strong>
+              <span>or click to choose a file</span>
+              <small>PDF, DOCX, DOC or TXT · Maximum 10 MB</small>
+            </div>
+
+            {error ? <p className={styles.error}>{error}</p> : null}
+          </article>
+        </section>
+      ) : null}
+
+      {stage === "analysing" ? (
+        <section className={styles.analysisState}>
+          <div className={styles.spinner} />
+          <span className={styles.eyebrow}>AI analysis in progress</span>
+          <h2>Reviewing {uploaded?.name}</h2>
+          <p>Checking ATS compatibility, keywords, structure, readability and achievements.</p>
+          <div>
+            {[
+              "ATS compatibility",
+              "Formatting and sections",
+              "Skills and keywords",
+              "Grammar and readability",
+              "Experience and achievements",
+              "Contact details",
+            ].map((item) => (
+              <span key={item}>✓ {item}</span>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {stage === "report" && uploaded && report ? (
+        <>
+          <section className={styles.fileBanner}>
+            <div>
+              <span className={styles.eyebrow}>Original CV uploaded</span>
+              <h2>{uploaded.name}</h2>
+              <p>
+                {formatFileSize(uploaded.size)} · Uploaded{" "}
+                {new Date(uploaded.uploadedAt).toLocaleString()}
+              </p>
+            </div>
+            <button type="button" onClick={resetUpload}>
+              Replace CV
+            </button>
+          </section>
+
+          <section className={styles.scorePanel}>
+            <article>
+              <span>Current ATS score</span>
+              <strong>{report.currentScore}%</strong>
+              <div className={styles.track}>
+                <span style={{ width: `${report.currentScore}%` }} />
+              </div>
+            </article>
+            <article className={styles.potential}>
+              <span>Potential ATS score</span>
+              <strong>{report.potentialScore}%</strong>
+              <div className={styles.track}>
+                <span style={{ width: `${report.potentialScore}%` }} />
+              </div>
+            </article>
+            <article>
+              <span>Keyword strength</span>
+              <strong>{report.keywordStrength}%</strong>
+              <div className={styles.track}>
+                <span style={{ width: `${report.keywordStrength}%` }} />
+              </div>
+            </article>
+            <article>
+              <span>Achievement strength</span>
+              <strong>{report.achievementStrength}%</strong>
+              <div className={styles.track}>
+                <span style={{ width: `${report.achievementStrength}%` }} />
+              </div>
+            </article>
+          </section>
+
+          <div className={styles.reportGrid}>
+            <section className={styles.panel}>
+              <div className={styles.heading}>
+                <div>
+                  <span className={styles.eyebrow}>Improvement report</span>
+                  <h2>What must be improved</h2>
+                </div>
+              </div>
+              <div className={styles.issueList}>
+                {topIssues.length ? (
+                  topIssues.map((item) => (
+                    <article key={item.id}>
+                      <div>
+                        <span className={styles[item.severity.toLowerCase()]}>
+                          {item.severity}
+                        </span>
+                        <small>{item.category}</small>
+                      </div>
+                      <h3>{item.title}</h3>
+                      <p>{item.description}</p>
+                      <strong>{item.recommendation}</strong>
+                    </article>
+                  ))
+                ) : (
+                  <p>No major issues were detected.</p>
+                )}
+              </div>
+            </section>
+
+            <section className={styles.panel}>
+              <div className={styles.heading}>
+                <div>
+                  <span className={styles.eyebrow}>ATS intelligence</span>
+                  <h2>Missing keywords</h2>
+                </div>
+              </div>
+              <div className={styles.keywordCloud}>
+                {report.missingKeywords.length ? (
+                  report.missingKeywords.map((keyword) => (
+                    <span key={keyword}>{keyword}</span>
+                  ))
+                ) : (
+                  <p>Keyword alignment is already competitive.</p>
+                )}
+              </div>
+
+              <div className={styles.strengths}>
+                <span className={styles.eyebrow}>Existing strengths</span>
+                {report.strengths.map((strength) => (
+                  <p key={strength}>✓ {strength}</p>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          <section className={styles.panel}>
+            <div className={styles.heading}>
+              <div>
+                <span className={styles.eyebrow}>Revamp service</span>
+                <h2>Choose the level of improvement</h2>
+              </div>
+            </div>
+            <div className={styles.revampGrid}>
+              {REVAMP_LEVELS.map((level) => (
+                <button
+                  type="button"
+                  key={level}
+                  className={revampLevel === level ? styles.selectedRevamp : ""}
+                  onClick={() => setRevampLevel(level)}
+                >
+                  <strong>{level}</strong>
+                  <span>{revampDescription(level)}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.nextActions}>
+              <div>
+                <span className={styles.eyebrow}>Selected service</span>
+                <h3>{revampLevel}</h3>
+                <p>{revampDescription(revampLevel)}</p>
+              </div>
+              <div>
+                <button type="button" onClick={onOpenAts}>
+                  Open ATS Optimiser
+                </button>
+                <button
+                  type="button"
+                  className={styles.primary}
+                  onClick={onContinueToBuilder}
+                >
+                  Continue to CV Builder
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.comparison}>
+            <article>
+              <span className={styles.eyebrow}>Before</span>
+              <h3>Original CV</h3>
+              <p>
+                Candidate wording, current structure and original formatting are
+                preserved as the source version.
+              </p>
+            </article>
+            <div>→</div>
+            <article>
+              <span className={styles.eyebrow}>After</span>
+              <h3>ATS-optimised CV</h3>
+              <p>
+                Professional structure, stronger achievements, targeted keywords
+                and recruiter-friendly presentation.
+              </p>
+            </article>
+          </section>
+        </>
+      ) : null}
+
+      <footer className={styles.notice}>
+        <strong>Frontend intake capability:</strong> file selection, validation and
+        analysis workflow are included. Production document extraction, secure cloud
+        storage, malware scanning, candidate consent and database persistence require
+        backend implementation.
+      </footer>
+    </div>
+  );
+}

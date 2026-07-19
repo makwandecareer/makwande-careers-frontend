@@ -35,6 +35,7 @@ import { OpportunityIntelligenceEngine } from "@/components/cv-builder/Opportuni
 import { ApplicationCommandCentre } from "@/components/cv-builder/ApplicationCommandCentre";
 import { RecruiterEmployerPortal } from "@/components/cv-builder/RecruiterEmployerPortal";
 import { CareerOperatingSystem } from "@/components/cv-builder/CareerOperatingSystem";
+import { CVIntakeRevampCentre } from "@/components/cv-builder/CVIntakeRevampCentre";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -79,7 +80,8 @@ type BuilderTab =
   | "opportunity-intelligence"
   | "application-command-centre"
   | "recruiter-employer-portal"
-  | "career-operating-system";
+  | "career-operating-system"
+  | "cv-intake-revamp";
 type BusyState = "" | "generate" | "ats" | "pdf" | "docx";
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -461,6 +463,13 @@ export default function CVBuilderPage() {
         </button>
         <button
           type="button"
+          className={tab === "cv-intake-revamp" ? "active" : ""}
+          onClick={() => setTab("cv-intake-revamp")}
+        >
+          CV Intake & Revamp
+        </button>
+        <button
+          type="button"
           className={tab === "build" ? "active" : ""}
           onClick={() => setTab("build")}
         >
@@ -532,7 +541,16 @@ export default function CVBuilderPage() {
       </div>
 
       <div className="builder-layout">
-        {tab === "career-operating-system" ? (
+        {tab === "cv-intake-revamp" ? (
+          <CVIntakeRevampCentre
+            targetRole={targetRole}
+            jobDescription={jobDescription}
+            currentAtsScore={atsScore}
+            onStartFromScratch={() => setTab("build")}
+            onContinueToBuilder={() => setTab("build")}
+            onOpenAts={() => setTab("ats")}
+          />
+        ) : tab === "career-operating-system" ? (
           <CareerOperatingSystem
             cvContent={currentCVContent}
             targetRole={targetRole}
