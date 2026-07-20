@@ -1,0 +1,55 @@
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.app-shell {
+  display: flex !important;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #f4f7f5;
+}
+
+.app-shell > aside[aria-label="Dashboard navigation"] {
+  position: relative;
+  z-index: 20;
+  flex: 0 0 308px;
+  width: 308px;
+  min-width: 308px;
+  height: 100vh;
+}
+
+.app-content {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  width: auto !important;
+  min-width: 0;
+  max-width: calc(100vw - 308px);
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #f4f7f5;
+}
+
+.app-content > * {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+  .app-shell > aside[aria-label="Dashboard navigation"] {
+    flex-basis: 88px;
+    width: 88px;
+    min-width: 88px;
+  }
+
+  .app-content {
+    max-width: calc(100vw - 88px);
+  }
+}

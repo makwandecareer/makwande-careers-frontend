@@ -1,0 +1,185 @@
+/* CV Studio polish scoped to the route's existing class names. */
+
+.studio-header,
+.cv-studio-header {
+  display: grid !important;
+  grid-template-columns: minmax(220px, auto) 1fr auto !important;
+  align-items: center !important;
+  gap: 20px !important;
+  min-height: 92px;
+  padding: 16px 24px !important;
+  border-bottom: 1px solid #dce6df;
+  background: #ffffff;
+}
+
+.studio-tabs,
+.cv-studio-tabs {
+  display: flex !important;
+  align-items: center;
+  gap: 4px;
+  min-height: 42px;
+  padding: 4px 18px !important;
+  border-bottom: 1px solid #dce6df;
+  background: #f8faf9;
+}
+
+.studio-workspace,
+.cv-studio-workspace,
+.studio-body,
+.cv-studio-body,
+.editor-shell {
+  display: grid !important;
+  grid-template-columns: minmax(180px, 200px) minmax(420px, .9fr) minmax(520px, 1.2fr) !important;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  height: calc(100vh - 134px);
+  overflow: hidden;
+}
+
+.resume-sections,
+.sections-panel,
+.studio-sections,
+.cv-sections {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 200px !important;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 22px 12px !important;
+  border-right: 1px solid #dce6df;
+  background: #f9fbfa;
+  box-sizing: border-box;
+}
+
+.editor-panel,
+.studio-editor,
+.cv-editor,
+.editing-panel,
+.form-panel {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 22px 40px !important;
+  border-right: 1px solid #dce6df;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px 14px !important;
+}
+
+.editor-panel input,
+.editor-panel textarea,
+.editor-panel select,
+.studio-editor input,
+.studio-editor textarea,
+.studio-editor select,
+.cv-editor input,
+.cv-editor textarea,
+.cv-editor select,
+.editing-panel input,
+.editing-panel textarea,
+.editing-panel select,
+.form-panel input,
+.form-panel textarea,
+.form-panel select {
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.preview-panel,
+.studio-preview,
+.cv-preview-panel,
+.live-preview {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100%;
+  overflow: hidden;
+  background: #e8eeeb;
+  box-sizing: border-box;
+}
+
+.preview-header,
+.live-preview-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 58px;
+  padding: 10px 16px !important;
+  border-bottom: 1px solid #d3ddd7;
+  background: #ffffff;
+}
+
+.preview-scroll,
+.preview-canvas,
+.preview-viewport {
+  width: 100%;
+  height: calc(100% - 58px);
+  overflow: auto;
+  padding: 26px 24px 40px !important;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1450px) {
+  .studio-workspace,
+  .cv-studio-workspace,
+  .studio-body,
+  .cv-studio-body,
+  .editor-shell {
+    grid-template-columns: minmax(170px, 185px) minmax(390px, .92fr) minmax(450px, 1.08fr) !important;
+  }
+}
+
+@media (max-width: 1120px) {
+  .studio-workspace,
+  .cv-studio-workspace,
+  .studio-body,
+  .cv-studio-body,
+  .editor-shell {
+    grid-template-columns: 180px minmax(0, 1fr) !important;
+    height: auto;
+    overflow: visible;
+  }
+
+  .preview-panel,
+  .studio-preview,
+  .cv-preview-panel,
+  .live-preview {
+    grid-column: 1 / -1;
+    min-height: 760px;
+  }
+}
+
+@media (max-width: 720px) {
+  .studio-workspace,
+  .cv-studio-workspace,
+  .studio-body,
+  .cv-studio-body,
+  .editor-shell {
+    grid-template-columns: 1fr !important;
+  }
+
+  .resume-sections,
+  .sections-panel,
+  .studio-sections,
+  .cv-sections {
+    max-width: none !important;
+    max-height: 280px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

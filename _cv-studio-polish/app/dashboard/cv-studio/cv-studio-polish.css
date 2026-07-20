@@ -1,0 +1,185 @@
+.cv-studio-precision {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f4f7f5;
+  box-sizing: border-box;
+}
+
+.cv-studio-precision *,
+.cv-studio-precision *::before,
+.cv-studio-precision *::after {
+  box-sizing: border-box;
+}
+
+.cv-studio-precision .studio-header,
+.cv-studio-precision .cv-studio-header,
+.cv-studio-precision > header {
+  display: grid;
+  grid-template-columns: minmax(220px, auto) 1fr auto;
+  align-items: center;
+  gap: 20px;
+  min-height: 92px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #dce6df;
+  background: #ffffff;
+}
+
+.cv-studio-precision .studio-tabs,
+.cv-studio-precision .cv-studio-tabs,
+.cv-studio-precision [role="tablist"] {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 42px;
+  padding: 4px 18px;
+  border-bottom: 1px solid #dce6df;
+  background: #f8faf9;
+}
+
+.cv-studio-precision .studio-workspace,
+.cv-studio-precision .cv-studio-workspace,
+.cv-studio-precision .studio-body,
+.cv-studio-precision .cv-studio-body,
+.cv-studio-precision .editor-shell {
+  display: grid !important;
+  grid-template-columns: minmax(180px, 200px) minmax(420px, .9fr) minmax(520px, 1.2fr) !important;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  height: calc(100vh - 134px);
+  overflow: hidden;
+}
+
+.cv-studio-precision .resume-sections,
+.cv-studio-precision .sections-panel,
+.cv-studio-precision .studio-sections,
+.cv-studio-precision .cv-sections {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 200px !important;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 22px 12px;
+  border-right: 1px solid #dce6df;
+  background: #f9fbfa;
+}
+
+.cv-studio-precision .editor-panel,
+.cv-studio-precision .studio-editor,
+.cv-studio-precision .cv-editor,
+.cv-studio-precision .editing-panel,
+.cv-studio-precision .form-panel {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 22px 40px;
+  border-right: 1px solid #dce6df;
+  background: #ffffff;
+}
+
+.cv-studio-precision .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 14px;
+}
+
+.cv-studio-precision input,
+.cv-studio-precision textarea,
+.cv-studio-precision select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.cv-studio-precision .preview-panel,
+.cv-studio-precision .studio-preview,
+.cv-studio-precision .cv-preview-panel,
+.cv-studio-precision .live-preview {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100%;
+  overflow: hidden;
+  background: #e8eeeb;
+}
+
+.cv-studio-precision .preview-header,
+.cv-studio-precision .live-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 58px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #d3ddd7;
+  background: #ffffff;
+}
+
+.cv-studio-precision .preview-scroll,
+.cv-studio-precision .preview-canvas,
+.cv-studio-precision .preview-viewport,
+.cv-studio-precision .live-preview > div:last-child {
+  width: 100%;
+  height: calc(100% - 58px);
+  overflow: auto;
+  padding: 26px 24px 40px;
+}
+
+@media (max-width: 1450px) {
+  .cv-studio-precision .studio-workspace,
+  .cv-studio-precision .cv-studio-workspace,
+  .cv-studio-precision .studio-body,
+  .cv-studio-precision .cv-studio-body,
+  .cv-studio-precision .editor-shell {
+    grid-template-columns: minmax(170px, 185px) minmax(390px, .92fr) minmax(450px, 1.08fr) !important;
+  }
+}
+
+@media (max-width: 1120px) {
+  .cv-studio-precision .studio-workspace,
+  .cv-studio-precision .cv-studio-workspace,
+  .cv-studio-precision .studio-body,
+  .cv-studio-precision .cv-studio-body,
+  .cv-studio-precision .editor-shell {
+    grid-template-columns: 180px minmax(0, 1fr) !important;
+    height: auto;
+    overflow: visible;
+  }
+
+  .cv-studio-precision .preview-panel,
+  .cv-studio-precision .studio-preview,
+  .cv-studio-precision .cv-preview-panel,
+  .cv-studio-precision .live-preview {
+    grid-column: 1 / -1;
+    min-height: 760px;
+  }
+}
+
+@media (max-width: 720px) {
+  .cv-studio-precision .studio-workspace,
+  .cv-studio-precision .cv-studio-workspace,
+  .cv-studio-precision .studio-body,
+  .cv-studio-precision .cv-studio-body,
+  .cv-studio-precision .editor-shell {
+    grid-template-columns: 1fr !important;
+  }
+
+  .cv-studio-precision .resume-sections,
+  .cv-studio-precision .sections-panel,
+  .cv-studio-precision .studio-sections,
+  .cv-studio-precision .cv-sections {
+    max-width: none !important;
+    max-height: 280px;
+  }
+
+  .cv-studio-precision .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

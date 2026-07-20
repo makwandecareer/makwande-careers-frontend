@@ -1,0 +1,135 @@
+.page-header.builder-header {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 28px 30px 36px !important;
+  overflow: visible !important;
+  background: #f4f7f5;
+}
+
+.page-header.builder-header > div:first-child {
+  width: 100%;
+  max-width: 980px !important;
+  margin: 0;
+}
+
+.page-header.builder-header .eyebrow {
+  display: block;
+  margin: 0 0 9px;
+  color: #006943;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.13em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.page-header.builder-header h1 {
+  max-width: 980px !important;
+  margin: 0 0 12px !important;
+  color: #13251d;
+  font-size: clamp(30px, 3vw, 46px);
+  line-height: 1.08 !important;
+  letter-spacing: -0.035em;
+}
+
+.page-header.builder-header > div:first-child > p {
+  max-width: 880px !important;
+  margin: 0 !important;
+  color: #617168;
+  font-size: 15px;
+  line-height: 1.55 !important;
+}
+
+.builder-status {
+  margin-top: 22px !important;
+}
+
+.builder-tabs {
+  margin: 20px 0 !important;
+  padding: 12px !important;
+  gap: 8px !important;
+  overflow: visible;
+}
+
+.builder-tabs button {
+  min-height: 38px;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+}
+
+.builder-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(460px, 44%) !important;
+  gap: 22px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+.builder-layout > :first-child,
+.builder-layout > :last-child {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.builder-layout > :last-child {
+  position: sticky !important;
+  top: 18px !important;
+  align-self: start;
+}
+
+.builder-layout > :first-child > * {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.builder-layout textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.builder-layout p,
+.builder-layout li {
+  line-height: 1.55;
+}
+
+@media (max-width: 1380px) {
+  .page-header.builder-header {
+    padding: 24px 24px 32px !important;
+  }
+
+  .builder-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(400px, 43%) !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .builder-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .builder-layout > :last-child {
+    position: relative !important;
+    top: auto !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .page-header.builder-header {
+    padding: 18px 14px 26px !important;
+  }
+
+  .page-header.builder-header h1 {
+    font-size: 30px;
+  }
+
+  .builder-tabs {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+  }
+}

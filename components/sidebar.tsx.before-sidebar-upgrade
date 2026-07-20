@@ -1,0 +1,352 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  Award,
+  BarChart3,
+  Bell,
+  BookOpen,
+  Bot,
+  BrainCircuit,
+  BriefcaseBusiness,
+  Building2,
+  CalendarDays,
+  ClipboardCheck,
+  ClipboardList,
+  FilePenLine,
+  FileSearch,
+  FileText,
+  FolderKanban,
+  Gauge,
+  GraduationCap,
+  Languages,
+  LayoutDashboard,
+  LayoutTemplate,
+  LogOut,
+  MessageSquare,
+  Palette,
+  Search,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  UserRound,
+  UserSearch,
+  UsersRound,
+  WandSparkles,
+  Wrench,
+} from "lucide-react";
+
+type SidebarItem = {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+  badge?: string;
+};
+
+type SidebarSection = {
+  title: string;
+  items: SidebarItem[];
+};
+
+const sections: SidebarSection[] = [
+  {
+    title: "Overview",
+    items: [
+      { label: "Dashboard", href: "/dashboard", icon: Gauge },
+      { label: "Profile", href: "/dashboard/profile", icon: UserRound },
+      {
+        label: "Notifications",
+        href: "/dashboard/notifications",
+        icon: Bell,
+      },
+    ],
+  },
+  {
+    title: "Career Profile",
+    items: [
+      {
+        label: "Education",
+        href: "/dashboard/education",
+        icon: GraduationCap,
+      },
+      {
+        label: "Experience",
+        href: "/dashboard/experience",
+        icon: BriefcaseBusiness,
+      },
+      { label: "Skills", href: "/dashboard/skills", icon: Wrench },
+      {
+        label: "Projects",
+        href: "/dashboard/projects",
+        icon: FolderKanban,
+      },
+      {
+        label: "Certifications",
+        href: "/dashboard/certifications",
+        icon: Award,
+      },
+      {
+        label: "Languages",
+        href: "/dashboard/languages",
+        icon: Languages,
+      },
+      {
+        label: "References",
+        href: "/dashboard/references",
+        icon: UsersRound,
+      },
+    ],
+  },
+  {
+    title: "CV Platform",
+    items: [
+      { label: "My CVs", href: "/dashboard/cvs", icon: BookOpen },
+      {
+        label: "Templates",
+        href: "/dashboard/templates",
+        icon: Palette,
+      },
+      {
+        label: "CV Studio",
+        href: "/dashboard/cv-studio",
+        icon: LayoutTemplate,
+      },
+      {
+        label: "AI CV Builder",
+        href: "/dashboard/cv-builder",
+        icon: FileText,
+      },
+    ],
+  },
+  {
+    title: "AI Career Suite",
+    items: [
+      {
+        label: "ATS Intelligence",
+        href: "/dashboard/cv-builder?workspace=ats",
+        icon: BarChart3,
+        badge: "AI",
+      },
+      {
+        label: "Career Intelligence",
+        href: "/dashboard/cv-builder?workspace=career",
+        icon: BrainCircuit,
+        badge: "AI",
+      },
+      {
+        label: "Application Copilot",
+        href: "/dashboard/cv-builder?workspace=copilot",
+        icon: ClipboardCheck,
+        badge: "AI",
+      },
+      {
+        label: "Recruiter Simulation",
+        href: "/dashboard/cv-builder?workspace=recruiter",
+        icon: UserSearch,
+        badge: "AI",
+      },
+      {
+        label: "AI Resume Writer",
+        href: "/dashboard/cv-builder?workspace=writer",
+        icon: WandSparkles,
+        badge: "AI",
+      },
+      {
+        label: "Job Matching",
+        href: "/dashboard/cv-builder?workspace=matching",
+        icon: Target,
+        badge: "AI",
+      },
+      {
+        label: "Opportunity Dashboard",
+        href: "/dashboard/cv-builder?workspace=opportunities",
+        icon: LayoutDashboard,
+        badge: "New",
+      },
+      {
+        label: "Career Assistant",
+        href: "/dashboard/career",
+        icon: Sparkles,
+      },
+      {
+        label: "Interview Coach",
+        href: "/dashboard/interview-ai",
+        icon: BrainCircuit,
+      },
+      {
+        label: "Cover Letter AI",
+        href: "/dashboard/cover-letter",
+        icon: FilePenLine,
+      },
+      {
+        label: "AI Career Engine",
+        href: "/dashboard/ai-engine",
+        icon: Bot,
+      },
+    ],
+  },
+  {
+    title: "Jobs",
+    items: [
+      {
+        label: "Browse Jobs",
+        href: "/dashboard/jobs",
+        icon: BriefcaseBusiness,
+      },
+      {
+        label: "Saved Jobs",
+        href: "/dashboard/saved-jobs",
+        icon: BookOpen,
+      },
+      {
+        label: "Applications",
+        href: "/dashboard/applications",
+        icon: ClipboardList,
+      },
+      {
+        label: "Interviews",
+        href: "/dashboard/interviews",
+        icon: CalendarDays,
+      },
+      {
+        label: "Job Search",
+        href: "/dashboard/job-search",
+        icon: Search,
+      },
+    ],
+  },
+  {
+    title: "Employer",
+    items: [
+      {
+        label: "Employer Portal",
+        href: "/dashboard/employer",
+        icon: Building2,
+      },
+      {
+        label: "Candidate Search",
+        href: "/dashboard/candidates",
+        icon: FileSearch,
+      },
+    ],
+  },
+  {
+    title: "Account",
+    items: [
+      {
+        label: "Settings",
+        href: "/dashboard/settings",
+        icon: Settings,
+      },
+      {
+        label: "Security",
+        href: "/dashboard/security",
+        icon: ShieldCheck,
+      },
+    ],
+  },
+];
+
+function splitHref(href: string): { pathname: string; workspace: string | null } {
+  const [pathname, query = ""] = href.split("?");
+  const params = new URLSearchParams(query);
+
+  return {
+    pathname,
+    workspace: params.get("workspace"),
+  };
+}
+
+export function Sidebar() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const activeWorkspace = searchParams.get("workspace");
+
+  async function logout() {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+    } finally {
+      router.push("/login");
+      router.refresh();
+    }
+  }
+
+  function isActive(href: string): boolean {
+    const target = splitHref(href);
+
+    if (target.workspace) {
+      return (
+        pathname === target.pathname &&
+        activeWorkspace === target.workspace
+      );
+    }
+
+    if (href === "/dashboard") {
+      return pathname === "/dashboard";
+    }
+
+    return (
+      pathname === target.pathname ||
+      pathname.startsWith(`${target.pathname}/`)
+    );
+  }
+
+  return (
+    <aside className="sidebar" aria-label="Dashboard navigation">
+      <Link className="sidebar-logo" href="/dashboard">
+        <Image
+          src="/makwande-careers-logo.jpeg"
+          alt="Makwande Careers"
+          width={44}
+          height={44}
+          priority
+        />
+        <span>
+          <strong>MAKWANDE</strong>
+          <small>CAREERS</small>
+        </span>
+      </Link>
+
+      <nav className="sidebar-navigation">
+        {sections.map((section) => (
+          <section className="sidebar-group" key={section.title}>
+            <div className="side-section">{section.title}</div>
+
+            {section.items.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+
+              return (
+                <Link
+                  className={`side-link${active ? " active" : ""}`}
+                  href={item.href}
+                  key={`${section.title}-${item.label}`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  <Icon size={18} strokeWidth={1.9} />
+                  <span className="side-link-label">{item.label}</span>
+                  {item.badge ? (
+                    <span className="side-link-badge">{item.badge}</span>
+                  ) : null}
+                </Link>
+              );
+            })}
+          </section>
+        ))}
+      </nav>
+
+      <div className="sidebar-footer">
+        <button className="side-link sidebar-logout" onClick={logout} type="button">
+          <LogOut size={18} strokeWidth={1.9} />
+          <span className="side-link-label">Sign out</span>
+        </button>
+      </div>
+    </aside>
+  );
+}

@@ -1,37 +1,54 @@
-PHASE 20 — AI CAREER OPERATING SYSTEM
 
-Final frontend feature package before complete system testing.
+MAKWANDE CAREERS — UPDATED AI SUITE SIDEBAR
 
-Adds:
-- Career dashboard and career health score
-- Daily, weekly and monthly tasks
-- Weekly and monthly goals
-- Progress tracking
-- Job application pipeline
-- Interview tracker
-- Learning tracker
-- CV version tracking
-- Recruiter CRM interactions
-- Salary progression
-- Promotion readiness
-- AI recommendations and alerts
-- Enterprise capability dashboard
-- Local browser persistence
-- Responsive design
+This package is based on the Sidebar code supplied in "Side Bar Coding.docx".
 
-Install:
-1. Extract outside E:\Makwande_Careers_Frontend
-2. Run install-phase20.cmd
-3. Run:
+ADDED TO THE SIDEBAR
+- ATS Intelligence
+- Career Intelligence
+- Application Copilot
+- Recruiter Simulation
+- AI Resume Writer
+- Job Matching
+- Opportunity Dashboard
+
+ALSO IMPROVED
+- Active-page highlighting
+- Active workspace highlighting through ?workspace=
+- AI and New badges
+- Scrollable navigation
+- Responsive compact sidebar
+- Safer logout handling
+- Accessible navigation labels
+- Existing career, CV, jobs, employer and account links retained
+
+INSTALL
+1. Extract this ZIP outside the frontend repository.
+2. Double-click install-sidebar.cmd.
+3. The installer searches for the existing Sidebar component and creates a backup.
+4. Copy the contents of sidebar-styles.css into the stylesheet where the current
+   .sidebar and .side-link rules are stored.
+5. Run:
+
    cd /d E:\Makwande_Careers_Frontend
    npm run build
-4. Run git status --short
-5. Commit only:
-   app/dashboard/cv-builder/page.tsx
-   components/cv-builder/CareerOperatingSystem.tsx
-   components/cv-builder/CareerOperatingSystem.module.css
-   lib/career-operating-system.ts
+   npm run dev
 
-Production backend work is still required for authentication, databases,
-billing, cloud storage, OAuth integrations, notifications, POPIA controls,
-multi-tenancy, audit logs and live AI services.
+IMPORTANT ROUTING NOTE
+The new AI links use:
+  /dashboard/cv-builder?workspace=ats
+  /dashboard/cv-builder?workspace=career
+  /dashboard/cv-builder?workspace=copilot
+  /dashboard/cv-builder?workspace=recruiter
+  /dashboard/cv-builder?workspace=writer
+  /dashboard/cv-builder?workspace=matching
+  /dashboard/cv-builder?workspace=opportunities
+
+Your CV Builder page should read the "workspace" search parameter and select the
+matching internal tab. If it does not yet do this, the links still open the CV
+Builder, but the requested tab will need query-parameter integration.
+
+COMMIT
+git add .
+git commit -m "Add complete AI career suite to dashboard sidebar"
+git push origin phase-3-cv-management

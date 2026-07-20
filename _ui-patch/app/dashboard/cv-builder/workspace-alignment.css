@@ -1,0 +1,236 @@
+/*
+  Functional workspace alignment patch.
+  Scoped to the CV Builder page so the rest of the dashboard is unchanged.
+*/
+
+.page-header.builder-header {
+  display: block !important;
+  width: 100%;
+  max-width: none !important;
+  min-width: 0;
+  margin: 0;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.page-header.builder-header > div:first-child {
+  max-width: 920px;
+}
+
+.page-header.builder-header > div:first-child h1 {
+  max-width: 860px;
+  margin: 8px 0 10px;
+  line-height: 1.08;
+}
+
+.page-header.builder-header > div:first-child p {
+  max-width: 820px;
+  line-height: 1.55;
+}
+
+.builder-status {
+  display: inline-grid !important;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 10px;
+  width: auto !important;
+  min-width: 0;
+  margin: 16px 0 0;
+  padding: 10px 14px;
+  border: 1px solid #dce8e1;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.builder-status span {
+  font-size: 12px;
+  color: #617168;
+}
+
+.builder-status strong {
+  font-size: 20px;
+  color: #006943;
+}
+
+.builder-tabs {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 20px 0;
+  padding: 12px;
+  border: 1px solid #dce8e1;
+  border-radius: 14px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.builder-tabs button {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid #d6e2db;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #36483f;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.builder-tabs button:hover {
+  border-color: #9fc8b4;
+  background: #f2f9f5;
+  color: #006943;
+}
+
+.builder-tabs button.active {
+  border-color: #006943;
+  background: #006943;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(0, 105, 67, 0.16);
+}
+
+.builder-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(430px, 46%);
+  align-items: start;
+  gap: 24px;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.builder-layout > * {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.builder-layout > :first-child {
+  width: 100%;
+}
+
+.builder-layout > :last-child {
+  position: sticky;
+  top: 18px;
+  width: 100%;
+  min-width: 0;
+  align-self: start;
+}
+
+/* Keep cards, forms, tables and text inside their workspace column. */
+.builder-layout article,
+.builder-layout section,
+.builder-layout form,
+.builder-layout fieldset,
+.builder-layout table,
+.builder-layout textarea,
+.builder-layout input,
+.builder-layout select {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.builder-layout textarea,
+.builder-layout input,
+.builder-layout select {
+  width: 100%;
+}
+
+.builder-layout table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.builder-layout td,
+.builder-layout th {
+  overflow-wrap: anywhere;
+}
+
+.builder-layout img,
+.builder-layout svg,
+.builder-layout canvas {
+  max-width: 100%;
+}
+
+/* Prevent long generated text or identifiers from breaking the layout. */
+.builder-layout p,
+.builder-layout li,
+.builder-layout h1,
+.builder-layout h2,
+.builder-layout h3,
+.builder-layout h4,
+.builder-layout strong,
+.builder-layout span {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* Standardise workspace cards without overriding their internal colours. */
+.builder-layout > :first-child > section,
+.builder-layout > :first-child > article,
+.builder-layout > :first-child > div {
+  min-width: 0;
+}
+
+/* Preview should stay visible, but never cover the active workspace. */
+.builder-layout > :last-child {
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+@media (max-width: 1380px) {
+  .builder-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(390px, 44%);
+    gap: 18px;
+  }
+
+  .page-header.builder-header {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 1120px) {
+  .builder-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .builder-layout > :last-child {
+    position: relative;
+    top: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .page-header.builder-header {
+    padding: 14px;
+  }
+
+  .builder-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 9px;
+    scrollbar-width: thin;
+  }
+
+  .builder-tabs button {
+    min-height: 36px;
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+
+  .builder-status {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: space-between;
+  }
+}

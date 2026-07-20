@@ -1,11 +1,16 @@
-"use client";
+﻿"use client";
+import "./workspace-alignment.css";
+import "./precision-alignment.css";
+import { useSearchParams } from "next/navigation";
 
 import {
+  Suspense,
   type FormEvent,
   useEffect,
   useMemo,
   useState,
 } from "react";
+
 
 import { ApplicationCopilotPanel } from "@/components/cv-builder/ApplicationCopilotPanel";
 import { BuilderControls } from "@/components/cv-builder/BuilderControls";
@@ -56,6 +61,7 @@ type BuilderTab =
   | "build"
   | "design"
   | "ats"
+  | "career"
   | "copilot"
   | "recruiter"
   | "writer"
@@ -97,7 +103,25 @@ function downloadBlob(blob: Blob, filename: string): void {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export default function CVBuilderPage() {
+
+const WORKSPACE_TAB_VALUES = [
+  "ats",
+  "career",
+  "copilot",
+  "recruiter",
+  "writer",
+  "matching",
+  "opportunities",
+] as const;
+
+type WorkspaceTab = (typeof WORKSPACE_TAB_VALUES)[number];
+
+function isWorkspaceTab(value: string | null): value is WorkspaceTab {
+  return value !== null && WORKSPACE_TAB_VALUES.includes(value as WorkspaceTab);
+}
+function CVBuilderContent() {
+  const workspaceSearchParams = useSearchParams();
+
   const [bundle, setBundle] = useState<ProfileBundle | null>(null);
   const [targetRole, setTargetRole] = useState("");
   const [title, setTitle] = useState("");
@@ -119,6 +143,13 @@ export default function CVBuilderPage() {
   const [message, setMessage] = useState("");
   const [tab, setTab] = useState<BuilderTab>("build");
 
+  useEffect(() => {
+    const requestedWorkspace = workspaceSearchParams.get("workspace");
+
+    if (isWorkspaceTab(requestedWorkspace)) {
+      setTab(requestedWorkspace);
+    }
+  }, [workspaceSearchParams]);
   useEffect(() => {
     let cancelled = false;
 
@@ -320,7 +351,7 @@ export default function CVBuilderPage() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 13 · AI Career Copilot
+          Phase 13 Â· AI Career Copilot
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
@@ -769,3 +800,22 @@ export default function CVBuilderPage() {
     </div>
   );
 }
+
+function CVBuilderLoading() {
+  return (
+    <div className="loading">
+      <span className="spinner" />
+      Loading CV Builder...
+    </div>
+  );
+}
+
+export default function CVBuilderPage() {
+  return (
+    <Suspense fallback={<CVBuilderLoading />}>
+      <CVBuilderContent />
+    </Suspense>
+  );
+}
+
+
