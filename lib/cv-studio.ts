@@ -21,32 +21,31 @@ export type StudioHeaderStyle =
   | "banded"
   | "minimal";
 
-export type StudioPhotoShape =
-  | "circle"
-  | "square"
-  | "rounded";
-
 export type StudioDraft = {
   cvTitle: string;
   targetRole: string;
+
   templateKey: string;
   templateName?: string;
   templateLayout?: string;
 
   accent: string;
   secondaryAccent: string;
+
   fontFamily: string;
   headingFont: string;
+
   fontSize: number;
   lineHeight: number;
   sectionSpacing: number;
+
   margin: StudioMargin;
   layout: StudioLayout;
   headerStyle: StudioHeaderStyle;
 
   showPhoto: boolean;
   photoUrl: string;
-  photoShape: StudioPhotoShape;
+  photoShape: "circle" | "square" | "rounded";
 
   sectionOrder: StudioSection[];
   hiddenSections: StudioSection[];
@@ -83,23 +82,25 @@ export const defaultSectionOrder: StudioSection[] = [
   "references",
 ];
 
-export function createStudioDraft(
-  bundle: ProfileBundle,
-): StudioDraft {
+export function createStudioDraft(bundle: ProfileBundle): StudioDraft {
   return {
     cvTitle: `${bundle.user.full_name} CV`,
     targetRole: bundle.profile?.professional_title || "",
+
     templateKey: "real-01",
     templateName: "Apex Professional",
     templateLayout: "sidebar-left",
 
     accent: "#006943",
     secondaryAccent: "#dcefe5",
+
     fontFamily: "Arial",
     headingFont: "Arial",
+
     fontSize: 12,
     lineHeight: 1.5,
     sectionSpacing: 20,
+
     margin: "standard",
     layout: "one-column",
     headerStyle: "classic",
@@ -108,7 +109,7 @@ export function createStudioDraft(
     photoUrl: "",
     photoShape: "circle",
 
-    sectionOrder: [...defaultSectionOrder],
+    sectionOrder: defaultSectionOrder,
     hiddenSections: [],
 
     profile: {
@@ -118,18 +119,16 @@ export function createStudioDraft(
       location: bundle.profile?.location || "",
       linkedin: bundle.profile?.linkedin_url || "",
       website: bundle.profile?.website_url || "",
-      professionalTitle:
-        bundle.profile?.professional_title || "",
-      summary:
-        bundle.profile?.professional_summary || "",
+      professionalTitle: bundle.profile?.professional_title || "",
+      summary: bundle.profile?.professional_summary || "",
     },
 
-    experience: bundle.experience ?? [],
-    education: bundle.education ?? [],
-    skills: bundle.skills ?? [],
-    projects: bundle.projects ?? [],
-    certifications: bundle.certifications ?? [],
-    languages: bundle.languages ?? [],
-    references: bundle.references ?? [],
+    experience: bundle.experience,
+    education: bundle.education,
+    skills: bundle.skills,
+    projects: bundle.projects,
+    certifications: bundle.certifications,
+    languages: bundle.languages,
+    references: bundle.references,
   };
 }

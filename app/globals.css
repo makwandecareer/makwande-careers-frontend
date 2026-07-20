@@ -869,3 +869,37 @@ pre.output {
     padding: 20px !important;
   }
 }
+/* OpenAI career engine and Paystack billing */
+.ai-workspace { align-items: start; }
+.ai-result-card { min-height: 520px; }
+.ai-result-heading { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.ai-result-heading h2 { margin: 0; }
+.ai-result-text { margin: 7px 0 12px; line-height: 1.65; white-space: pre-wrap; }
+.ai-result-list { display: grid; gap: 10px; margin: 8px 0 16px; }
+.ai-result-item { padding: 12px 14px; border: 1px solid var(--border); border-radius: 11px; background: #f8faf8; }
+.ai-result-item .ai-result-text { margin: 0; }
+.ai-result-object { display: grid; gap: 16px; }
+.ai-result-object > div > strong { color: var(--brand-dark); }
+.spin-icon { animation: spin 1s linear infinite; }
+.billing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; max-width: 980px; }
+.pricing-card { display: grid; gap: 24px; position: relative; overflow: hidden; }
+.pricing-featured { border: 2px solid var(--brand); }
+.pricing-badge { position: absolute; top: 16px; right: -34px; width: 140px; padding: 7px; transform: rotate(38deg); background: var(--gold); color: #2b2100; text-align: center; font-size: 12px; font-weight: 800; }
+.pricing-card h2 { margin: 3px 0 14px; }
+.price-line { display: flex; align-items: end; gap: 9px; }
+.price-line strong { font-size: 46px; line-height: 1; color: var(--brand-dark); }
+.price-line span { color: var(--muted); }
+.pricing-benefits { display: grid; gap: 13px; }
+.pricing-benefits > div { display: flex; align-items: flex-start; gap: 9px; }
+.pricing-benefits svg { color: var(--brand); flex: none; margin-top: 1px; }
+.payment-trust { display: flex; align-items: center; gap: 14px; max-width: 980px; margin-top: 22px; }
+.payment-trust svg { color: var(--brand); flex: none; }
+.payment-trust p { margin: 4px 0 0; }
+.payment-callback-shell { background: radial-gradient(circle at top, #e4f4ea, var(--bg) 48%); }
+.payment-callback-card { width: min(520px, 100%); text-align: center; display: grid; gap: 18px; justify-items: center; }
+.callback-icon { width: 66px; height: 66px; }
+.success-icon { color: var(--brand); }
+.error-icon { color: var(--danger); }
+.payment-callback-card h1 { margin: 0; }
+.payment-callback-card .success { width: 100%; overflow-wrap: anywhere; }
+@media (max-width: 760px) { .billing-grid { grid-template-columns: 1fr; } }

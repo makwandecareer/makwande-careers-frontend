@@ -1,82 +1,46 @@
-# Makwande Careers World-Class Payment Backend
+# Makwande Careers AI Career Engine v1
 
-This package adds a production-oriented Paystack billing system for:
+Backend patch for FastAPI using the OpenAI Responses API and structured outputs.
 
-- **R45 one-time access for 14 days**
-- **R300 recurring monthly premium**
-- Server-side transaction verification
-- Idempotent payment fulfilment
-- Signed Paystack webhooks
-- Subscription cancellation at period end
-- Subscription reactivation
-- Payment-method management links
-- Payment history
-- Automatic expiry
-- Admin reconciliation
-- PostgreSQL models and migration SQL
-- Billing audit logs
-- Safe card metadata storage only: brand and last four digits
+## Features
+
+- Career roadmap generation
+- Skills-gap analysis
+- Interview preparation
+- Cover-letter generation
+- Professional-summary improvement
+- Experience rewriting
+- Job-match analysis
+- Structured JSON responses
+- Uses the authenticated user's source-of-truth profile
+- OpenAI API key remains server-side
 
 ## Install
 
-Copy the package into the backend repository root and run:
-
-```cmd
-cd /d E:\Makwande_Careers_Backend\makwande-Careers-backend
-install-worldclass-billing.cmd
-python -m pip install -r requirements.txt
-```
-
-Copy `.env.billing.example` values into `.env`.
-
-## Required environment variables
+1. Copy the supplied `app` folder into the backend project.
+2. Add `openai>=2.0.0` to `requirements.txt`.
+3. Add these environment variables:
 
 ```env
-PAYSTACK_SECRET_KEY=
-PAYSTACK_PUBLIC_KEY=
-PAYSTACK_PREMIUM_PLAN_CODE=PLN_...
-FRONTEND_URL=http://localhost:3000
-BILLING_CRON_SECRET=
-JWT_SECRET_KEY=
-JWT_ALGORITHM=HS256
-DATABASE_URL=postgresql://...
+OPENAI_API_KEY=your-secret-key
+OPENAI_MODEL=gpt-5.4-mini
 ```
 
-Never commit real keys.
+4. In `app/main.py` add:
 
-## API endpoints
-
-- `GET /api/billing/plans`
-- `GET /api/billing/subscription`
-- `GET /api/billing/payments`
-- `POST /api/billing/checkout`
-- `POST /api/billing/verify`
-- `POST /api/billing/cancel`
-- `POST /api/billing/reactivate`
-- `GET /api/billing/manage-payment-method`
-- `POST /api/billing/webhook`
-- `POST /api/billing/internal/expire-subscriptions`
-- `POST /api/billing/internal/reconcile`
-
-## Paystack webhook
-
-Set:
-
-```text
-https://makwande-careers-backend.onrender.com/api/billing/webhook
+```python
+from app.routes import ai_career_engine
+app.include_router(ai_career_engine.router, prefix="/api")
 ```
 
-## Render scheduled expiry
+5. Restart the backend.
 
-Call daily:
+## Endpoints
 
-```text
-POST /api/billing/internal/expire-subscriptions
-Header: X-Billing-Cron-Secret: YOUR_SECRET
-```
-
-## Important
-
-Paystack monthly subscriptions bill on the recurring calendar schedule determined by Paystack. The local 30-day period is used as a temporary access window and is updated from Paystack invoice webhooks when available.
-
-Rotate any Paystack secret key that was exposed in chat or screenshots before accepting real money.
+- `POST /api/ai-career/roadmap`
+- `POST /api/ai-career/skills-gap`
+- `POST /api/ai-career/interview-prep`
+- `POST /api/ai-career/cover-letter`
+- `POST /api/ai-career/improve-summary`
+- `POST /api/ai-career/improve-experience`
+- `POST /api/ai-career/job-match`

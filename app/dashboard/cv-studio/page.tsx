@@ -1,4 +1,2 @@
-﻿import {CVStudio} from "@/components/cv-studio/CVStudio";
-import "./cv-studio-polish.css";
+import {CVStudio} from "@/components/cv-studio/CVStudio";
 export default function CVStudioPage(){return <CVStudio/>}
-

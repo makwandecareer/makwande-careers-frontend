@@ -1,32 +1,5 @@
-﻿import { Suspense } from "react";
-import "./dashboard-shell-fix.css";
 import { Sidebar } from "@/components/sidebar";
 
-function SidebarFallback() {
-  return (
-    <aside className="sidebar">
-      <div className="sidebar-logo">
-        <strong>MAKWANDE CAREERS</strong>
-      </div>
-    </aside>
-  );
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return <div className="app-shell"><Sidebar /><main className="app-content">{children}</main></div>;
 }
-
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="app-shell">
-      <Suspense fallback={<SidebarFallback />}>
-        <Sidebar />
-      </Suspense>
-
-      <main className="app-content">
-        {children}
-      </main>
-    </div>
-  );
-}
-

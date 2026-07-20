@@ -35,6 +35,7 @@ function Add-ReactUseEffectImport([string]$Content) {
         if ([string]::IsNullOrWhiteSpace($items)) {
           return 'import { useEffect } from "react";'
         }
+
         return 'import { ' + $items.TrimEnd() + ', useEffect } from "react";'
       },
       1
@@ -59,6 +60,7 @@ function Add-SearchParamsImport([string]$Content) {
         if ([string]::IsNullOrWhiteSpace($items)) {
           return 'import { useSearchParams } from "next/navigation";'
         }
+
         return 'import { ' + $items.TrimEnd() + ', useSearchParams } from "next/navigation";'
       },
       1
@@ -66,25 +68,28 @@ function Add-SearchParamsImport([string]$Content) {
   }
 
   $lines = $Content -split "`r?`n"
-  $insertIndex = 0
+  $insertIndex = 1
 
-  if ($lines.Count -gt 0 -and ($lines[0].Trim() -eq '"use client";' -or $lines[0].Trim() -eq "'use client';")) {
+  if ($lines.Count -gt 0 -and $lines[0].Trim() -eq '"use client";') {
     $insertIndex = 1
+  } elseif ($lines.Count -gt 0 -and $lines[0].Trim() -eq "'use client';") {
+    $insertIndex = 1
+  } else {
+    $insertIndex = 0
   }
 
-  $result = New-Object System.Collections.Generic.List[string]
-  for ($i = 0; $i -lt $lines.Count; $i++) {
-    if ($i -eq $insertIndex) {
-      $result.Add('import { useSearchParams } from "next/navigation";')
-    }
-    $result.Add($lines[$i])
+  $before = @()
+  $after = @()
+
+  if ($insertIndex -gt 0) {
+    $before = $lines[0..($insertIndex - 1)]
   }
 
-  if ($insertIndex -ge $lines.Count) {
-    $result.Add('import { useSearchParams } from "next/navigation";')
+  if ($insertIndex -lt $lines.Count) {
+    $after = $lines[$insertIndex..($lines.Count - 1)]
   }
 
-  return ($result -join [Environment]::NewLine)
+  return (($before + 'import { useSearchParams } from "next/navigation";' + $after) -join [Environment]::NewLine)
 }
 
 function Patch-CvBuilderPage([string]$PagePath) {
@@ -94,13 +99,22 @@ function Patch-CvBuilderPage([string]$PagePath) {
   $content = Get-Content $PagePath -Raw
 
   if ($content -notmatch '\bsetTab\s*\(') {
-    throw "Could not find setTab(...) in $PagePath."
+    throw "Could not find setTab(...) in $PagePath. The page structure is different from the expected CV Builder implementation."
+  }
+
+  if ($content -notmatch 'type\s+\w*Tab\w*\s*=|const\s+\[\s*tab\s*,\s*setTab\s*\]') {
+    Write-Host "Warning: tab type declaration was not detected, but setTab exists. Continuing." -ForegroundColor Yellow
   }
 
   $content = Add-ReactUseEffectImport $content
   $content = Add-SearchParamsImport $content
 
   if ($content -notmatch 'const\s+WORKSPACE_TAB_VALUES') {
+    $anchor = [regex]::Match(
+      $content,
+      '(?ms)(type\s+\w*Tab\w*\s*=\s*.*?;|const\s+\w*Tabs?\s*=.*?;)'
+    )
+
     $mapping = @'
 
 const WORKSPACE_TAB_VALUES = [
@@ -120,12 +134,20 @@ function isWorkspaceTab(value: string | null): value is WorkspaceTab {
 }
 '@
 
-    $componentMatch = [regex]::Match($content, '(?m)^export\s+(?:default\s+)?function\s+')
-    if (-not $componentMatch.Success) {
-      throw "Could not locate the exported CV Builder component."
-    }
+    if ($anchor.Success) {
+      $content = $content.Insert($anchor.Index + $anchor.Length, $mapping)
+    } else {
+      $componentMatch = [regex]::Match($content, '(?m)^export\s+default\s+function\s+')
+      if (-not $componentMatch.Success) {
+        $componentMatch = [regex]::Match($content, '(?m)^export\s+function\s+')
+      }
 
-    $content = $content.Insert($componentMatch.Index, $mapping + [Environment]::NewLine)
+      if (-not $componentMatch.Success) {
+        throw "Could not locate the CV Builder component declaration."
+      }
+
+      $content = $content.Insert($componentMatch.Index, $mapping + [Environment]::NewLine)
+    }
   }
 
   if ($content -notmatch 'const\s+workspaceSearchParams\s*=\s*useSearchParams\(\)') {
@@ -138,7 +160,11 @@ function isWorkspaceTab(value: string | null): value is WorkspaceTab {
       throw "Could not find the opening of the exported CV Builder component."
     }
 
-    $insert = [Environment]::NewLine + '  const workspaceSearchParams = useSearchParams();' + [Environment]::NewLine
+    $insert = @'
+
+  const workspaceSearchParams = useSearchParams();
+'@
+
     $content = $content.Insert($componentOpen.Index + $componentOpen.Length, $insert)
   }
 
@@ -189,10 +215,15 @@ function Patch-SidebarLinks([string]$SidebarPath) {
   foreach ($label in $expected.Keys) {
     $href = $expected[$label]
     $labelPattern = [regex]::Escape($label)
-    $pattern = '(?ms)(label:\s*"' + $labelPattern + '"\s*,\s*href:\s*")[^"]+(")'
 
+    $pattern = '(?ms)(label:\s*"' + $labelPattern + '"\s*,\s*href:\s*")[^"]+(")'
     if ($content -match $pattern) {
-      $content = [regex]::Replace($content, $pattern, ('$1' + $href + '$2'), 1)
+      $content = [regex]::Replace(
+        $content,
+        $pattern,
+        ('$1' + $href + '$2'),
+        1
+      )
       Write-Host "Connected: $label -> $href"
     } else {
       Write-Host "Warning: sidebar item not found: $label" -ForegroundColor Yellow
@@ -209,9 +240,6 @@ function Write-ConnectionReport([string]$ProjectRoot, [string]$PagePath, [string
   $page = Get-Content $PagePath -Raw
   $sidebar = Get-Content $SidebarPath -Raw
 
-  $relativePage = $PagePath.Substring($ProjectRoot.Length).TrimStart('\')
-  $relativeSidebar = $SidebarPath.Substring($ProjectRoot.Length).TrimStart('\')
-
   $workspaceNames = @(
     "ats",
     "career",
@@ -222,39 +250,45 @@ function Write-ConnectionReport([string]$ProjectRoot, [string]$PagePath, [string
     "opportunities"
   )
 
-  $lines = New-Object System.Collections.Generic.List[string]
-  $lines.Add("# Makwande Careers functional connection report")
-  $lines.Add("")
-  $lines.Add("Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')")
-  $lines.Add("")
-  $lines.Add("## Files")
-  $lines.Add("")
-  $lines.Add("- CV Builder: $relativePage")
-  $lines.Add("- Sidebar: $relativeSidebar")
-  $lines.Add("")
-  $lines.Add("## Workspace checks")
-  $lines.Add("")
+  $lines = @(
+    "# Makwande Careers functional connection report",
+    "",
+    "Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
+    "",
+    "## Files",
+    "",
+    "- CV Builder: `$($PagePath.Replace($ProjectRoot + '\', ''))`",
+    "- Sidebar: `$($SidebarPath.Replace($ProjectRoot + '\', ''))`",
+    "",
+    "## Workspace checks",
+    ""
+  )
 
   foreach ($workspace in $workspaceNames) {
     $sidebarConnected = $sidebar.Contains("workspace=$workspace")
     $pageRecognised = $page.Contains('"' + $workspace + '"')
     $status = if ($sidebarConnected -and $pageRecognised) { "CONNECTED" } else { "CHECK REQUIRED" }
-    $lines.Add("- $workspace : $status")
+
+    $lines += "- `$workspace`: $status"
   }
 
-  $lines.Add("")
-  $lines.Add("## Functional URLs")
-  $lines.Add("")
-
-  foreach ($workspace in $workspaceNames) {
-    $lines.Add("- /dashboard/cv-builder?workspace=$workspace")
-  }
-
-  $lines.Add("")
-  $lines.Add("## Important")
-  $lines.Add("")
-  $lines.Add("This patch connects navigation to the existing CV Builder workspaces.")
-  $lines.Add("It does not invent backend endpoints or replace existing feature logic.")
+  $lines += @(
+    "",
+    "## Functional URLs",
+    "",
+    "- `/dashboard/cv-builder?workspace=ats`",
+    "- `/dashboard/cv-builder?workspace=career`",
+    "- `/dashboard/cv-builder?workspace=copilot`",
+    "- `/dashboard/cv-builder?workspace=recruiter`",
+    "- `/dashboard/cv-builder?workspace=writer`",
+    "- `/dashboard/cv-builder?workspace=matching`",
+    "- `/dashboard/cv-builder?workspace=opportunities`",
+    "",
+    "## Important",
+    "",
+    "This patch connects navigation to the existing CV Builder workspaces.",
+    "It does not invent backend endpoints or replace existing feature logic."
+  )
 
   $reportPath = Join-Path $ProjectRoot "FUNCTIONAL_CONNECTION_REPORT.md"
   Set-Content -Path $reportPath -Value ($lines -join [Environment]::NewLine) -Encoding utf8

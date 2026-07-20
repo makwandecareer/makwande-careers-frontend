@@ -1,5 +1,5 @@
 "use client";
-import {useMemo,useState} from "react";
+import {useEffect,useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
 import {RealTemplatePreview} from "@/components/templates/RealTemplatePreview";
 import {realTemplates,type RealTemplate,type TemplateIndustry,type TemplateStyle} from "@/lib/real-template-catalog";
@@ -8,18 +8,17 @@ type PhotoFilter="all"|"with-photo"|"without-photo"; type ColumnFilter="all"|1|2
 const colours=[["All",""],["Emerald","#006943"],["Navy","#1f4e79"],["Black","#2f2f2f"],["Burgundy","#7a3e3e"],["Purple","#5a4a78"],["Blue","#0f5f8f"],["Teal","#1d6d80"]];
 
 export default function TemplatesPage(){
- const router=useRouter(); const [selected,setSelected]=useState(()=>{
-  if(typeof window==="undefined")return "real-01";
-  const raw=window.localStorage.getItem(SELECTED_TEMPLATE_KEY);
-  if(!raw)return "real-01";
+ const router=useRouter(); const [selected,setSelected]=useState("real-01"); const [photo,setPhoto]=useState<PhotoFilter>("all"); const [columns,setColumns]=useState<ColumnFilter>("all"); const [industry,setIndustry]=useState<TemplateIndustry|"all">("all"); const [style,setStyle]=useState<TemplateStyle|"all">("all"); const [colour,setColour]=useState(""); const [search,setSearch]=useState("");
+ useEffect(()=>{
+  const raw=localStorage.getItem(SELECTED_TEMPLATE_KEY);
+  if(!raw)return;
   try{
    const saved=JSON.parse(raw) as RealTemplate;
-   return realTemplates.some(item=>item.key===saved.key)?saved.key:"real-01";
+   if(realTemplates.some(item=>item.key===saved.key))setSelected(saved.key);
   }catch{
-   window.localStorage.removeItem(SELECTED_TEMPLATE_KEY);
-   return "real-01";
+   localStorage.removeItem(SELECTED_TEMPLATE_KEY);
   }
- }); const [photo,setPhoto]=useState<PhotoFilter>("all"); const [columns,setColumns]=useState<ColumnFilter>("all"); const [industry,setIndustry]=useState<TemplateIndustry|"all">("all"); const [style,setStyle]=useState<TemplateStyle|"all">("all"); const [colour,setColour]=useState(""); const [search,setSearch]=useState("");
+ },[]);
  const filtered=useMemo(()=>realTemplates.filter(t=>{const q=search.trim().toLowerCase();return(photo==="all"||t.photo===photo)&&(columns==="all"||t.columns===columns)&&(industry==="all"||t.industry===industry)&&(style==="all"||t.style===style)&&(!colour||t.palette.includes(colour))&&(!q||`${t.name} ${t.subtitle} ${t.industry} ${t.style}`.toLowerCase().includes(q))}),[photo,columns,industry,style,colour,search]);
  const choose=(t:RealTemplate)=>{setSelected(t.key);saveSelectedTemplate(t)}; const chosen=realTemplates.find(t=>t.key===selected)||realTemplates[0];
  return <div className="world-template-page">

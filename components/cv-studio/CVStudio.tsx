@@ -1,35 +1,24 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-
-import { useCVBackendAutosave } from "@/hooks/use-cv-backend-autosave";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/client-api";
 import {
   createStudioDraft,
   type StudioDraft,
   type StudioSection,
 } from "@/lib/cv-studio";
+import type { ProfileBundle } from "@/lib/types";
 import {
   applyTemplateToDraft,
   buildExportPayload,
   readSelectedTemplate,
   STUDIO_DRAFT_KEY,
 } from "@/lib/template-process";
-import type { ProfileBundle } from "@/lib/types";
-
-import "./cv-studio.css";
-import { DesignPanel } from "./DesignPanel";
+import { Toolbar } from "./Toolbar";
+import { SectionSidebar } from "./SectionSidebar";
 import { EditorPanel } from "./EditorPanel";
 import { PreviewPanel } from "./PreviewPanel";
-import { SectionSidebar } from "./SectionSidebar";
-import { Toolbar } from "./Toolbar";
-
-type LocalSaveState = "saved" | "saving" | "unsaved";
+import { DesignPanel } from "./DesignPanel";
 
 export function CVStudio() {
   const [draft, setDraft] = useState<StudioDraft | null>(null);
@@ -37,42 +26,20 @@ export function CVStudio() {
   const [mode, setMode] = useState<"content" | "design">("content");
   const [history, setHistory] = useState<StudioDraft[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [localSaveState, setLocalSaveState] =
-    useState<LocalSaveState>("saved");
+  const [saveState, setSaveState] = useState<
+    "saved" | "saving" | "unsaved"
+  >("saved");
   const [zoom, setZoom] = useState(0.82);
-  const [previewOnly, setPreviewOnly] = useState(false);
+  const [preview, setPreview] = useState(false);
   const [error, setError] = useState("");
-
-  const localSaveTimerRef =
-    useRef<ReturnType<typeof setTimeout> | null>(null);
-  const draftRef = useRef<StudioDraft | null>(null);
-
-  const {
-    backendSaveState,
-    backendSaveError,
-    lastSavedAt,
-    saveNow: saveBackendNow,
-  } = useCVBackendAutosave(draft, 2500);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    draftRef.current = draft;
-  }, [draft]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadStudio(): Promise<void> {
-      try {
-        const bundle = await api<ProfileBundle>(
-          "/api/profile/source-of-truth",
-        );
-
-        if (cancelled) return;
-
+    api<ProfileBundle>("/api/profile/source-of-truth")
+      .then((bundle) => {
         let initial = createStudioDraft(bundle);
-        const savedDraft = window.localStorage.getItem(
-          STUDIO_DRAFT_KEY,
-        );
+
+        const savedDraft = localStorage.getItem(STUDIO_DRAFT_KEY);
 
         if (savedDraft) {
           try {
@@ -81,7 +48,7 @@ export function CVStudio() {
               ...(JSON.parse(savedDraft) as Partial<StudioDraft>),
             };
           } catch {
-            window.localStorage.removeItem(STUDIO_DRAFT_KEY);
+            localStorage.removeItem(STUDIO_DRAFT_KEY);
           }
         }
 
@@ -96,7 +63,7 @@ export function CVStudio() {
             selectedTemplate,
           );
 
-          window.localStorage.setItem(
+          localStorage.setItem(
             STUDIO_DRAFT_KEY,
             JSON.stringify(initial),
           );
@@ -105,234 +72,167 @@ export function CVStudio() {
         setDraft(initial);
         setHistory([initial]);
         setHistoryIndex(0);
-      } catch (reason) {
-        if (cancelled) return;
-
+      })
+      .catch((reason) =>
         setError(
           reason instanceof Error
             ? reason.message
             : "Unable to open CV Studio",
-        );
-      }
-    }
-
-    void loadStudio();
-
-    return () => {
-      cancelled = true;
-    };
+        ),
+      );
   }, []);
 
-  const saveLocalNow = useCallback(
-    (candidate?: StudioDraft | null): void => {
-      const currentDraft = candidate ?? draftRef.current;
+  function persist(nextDraft: StudioDraft) {
+    setSaveState("saving");
 
-      if (!currentDraft) return;
+    if (saveTimer.current) {
+      clearTimeout(saveTimer.current);
+    }
 
-      if (localSaveTimerRef.current) {
-        clearTimeout(localSaveTimerRef.current);
-        localSaveTimerRef.current = null;
-      }
-
-      window.localStorage.setItem(
+    saveTimer.current = setTimeout(() => {
+      localStorage.setItem(
         STUDIO_DRAFT_KEY,
-        JSON.stringify(currentDraft),
+        JSON.stringify(nextDraft),
       );
+      setSaveState("saved");
+    }, 900);
+  }
 
-      setLocalSaveState("saved");
-    },
-    [],
-  );
+  function change(nextDraft: StudioDraft) {
+    const nextHistory = [
+      ...history.slice(0, historyIndex + 1),
+      nextDraft,
+    ].slice(-50);
 
-  const scheduleLocalSave = useCallback(
-    (nextDraft: StudioDraft): void => {
-      setLocalSaveState("saving");
+    setHistory(nextHistory);
+    setHistoryIndex(nextHistory.length - 1);
+    setDraft(nextDraft);
+    setSaveState("unsaved");
+    persist(nextDraft);
+  }
 
-      if (localSaveTimerRef.current) {
-        clearTimeout(localSaveTimerRef.current);
-      }
-
-      localSaveTimerRef.current = setTimeout(() => {
-        saveLocalNow(nextDraft);
-      }, 700);
-    },
-    [saveLocalNow],
-  );
-
-  const change = useCallback(
-    (nextDraft: StudioDraft): void => {
-      const nextHistory = [
-        ...history.slice(0, historyIndex + 1),
-        nextDraft,
-      ].slice(-50);
-
-      setHistory(nextHistory);
-      setHistoryIndex(nextHistory.length - 1);
-      setDraft(nextDraft);
-      setLocalSaveState("unsaved");
-      scheduleLocalSave(nextDraft);
-    },
-    [history, historyIndex, scheduleLocalSave],
-  );
-
-  const undo = useCallback((): void => {
+  function undo() {
     if (historyIndex <= 0) return;
 
     const nextIndex = historyIndex - 1;
     const previousDraft = history[nextIndex];
 
-    if (!previousDraft) return;
-
     setHistoryIndex(nextIndex);
     setDraft(previousDraft);
-    setLocalSaveState("unsaved");
-    scheduleLocalSave(previousDraft);
-  }, [history, historyIndex, scheduleLocalSave]);
+    persist(previousDraft);
+  }
 
-  const redo = useCallback((): void => {
+  function redo() {
     if (historyIndex >= history.length - 1) return;
 
     const nextIndex = historyIndex + 1;
     const nextDraft = history[nextIndex];
 
-    if (!nextDraft) return;
-
     setHistoryIndex(nextIndex);
     setDraft(nextDraft);
-    setLocalSaveState("unsaved");
-    scheduleLocalSave(nextDraft);
-  }, [history, historyIndex, scheduleLocalSave]);
+    persist(nextDraft);
+  }
 
-  const move = useCallback(
-    (index: number, direction: -1 | 1): void => {
-      if (!draft) return;
+  function move(index: number, direction: -1 | 1) {
+    if (!draft) return;
 
-      const destination = index + direction;
+    const destination = index + direction;
 
-      if (
-        destination < 0 ||
-        destination >= draft.sectionOrder.length
-      ) {
-        return;
-      }
+    if (
+      destination < 0 ||
+      destination >= draft.sectionOrder.length
+    ) {
+      return;
+    }
 
-      const nextOrder = [...draft.sectionOrder];
+    const nextOrder = [...draft.sectionOrder];
 
-      [nextOrder[index], nextOrder[destination]] = [
-        nextOrder[destination],
-        nextOrder[index],
-      ];
+    [nextOrder[index], nextOrder[destination]] = [
+      nextOrder[destination],
+      nextOrder[index],
+    ];
 
-      change({
-        ...draft,
-        sectionOrder: nextOrder,
-      });
-    },
-    [change, draft],
-  );
+    change({
+      ...draft,
+      sectionOrder: nextOrder,
+    });
+  }
 
-  const toggle = useCallback(
-    (section: StudioSection): void => {
-      if (!draft) return;
+  function toggle(section: StudioSection) {
+    if (!draft) return;
 
-      const hiddenSections = draft.hiddenSections.includes(section)
+    change({
+      ...draft,
+      hiddenSections: draft.hiddenSections.includes(section)
         ? draft.hiddenSections.filter(
             (item) => item !== section,
           )
-        : [...draft.hiddenSections, section];
+        : [...draft.hiddenSections, section],
+    });
+  }
 
-      change({
-        ...draft,
-        hiddenSections,
-      });
-    },
-    [change, draft],
-  );
+  async function exportDocument(format: "pdf" | "docx") {
+    if (!draft) return;
 
-  const saveEverythingNow = useCallback(async (): Promise<void> => {
-    saveLocalNow();
-    await saveBackendNow();
-  }, [saveBackendNow, saveLocalNow]);
+    setError("");
 
-  const exportDocument = useCallback(
-    async (format: "pdf" | "docx"): Promise<void> => {
-      const currentDraft = draftRef.current;
+    try {
+      const blob = await api<Blob>(
+        `/api/ai-cv/export/${format}`,
+        {
+          method: "POST",
+          body: JSON.stringify(buildExportPayload(draft)),
+        },
+      );
 
-      if (!currentDraft) return;
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
 
-      setError("");
+      anchor.href = url;
+      anchor.download = `${draft.cvTitle
+        .replace(/[^a-z0-9]+/gi, "-")
+        .toLowerCase()}.${format}`;
 
-      try {
-        saveLocalNow(currentDraft);
-        await saveBackendNow();
-
-        const blob = await api<Blob>(
-          `/api/ai-cv/export/${format}`,
-          {
-            method: "POST",
-            body: JSON.stringify(
-              buildExportPayload(currentDraft),
-            ),
-          },
-        );
-
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
-        const safeTitle = currentDraft.cvTitle
-          .replace(/[^a-z0-9]+/gi, "-")
-          .replace(/^-+|-+$/g, "")
-          .toLowerCase();
-
-        anchor.href = url;
-        anchor.download = `${safeTitle || "cv"}.${format}`;
-
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-
-        window.setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 1000);
-      } catch (reason) {
-        setError(
-          reason instanceof Error
-            ? reason.message
-            : "Export failed",
-        );
-      }
-    },
-    [saveBackendNow, saveLocalNow],
-  );
-
-  const handleExportPDF = useCallback(async (): Promise<void> => {
-    await exportDocument("pdf");
-  }, [exportDocument]);
-
-  const handleExportDOCX = useCallback(async (): Promise<void> => {
-    await exportDocument("docx");
-  }, [exportDocument]);
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : "Export failed",
+      );
+    }
+  }
 
   useEffect(() => {
-    function handleKeyboard(event: KeyboardEvent): void {
-      const commandKey = event.ctrlKey || event.metaKey;
-
-      if (!commandKey) return;
-
-      const key = event.key.toLowerCase();
-
-      if (key === "s") {
+    function handleKeyboard(event: KeyboardEvent) {
+      if (
+        event.ctrlKey &&
+        event.key.toLowerCase() === "s"
+      ) {
         event.preventDefault();
-        void saveEverythingNow();
-        return;
+
+        if (draft) {
+          localStorage.setItem(
+            STUDIO_DRAFT_KEY,
+            JSON.stringify(draft),
+          );
+          setSaveState("saved");
+        }
       }
 
-      if (key === "z" && !event.shiftKey) {
+      if (
+        event.ctrlKey &&
+        event.key.toLowerCase() === "z"
+      ) {
         event.preventDefault();
         undo();
-        return;
       }
 
-      if (key === "y" || (key === "z" && event.shiftKey)) {
+      if (
+        event.ctrlKey &&
+        event.key.toLowerCase() === "y"
+      ) {
         event.preventDefault();
         redo();
       }
@@ -340,53 +240,15 @@ export function CVStudio() {
 
     window.addEventListener("keydown", handleKeyboard);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyboard);
-    };
-  }, [redo, saveEverythingNow, undo]);
-
-  useEffect(() => {
-    function handleBeforeUnload(
-      event: BeforeUnloadEvent,
-    ): void {
-      if (draftRef.current) {
-        saveLocalNow(draftRef.current);
-      }
-
-      if (
-        ["unsaved", "saving", "error", "offline"].includes(
-          backendSaveState,
-        )
-      ) {
-        event.preventDefault();
-        event.returnValue = "";
-      }
-    }
-
-    window.addEventListener(
-      "beforeunload",
-      handleBeforeUnload,
-    );
-
-    return () => {
+    return () =>
       window.removeEventListener(
-        "beforeunload",
-        handleBeforeUnload,
+        "keydown",
+        handleKeyboard,
       );
-
-      if (localSaveTimerRef.current) {
-        clearTimeout(localSaveTimerRef.current);
-      }
-    };
-  }, [backendSaveState, saveLocalNow]);
+  });
 
   if (error) {
-    return (
-      <div className="error">
-        <strong>CV Studio error</strong>
-        <span>{error}</span>
-      </div>
-    );
+    return <div className="error">{error}</div>;
   }
 
   if (!draft) {
@@ -401,28 +263,31 @@ export function CVStudio() {
   return (
     <div
       className={`cv-studio-shell ${
-        previewOnly ? "preview-only" : ""
+        preview ? "preview-only" : ""
       }`}
     >
       <Toolbar
-        saveState={backendSaveState}
-        backendSaveError={backendSaveError}
-        lastSavedAt={lastSavedAt}
+        saveState={saveState}
         canUndo={historyIndex > 0}
         canRedo={historyIndex < history.length - 1}
         onUndo={undo}
         onRedo={redo}
-        onSave={saveEverythingNow}
-        onExportPDF={handleExportPDF}
-        onExportDOCX={handleExportDOCX}
-        previewOnly={previewOnly}
-        setPreviewOnly={setPreviewOnly}
+        onSave={() => {
+          localStorage.setItem(
+            STUDIO_DRAFT_KEY,
+            JSON.stringify(draft),
+          );
+          setSaveState("saved");
+        }}
+        onExportPDF={() => exportDocument("pdf")}
+        onExportDOCX={() => exportDocument("docx")}
+        previewOnly={preview}
+        setPreviewOnly={setPreview}
       />
 
-      {!previewOnly && (
+      {!preview && (
         <div className="studio-mode-tabs">
           <button
-            type="button"
             className={mode === "content" ? "active" : ""}
             onClick={() => setMode("content")}
           >
@@ -430,7 +295,6 @@ export function CVStudio() {
           </button>
 
           <button
-            type="button"
             className={mode === "design" ? "active" : ""}
             onClick={() => setMode("design")}
           >
@@ -440,7 +304,7 @@ export function CVStudio() {
       )}
 
       <div className="cv-studio-workspace">
-        {!previewOnly && mode === "content" && (
+        {!preview && mode === "content" && (
           <SectionSidebar
             draft={draft}
             active={active}
@@ -450,7 +314,7 @@ export function CVStudio() {
           />
         )}
 
-        {!previewOnly && mode === "content" && (
+        {!preview && mode === "content" && (
           <EditorPanel
             draft={draft}
             active={active}
@@ -458,12 +322,15 @@ export function CVStudio() {
           />
         )}
 
-        {!previewOnly && mode === "design" && (
+        {!preview && mode === "design" && (
           <div className="studio-design-spacer" />
         )}
 
-        {!previewOnly && mode === "design" && (
-          <DesignPanel draft={draft} onChange={change} />
+        {!preview && mode === "design" && (
+          <DesignPanel
+            draft={draft}
+            onChange={change}
+          />
         )}
 
         <PreviewPanel
@@ -472,10 +339,6 @@ export function CVStudio() {
           setZoom={setZoom}
         />
       </div>
-
-      <span className="sr-only">
-        Local save status: {localSaveState}
-      </span>
     </div>
   );
 }
