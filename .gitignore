@@ -1,3 +1,29 @@
+# Secrets
 .env
+.env.local
+.env.development
+.env.production
+.env.*.local
+.env.*
+
+# Keep safe examples
+!.env.example
+
+# Next.js and Node
+node_modules/
+.next/
+.vercel/
+npm-debug.log*
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+
+# Temporary files
+*.patch
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
