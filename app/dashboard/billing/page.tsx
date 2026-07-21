@@ -51,8 +51,8 @@ const benefits: Record<PlanId, string[]> = {
 
 function toBackendPlanCode(plan: PlanId): BackendPlanCode {
   return plan === "trial_14_days"
-    ? "trial_14_days"
-    : "premium_30_days";
+    ? "trial_14_day"
+    : "premium_30_day";
 }
 
 function getErrorMessage(
