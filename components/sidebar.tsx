@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState, type ComponentType } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 import {
   Award,
   BarChart3,
@@ -14,383 +15,265 @@ import {
   BriefcaseBusiness,
   Building2,
   CalendarDays,
-  ChevronDown,
-  ClipboardCheck,
   ClipboardList,
-  CreditCard,
-  FilePenLine,
-  FileSearch,
   FileText,
   FolderKanban,
   Gauge,
   GraduationCap,
   Languages,
-  Mail,
-  LayoutDashboard,
   LayoutTemplate,
   LogOut,
+  Menu,
+  MessageSquare,
   Palette,
   Search,
   Settings,
   ShieldCheck,
-  ScrollText,
   Sparkles,
-  Target,
   UserRound,
   UserSearch,
   UsersRound,
-  WandSparkles,
   Wrench,
+  X,
 } from "lucide-react";
 
-import styles from "./sidebar.module.css";
-
-type Icon = ComponentType<{ size?: number; strokeWidth?: number }>;
-
-type SidebarItem = {
-  label: string;
+type NavItem = {
   href: string;
-  icon: Icon;
-  badge?: "AI" | "New";
+  label: string;
+  icon: React.ComponentType<{ size?: number; "aria-hidden"?: boolean }>;
 };
 
-type SidebarSection = {
-  id: string;
+type NavSection = {
   title: string;
-  items: SidebarItem[];
-  defaultOpen?: boolean;
+  items: NavItem[];
 };
 
-const SECTIONS: SidebarSection[] = [
+const navigation: NavSection[] = [
   {
-    id: "overview",
     title: "Overview",
-    defaultOpen: true,
     items: [
-      { label: "Dashboard", href: "/dashboard", icon: Gauge },
-      {
-        label: "Upload & Improve CV",
-        href: "/dashboard/cv-builder?workspace=cv-intake-revamp",
-        icon: FileSearch,
-        badge: "New",
-      },
-      { label: "Profile", href: "/dashboard/profile", icon: UserRound },
-      { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
+      { href: "/dashboard", label: "Dashboard", icon: Gauge },
+      { href: "/dashboard/profile", label: "Profile", icon: UserRound },
+      { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
     ],
   },
   {
-    id: "career-profile",
     title: "Career Profile",
-    defaultOpen: true,
     items: [
-      { label: "Education", href: "/dashboard/education", icon: GraduationCap },
-      { label: "Experience", href: "/dashboard/experience", icon: BriefcaseBusiness },
-      { label: "Skills", href: "/dashboard/skills", icon: Wrench },
-      { label: "Projects", href: "/dashboard/projects", icon: FolderKanban },
-      { label: "Certifications", href: "/dashboard/certifications", icon: Award },
-      { label: "Languages", href: "/dashboard/languages", icon: Languages },
-      { label: "References", href: "/dashboard/references", icon: UsersRound },
+      { href: "/dashboard/education", label: "Education", icon: GraduationCap },
+      { href: "/dashboard/experience", label: "Experience", icon: BriefcaseBusiness },
+      { href: "/dashboard/skills", label: "Skills", icon: Wrench },
+      { href: "/dashboard/projects", label: "Projects", icon: FolderKanban },
+      { href: "/dashboard/certifications", label: "Certifications", icon: Award },
+      { href: "/dashboard/languages", label: "Languages", icon: Languages },
+      { href: "/dashboard/references", label: "References", icon: UsersRound },
     ],
   },
   {
-    id: "cv-platform",
     title: "CV Platform",
-    defaultOpen: true,
     items: [
-      { label: "My CVs", href: "/dashboard/cvs", icon: BookOpen },
-      { label: "Templates", href: "/dashboard/templates", icon: Palette },
-      { label: "CV Studio", href: "/dashboard/cv-studio", icon: LayoutTemplate },
-      { label: "AI CV Builder", href: "/dashboard/cv-builder", icon: FileText },
+      { href: "/dashboard/cvs", label: "My CVs", icon: BookOpen },
+      { href: "/dashboard/templates", label: "Templates", icon: Palette },
+      { href: "/dashboard/cv-studio", label: "CV Studio", icon: LayoutTemplate },
+      { href: "/dashboard/cv-builder", label: "AI CV Builder", icon: FileText },
+      { href: "/dashboard/ats", label: "ATS Analysis", icon: BarChart3 },
     ],
   },
   {
-    id: "ai-suite",
-    title: "AI Career Suite",
-    defaultOpen: true,
+    title: "AI",
     items: [
-      {
-        label: "ATS Intelligence",
-        href: "/dashboard/cv-builder?workspace=ats",
-        icon: BarChart3,
-        badge: "AI",
-      },
-      {
-        label: "Career Intelligence",
-        href: "/dashboard/cv-builder?workspace=career",
-        icon: BrainCircuit,
-        badge: "AI",
-      },
-      {
-        label: "Application Copilot",
-        href: "/dashboard/cv-builder?workspace=copilot",
-        icon: ClipboardCheck,
-        badge: "AI",
-      },
-      {
-        label: "Recruiter Simulation",
-        href: "/dashboard/cv-builder?workspace=recruiter",
-        icon: UserSearch,
-        badge: "AI",
-      },
-      {
-        label: "AI Resume Writer",
-        href: "/dashboard/cv-builder?workspace=writer",
-        icon: WandSparkles,
-        badge: "AI",
-      },
-      {
-        label: "Job Matching",
-        href: "/dashboard/cv-builder?workspace=matching",
-        icon: Target,
-        badge: "AI",
-      },
-      {
-        label: "Opportunity Dashboard",
-        href: "/dashboard/cv-builder?workspace=opportunities",
-        icon: LayoutDashboard,
-        badge: "New",
-      },
-      {
-        label: "Career Coach",
-        href: "/dashboard/cv-builder?workspace=coach",
-        icon: Sparkles,
-        badge: "AI",
-      },
-      {
-        label: "Performance & KPIs",
-        href: "/dashboard/cv-builder?workspace=progress",
-        icon: Gauge,
-        badge: "AI",
-      },
-      {
-        label: "Career Goals",
-        href: "/dashboard/cv-builder?workspace=career-goals",
-        icon: Target,
-        badge: "AI",
-      },
-      {
-        label: "Market Insights",
-        href: "/dashboard/cv-builder?workspace=opportunity-intelligence",
-        icon: BarChart3,
-        badge: "AI",
-      },
-      {
-        label: "Application Command",
-        href: "/dashboard/cv-builder?workspace=application-command-centre",
-        icon: ClipboardList,
-        badge: "New",
-      },
-      {
-        label: "Interview Intelligence",
-        href: "/dashboard/cv-builder?workspace=interview-studio",
-        icon: BrainCircuit,
-        badge: "AI",
-      },
-      {
-        label: "Company Intelligence",
-        href: "/dashboard/cv-builder?workspace=company-intelligence",
-        icon: Building2,
-        badge: "AI",
-      },
-      {
-        label: "CV Intake & Revamp",
-        href: "/dashboard/cv-builder?workspace=cv-intake-revamp",
-        icon: FileSearch,
-        badge: "New",
-      },
-      {
-        label: "Career Operating System",
-        href: "/dashboard/cv-builder?workspace=career-operating-system",
-        icon: LayoutDashboard,
-        badge: "AI",
-      },
-      { label: "Career Assistant", href: "/dashboard/career", icon: Sparkles },
-      { label: "Interview Coach", href: "/dashboard/interview-ai", icon: BrainCircuit },
-      { label: "Cover Letter AI", href: "/dashboard/cover-letter", icon: FilePenLine },
-      { label: "AI Career Engine", href: "/dashboard/ai-engine", icon: Bot },
+      { href: "/dashboard/career", label: "Career Assistant", icon: Sparkles },
+      { href: "/dashboard/interview-ai", label: "Interview Coach", icon: BrainCircuit },
+      { href: "/dashboard/job-matcher", label: "Job Matcher", icon: Search },
+      { href: "/dashboard/cover-letter", label: "Cover Letter AI", icon: MessageSquare },
+      { href: "/dashboard/ai-engine", label: "AI Career Engine", icon: Bot },
     ],
   },
   {
-    id: "jobs",
     title: "Jobs",
-    defaultOpen: false,
     items: [
-      { label: "Browse Jobs", href: "/dashboard/jobs", icon: BriefcaseBusiness },
-      { label: "Saved Jobs", href: "/dashboard/saved-jobs", icon: BookOpen },
-      { label: "Applications", href: "/dashboard/applications", icon: ClipboardList },
-      { label: "Interviews", href: "/dashboard/interviews", icon: CalendarDays },
-      { label: "Job Search", href: "/dashboard/job-search", icon: Search },
+      { href: "/dashboard/jobs", label: "Browse Jobs", icon: BriefcaseBusiness },
+      { href: "/dashboard/saved-jobs", label: "Saved Jobs", icon: BookOpen },
+      { href: "/dashboard/applications", label: "Applications", icon: ClipboardList },
+      { href: "/dashboard/interviews", label: "Interviews", icon: CalendarDays },
     ],
   },
   {
-    id: "employer",
     title: "Employer",
-    defaultOpen: false,
     items: [
-      { label: "Employer Portal", href: "/dashboard/employer", icon: Building2 },
-      { label: "Candidate Search", href: "/dashboard/candidates", icon: FileSearch },
+      { href: "/dashboard/employer", label: "Employer Portal", icon: Building2 },
+      { href: "/dashboard/candidates", label: "Candidate Search", icon: UserSearch },
     ],
   },
   {
-    id: "account",
     title: "Account",
-    defaultOpen: false,
     items: [
-      { label: "Billing & Plans", href: "/dashboard/billing", icon: CreditCard },
-      { label: "Settings", href: "/dashboard/settings", icon: Settings },
-      { label: "Security", href: "/dashboard/security", icon: ShieldCheck },
-      { label: "Terms & Conditions", href: "/terms", icon: ScrollText },
-      { label: "Contact Support", href: "/contact", icon: Mail },
+      { href: "/dashboard/settings", label: "Settings", icon: Settings },
+      { href: "/dashboard/security", label: "Security", icon: ShieldCheck },
     ],
   },
 ];
 
-function parseHref(href: string) {
-  const [pathname, query = ""] = href.split("?");
-  const params = new URLSearchParams(query);
+const mobileTabs: NavItem[] = [
+  { href: "/dashboard", label: "Home", icon: Gauge },
+  { href: "/dashboard/cvs", label: "CVs", icon: BookOpen },
+  { href: "/dashboard/ats", label: "ATS", icon: BarChart3 },
+  { href: "/dashboard/jobs", label: "Jobs", icon: BriefcaseBusiness },
+  { href: "/dashboard/profile", label: "Profile", icon: UserRound },
+];
 
-  return {
-    pathname,
-    workspace: params.get("workspace"),
-  };
+function isActivePath(pathname: string, href: string) {
+  if (href === "/dashboard") return pathname === href;
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 export function Sidebar() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const activeWorkspace = searchParams.get("workspace");
-
-  const initialOpen = useMemo(
-    () =>
-      Object.fromEntries(
-        SECTIONS.map((section) => [section.id, Boolean(section.defaultOpen)]),
-      ),
-    [],
-  );
-
-  const [openSections, setOpenSections] =
-    useState<Record<string, boolean>>(initialOpen);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const activeSection = SECTIONS.find((section) =>
-      section.items.some((item) => isItemActive(item.href)),
-    );
+    setMobileOpen(false);
+  }, [pathname]);
 
-    if (activeSection) {
-      setOpenSections((current) => ({
-        ...current,
-        [activeSection.id]: true,
-      }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, activeWorkspace]);
+  useEffect(() => {
+    if (!mobileOpen) return;
 
-  function isItemActive(href: string) {
-    const target = parseHref(href);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
-    if (target.workspace) {
-      return pathname === target.pathname && activeWorkspace === target.workspace;
-    }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
 
-    if (href === "/dashboard") {
-      return pathname === "/dashboard";
-    }
+    window.addEventListener("keydown", closeOnEscape);
 
-    return pathname === target.pathname || pathname.startsWith(`${target.pathname}/`);
-  }
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [mobileOpen]);
 
   async function logout() {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } finally {
-      router.push("/login");
-      router.refresh();
-    }
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+    router.refresh();
   }
 
-  return (
-    <aside className={styles.sidebar} aria-label="Dashboard navigation">
-      <Link href="/dashboard" className={styles.logo}>
+  const navigationContent = (
+    <>
+      <div className="sidebar-logo">
         <Image
           src="/makwande-careers-logo.jpeg"
           alt="Makwande Careers"
-          width={42}
-          height={42}
+          width={44}
+          height={44}
           priority
         />
-        <span>
-          <strong>MAKWANDE</strong>
-          <small>CAREERS</small>
-        </span>
-      </Link>
+        <strong>MAKWANDE CAREERS</strong>
+      </div>
 
-      <nav className={styles.navigation}>
-        {SECTIONS.map((section) => {
-          const isOpen = openSections[section.id];
+      <nav aria-label="Dashboard navigation">
+        {navigation.map((section) => (
+          <div className="sidebar-section-group" key={section.title}>
+            <div className="side-section">{section.title}</div>
+            {section.items.map(({ href, label, icon: Icon }) => {
+              const active = isActivePath(pathname, href);
+              return (
+                <Link
+                  aria-current={active ? "page" : undefined}
+                  className={`side-link${active ? " side-link-active" : ""}`}
+                  href={href}
+                  key={href}
+                >
+                  <Icon aria-hidden size={18} />
+                  <span>{label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        ))}
+      </nav>
 
+      <button className="side-link sidebar-logout" onClick={logout} type="button">
+        <LogOut aria-hidden size={18} />
+        <span>Sign out</span>
+      </button>
+    </>
+  );
+
+  return (
+    <>
+      <aside className="sidebar desktop-sidebar">{navigationContent}</aside>
+
+      <header className="mobile-dashboard-header">
+        <Link className="mobile-brand" href="/dashboard">
+          <Image
+            src="/makwande-careers-logo.jpeg"
+            alt=""
+            width={38}
+            height={38}
+            priority
+          />
+          <span>
+            <strong>Makwande Careers</strong>
+            <small>Career Command Centre</small>
+          </span>
+        </Link>
+
+        <button
+          aria-controls="mobile-dashboard-menu"
+          aria-expanded={mobileOpen}
+          aria-label="Open dashboard menu"
+          className="mobile-menu-button"
+          onClick={() => setMobileOpen(true)}
+          type="button"
+        >
+          <Menu aria-hidden size={24} />
+        </button>
+      </header>
+
+      <div
+        aria-hidden={!mobileOpen}
+        className={`mobile-sidebar-backdrop${mobileOpen ? " is-open" : ""}`}
+        onClick={() => setMobileOpen(false)}
+      />
+
+      <aside
+        aria-label="Mobile dashboard menu"
+        className={`mobile-sidebar-drawer${mobileOpen ? " is-open" : ""}`}
+        id="mobile-dashboard-menu"
+      >
+        <div className="mobile-drawer-close-row">
+          <span>Menu</span>
+          <button
+            aria-label="Close dashboard menu"
+            className="mobile-menu-button"
+            onClick={() => setMobileOpen(false)}
+            type="button"
+          >
+            <X aria-hidden size={24} />
+          </button>
+        </div>
+        {navigationContent}
+      </aside>
+
+      <nav aria-label="Mobile quick navigation" className="mobile-bottom-nav">
+        {mobileTabs.map(({ href, label, icon: Icon }) => {
+          const active = isActivePath(pathname, href);
           return (
-            <section className={styles.section} key={section.id}>
-              <button
-                type="button"
-                className={styles.sectionButton}
-                aria-expanded={isOpen}
-                onClick={() =>
-                  setOpenSections((current) => ({
-                    ...current,
-                    [section.id]: !current[section.id],
-                  }))
-                }
-              >
-                <span>{section.title}</span>
-                <ChevronDown
-                  size={15}
-                  className={isOpen ? styles.chevronOpen : styles.chevron}
-                />
-              </button>
-
-              {isOpen ? (
-                <div className={styles.sectionItems}>
-                  {section.items.map((item) => {
-                    const Icon = item.icon;
-                    const active = isItemActive(item.href);
-
-                    return (
-                      <Link
-                        key={`${section.id}-${item.label}`}
-                        href={item.href}
-                        className={`${styles.link} ${active ? styles.active : ""}`}
-                        aria-current={active ? "page" : undefined}
-                      >
-                        <Icon size={18} strokeWidth={1.9} />
-                        <span className={styles.label}>{item.label}</span>
-                        {item.badge ? (
-                          <span
-                            className={
-                              item.badge === "New"
-                                ? styles.newBadge
-                                : styles.aiBadge
-                            }
-                          >
-                            {item.badge}
-                          </span>
-                        ) : null}
-                      </Link>
-                    );
-                  })}
-                </div>
-              ) : null}
-            </section>
+            <Link
+              aria-current={active ? "page" : undefined}
+              className={`mobile-bottom-link${active ? " is-active" : ""}`}
+              href={href}
+              key={href}
+            >
+              <Icon aria-hidden size={20} />
+              <span>{label}</span>
+            </Link>
           );
         })}
       </nav>
-
-      <div className={styles.footer}>
-        <button type="button" className={styles.logout} onClick={logout}>
-          <LogOut size={18} strokeWidth={1.9} />
-          <span>Sign out</span>
-        </button>
-      </div>
-    </aside>
+    </>
   );
 }
