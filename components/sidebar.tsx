@@ -66,6 +66,12 @@ const SECTIONS: SidebarSection[] = [
     defaultOpen: true,
     items: [
       { label: "Dashboard", href: "/dashboard", icon: Gauge },
+      {
+        label: "Upload & Improve CV",
+        href: "/dashboard/cv-builder?workspace=cv-intake-revamp",
+        icon: FileSearch,
+        badge: "New",
+      },
       { label: "Profile", href: "/dashboard/profile", icon: UserRound },
       { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
     ],
