@@ -40,6 +40,7 @@ import { ApplicationCommandCentre } from "@/components/cv-builder/ApplicationCom
 import { RecruiterEmployerPortal } from "@/components/cv-builder/RecruiterEmployerPortal";
 import { CareerOperatingSystem } from "@/components/cv-builder/CareerOperatingSystem";
 import { CVIntakeRevampCentre } from "@/components/cv-builder/CVIntakeRevampCentre";
+import type { ImportedCVDraft } from "@/components/cv-builder/CVIntakeRevampCentre";
 import { createCareerCoachDashboard } from "@/lib/career-coach";
 import { ResumeWriterPanel } from "@/components/cv-builder/ResumeWriterPanel";
 import { api } from "@/lib/client-api";
@@ -155,6 +156,8 @@ function CVBuilderContent() {
     useState<CVSectionKey[]>(defaultSectionOrder);
   const [generated, setGenerated] =
     useState<GeneratedCV | null>(null);
+  const [importedDraftContent, setImportedDraftContent] =
+    useState<Record<string, unknown> | null>(null);
   const [ats, setAts] = useState<ATSResult | null>(null);
   const [zoom, setZoom] = useState(0.85);
   const [loading, setLoading] = useState(true);
@@ -263,18 +266,33 @@ function CVBuilderContent() {
     setMessage("");
 
     try {
-      const result = await api<GeneratedCV>("/api/ai-cv/generate", {
+      const result = await api<GeneratedCV>(
+        importedDraftContent ? "/api/ai-cv/import-draft" : "/api/ai-cv/generate",
+        {
         method: "POST",
-        body: JSON.stringify({
-          title,
-          target_role: targetRole,
-          template_key: template,
-          save_snapshot: true,
-          job_description: jobDescription || null,
-          settings,
-          section_order: sectionOrder,
-        }),
-      });
+          body: JSON.stringify(
+            importedDraftContent
+              ? {
+                  title,
+                  target_role: targetRole,
+                  template_key: template,
+                  content: {
+                    ...importedDraftContent,
+                    professional_title: targetRole,
+                  },
+                }
+              : {
+                  title,
+                  target_role: targetRole,
+                  template_key: template,
+                  save_snapshot: true,
+                  job_description: jobDescription || null,
+                  settings,
+                  section_order: sectionOrder,
+                },
+          ),
+        },
+      );
 
       setGenerated(result);
       setMessage("Professional CV generated and saved successfully.");
@@ -287,6 +305,53 @@ function CVBuilderContent() {
     } finally {
       setBusy("");
     }
+  }
+
+  function useImportedDraft(draft: ImportedCVDraft): void {
+    const verifiedEvidence = [
+      ...draft.intake_answers,
+      draft.additional_details,
+    ].filter((value) => value.trim());
+    const professionalSummary = [
+      draft.professional_summary,
+      verifiedEvidence.length
+        ? `Additional verified evidence: ${verifiedEvidence.join(" ")}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
+    const content: Record<string, unknown> = {
+      personal_details: draft.personal_details,
+      professional_title: draft.professional_title,
+      professional_summary: professionalSummary,
+      skills: draft.skills.map((name) => ({ name })),
+      experience: draft.experience,
+      education: draft.education,
+      projects: draft.projects,
+      certifications: draft.certifications,
+      languages: draft.languages.map((name) => ({ name })),
+      references: "Available upon request",
+      candidate_level: draft.candidate_level,
+      additional_details: draft.additional_details,
+      intake_answers: draft.intake_answers,
+    };
+
+    const role = draft.professional_title || targetRole || "Professional";
+    const candidateName = draft.personal_details.full_name || bundle?.user.full_name || "Candidate";
+
+    setImportedDraftContent(content);
+    setTargetRole(role);
+    setTitle(`${candidateName} - ${role} CV`);
+    setTemplate(draft.suggested_template);
+    setGenerated({
+      title: `${candidateName} - ${role} CV`,
+      target_role: role,
+      template_key: draft.suggested_template,
+      content,
+    });
+    setMessage("Imported CV reviewed. Complete any final edits, then generate and save.");
+    setTab("build");
   }
 
   async function analyse(): Promise<void> {
@@ -600,6 +665,7 @@ function CVBuilderContent() {
             onStartFromScratch={() => setTab("build")}
             onContinueToBuilder={() => setTab("build")}
             onOpenAts={() => setTab("ats")}
+            onUseImportedDraft={useImportedDraft}
           />
         ) : tab === "career-operating-system" ? (
           <CareerOperatingSystem
