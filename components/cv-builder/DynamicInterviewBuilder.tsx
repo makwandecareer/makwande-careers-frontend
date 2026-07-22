@@ -142,7 +142,7 @@ export function DynamicInterviewBuilder({
           </span>
           <h1>Generate a unique interview from the candidate, role and company</h1>
           <p>
-            Build a structured interview that adapts to the candidate's CV,
+            Build a structured interview that adapts to the candidate&amp;apos;s CV,
             vacancy requirements, seniority, company priorities and recruiter
             persona. Every question includes interviewer intent, evidence cues,
             answer signals, red flags and adaptive follow-up questions.
