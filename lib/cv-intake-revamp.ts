@@ -29,6 +29,20 @@ export interface CVIssue {
   recommendation: string;
 }
 
+export interface CVCheck {
+  id: string;
+  category: string;
+  label: string;
+  status: "pass" | "improve";
+  detail: string;
+}
+
+export interface CVDocumentMeta {
+  fileType?: string;
+  wordCount?: number;
+  pageCount?: number | null;
+}
+
 export interface CVAnalysisReport {
   currentScore: number;
   potentialScore: number;
@@ -37,6 +51,9 @@ export interface CVAnalysisReport {
   keywordStrength: number;
   achievementStrength: number;
   formattingScore: number;
+  checks: CVCheck[];
+  checksPassed: number;
+  totalChecks: number;
   issues: CVIssue[];
   strengths: string[];
   missingKeywords: string[];
@@ -99,6 +116,7 @@ export function analyseCV(
   targetRole: string,
   jobDescription: string,
   fallbackScore = 0,
+  documentMeta: CVDocumentMeta = {},
 ): CVAnalysisReport {
   const text = normalize(cvText);
   const sourceWords = words(cvText);
@@ -109,6 +127,17 @@ export function analyseCV(
   const actionVerbCount = ACTION_VERBS.filter((verb) => text.includes(verb)).length;
   const numberCount = (cvText.match(/\b\d+(?:\.\d+)?%?\b/g) || []).length;
   const bulletCount = (cvText.match(/[•●▪◦\-]\s/g) || []).length;
+  const dateCount = (cvText.match(/\b(?:19|20)\d{2}\b/g) || []).length;
+  const firstPersonCount = (cvText.match(/\b(?:I|me|my|mine)\b/gi) || []).length;
+  const urlPresent = /(?:linkedin\.com\/in\/|https?:\/\/|www\.)/i.test(cvText);
+  const lineCount = cvText.split("\n").filter((line) => line.trim()).length;
+  const longLineCount = cvText
+    .split("\n")
+    .filter((line) => line.trim().length > 220).length;
+  const summaryMatch = cvText.match(
+    /(?:professional\s+summary|career\s+profile|professional\s+profile)([\s\S]{0,900})/i,
+  );
+  const summaryWordCount = summaryMatch ? words(summaryMatch[1]).slice(0, 120).length : 0;
   const emailPresent = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(cvText);
   const phonePresent = /(?:\+?\d[\d\s()-]{7,}\d)/.test(cvText);
   const lengthScore =
@@ -148,6 +177,56 @@ export function analyseCV(
   );
   const currentScore = fallbackScore > 0 ? clamp((calculated + fallbackScore) / 2) : calculated;
   const potentialScore = clamp(Math.max(currentScore + 18, 88));
+
+  const checks: CVCheck[] = [];
+  const addCheck = (
+    category: string,
+    label: string,
+    passed: boolean,
+    passDetail: string,
+    improveDetail: string,
+  ) => {
+    checks.push({
+      id: `${category}-${label}`.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      category,
+      label,
+      status: passed ? "pass" : "improve",
+      detail: passed ? passDetail : improveDetail,
+    });
+  };
+
+  addCheck("Contact", "Email address", emailPresent, "Professional email detected.", "Add a professional email address.");
+  addCheck("Contact", "Telephone number", phonePresent, "Telephone number detected.", "Add a reachable telephone number.");
+  addCheck("Contact", "Professional web presence", urlPresent, "LinkedIn or portfolio link detected.", "Add a LinkedIn or portfolio URL.");
+  addCheck("Structure", "Professional summary", text.includes("summary") || text.includes("profile"), "Summary section detected.", "Add a targeted professional summary.");
+  addCheck("Structure", "Experience section", text.includes("experience") || text.includes("employment"), "Experience section detected.", "Use a standard Experience heading.");
+  addCheck("Structure", "Education section", text.includes("education") || text.includes("qualification"), "Education section detected.", "Add an Education section.");
+  addCheck("Structure", "Skills section", text.includes("skills") || text.includes("competencies"), "Skills section detected.", "Add a clearly labelled Skills section.");
+  addCheck("Structure", "Supporting sections", detectedSections.length >= 5, "Strong section coverage detected.", "Add relevant projects, certifications or achievements.");
+  addCheck("Structure", "Recognised headings", detectedSections.length >= 4, "ATS-recognised headings detected.", "Use standard ATS section headings.");
+  addCheck("Structure", "Reverse chronology evidence", dateCount >= 2, "Multiple career dates detected.", "Include dates for education and employment entries.");
+  addCheck("Job alignment", "Target-role language", keywordStrength >= 55, "Role language is represented.", "Add more language from the target role.");
+  addCheck("Job alignment", "Competitive keyword match", keywordStrength >= 70, "Competitive keyword match achieved.", "Aim for at least 70% natural keyword alignment.");
+  addCheck("Job alignment", "Technical terminology", matchedKeywords.length >= 4, "Relevant role terms detected.", "Add role-specific tools, methods and technical skills.");
+  addCheck("Job alignment", "Missing-keyword control", missingKeywords.length <= 6, "Few priority terms are missing.", "Address the priority missing keywords.");
+  addCheck("Job alignment", "Target title", !targetRole || text.includes(normalize(targetRole)), "Target title is reflected.", "Include the target title where truthful.");
+  addCheck("Impact", "Action verbs", actionVerbCount >= 4, "Strong action language detected.", "Start more bullets with strong action verbs.");
+  addCheck("Impact", "Measurable results", numberCount >= 4, "Multiple measurable results detected.", "Add quantities, percentages, time or financial impact.");
+  addCheck("Impact", "Achievement density", achievementStrength >= 65, "Evidence-led experience is strong.", "Rewrite responsibilities as measurable achievements.");
+  addCheck("Impact", "Scannable bullets", bulletCount >= 4, "Bullet structure detected.", "Use concise achievement-focused bullet points.");
+  addCheck("Impact", "Outcome-oriented writing", actionVerbCount >= 3 && numberCount >= 2, "Actions are supported by outcomes.", "Connect actions to outcomes and business impact.");
+  addCheck("Readability", "Recommended length", sourceWords.length >= 300 && sourceWords.length <= 1100, "Word count is within a practical range.", "Keep the CV focused at roughly 300–1,100 words.");
+  addCheck("Readability", "Useful content volume", sourceWords.length >= 180, "Enough content is available for assessment.", "Add more evidence about skills and experience.");
+  addCheck("Readability", "Line structure", lineCount >= 8, "Content is separated into readable lines.", "Break dense content into sections and bullets.");
+  addCheck("Readability", "Dense paragraph control", longLineCount <= 2, "No excessive dense blocks detected.", "Shorten long paragraphs for recruiter scanning.");
+  addCheck("Readability", "First-person control", firstPersonCount <= 2, "Professional CV voice detected.", "Remove unnecessary first-person pronouns.");
+  addCheck("Readability", "Summary length", summaryWordCount === 0 || (summaryWordCount >= 25 && summaryWordCount <= 120), "Summary length is concise.", "Keep the summary between roughly 25 and 120 words.");
+  addCheck("Quality", "Readable extraction", sourceWords.length >= 30, "Document text was extracted successfully.", "Upload a text-based PDF, DOCX or TXT file.");
+  addCheck("Quality", "Supported file format", !documentMeta.fileType || /pdf|docx|text|plain/i.test(documentMeta.fileType), "ATS-compatible source format detected.", "Use PDF, DOCX or TXT.");
+  addCheck("Quality", "Practical page count", !documentMeta.pageCount || documentMeta.pageCount <= 3, "Page count is recruiter-friendly.", "Reduce the CV to three pages or fewer where possible.");
+  addCheck("Quality", "Overall ATS foundation", formattingScore >= 70, "The CV has a solid ATS foundation.", "Strengthen headings, contact details and bullet structure.");
+
+  const checksPassed = checks.filter((check) => check.status === "pass").length;
 
   const issues: CVIssue[] = [];
 
@@ -245,6 +324,9 @@ export function analyseCV(
     keywordStrength,
     achievementStrength,
     formattingScore,
+    checks,
+    checksPassed,
+    totalChecks: checks.length,
     issues,
     strengths: strengths.length ? strengths : ["The original CV provides a foundation that can be professionally improved."],
     missingKeywords,

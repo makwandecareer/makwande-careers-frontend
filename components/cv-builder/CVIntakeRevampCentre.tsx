@@ -1,6 +1,7 @@
 "use client";
 
 import { DragEvent, useMemo, useRef, useState } from "react";
+import { api } from "@/lib/client-api";
 import {
   analyseCV,
   formatFileSize,
@@ -11,6 +12,7 @@ import {
   type UploadedCVRecord,
 } from "@/lib/cv-intake-revamp";
 import styles from "./CVIntakeRevampCentre.module.css";
+import checkStyles from "./CVIntakeRevampChecks.module.css";
 
 interface Props {
   targetRole: string;
@@ -22,7 +24,7 @@ interface Props {
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
-const ACCEPTED_EXTENSIONS = [".pdf", ".docx", ".doc", ".txt"];
+const ACCEPTED_EXTENSIONS = [".pdf", ".docx", ".txt"];
 const REVAMP_LEVELS: RevampLevel[] = [
   "Basic ATS Optimisation",
   "Professional Rewrite",
@@ -33,6 +35,16 @@ const REVAMP_LEVELS: RevampLevel[] = [
 function extension(name: string): string {
   const index = name.lastIndexOf(".");
   return index >= 0 ? name.slice(index).toLowerCase() : "";
+}
+
+interface IntakeAnalysisResponse {
+  filename: string;
+  size: number;
+  content_type: string;
+  text: string;
+  word_count: number;
+  page_count: number | null;
+  stored: false;
 }
 
 export function CVIntakeRevampCentre({
@@ -58,7 +70,7 @@ export function CVIntakeRevampCentre({
     const ext = extension(file.name);
 
     if (!ACCEPTED_EXTENSIONS.includes(ext)) {
-      setError("Upload a PDF, DOCX, DOC or TXT CV.");
+      setError("Upload a PDF, DOCX or TXT CV. Save legacy DOC files as DOCX first.");
       return;
     }
     if (file.size > MAX_FILE_SIZE) {
@@ -66,42 +78,51 @@ export function CVIntakeRevampCentre({
       return;
     }
 
-    let extractedText = "";
-    if (ext === ".txt") {
-      extractedText = await file.text();
-    } else {
-      extractedText = [
-        file.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " "),
-        targetRole,
-        jobDescription,
-      ]
-        .filter(Boolean)
-        .join("\n");
-    }
-
-    const record: UploadedCVRecord = {
-      id: `cv-${Date.now()}`,
-      name: file.name,
-      size: file.size,
-      type: file.type || ext,
-      uploadedAt: new Date().toISOString(),
-      textPreview: extractedText.slice(0, 900),
-    };
-
-    setUploaded(record);
     setStage("analysing");
 
-    window.setTimeout(() => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("target_role", targetRole);
+      formData.append("job_description", jobDescription);
+
+      const intake = await api<IntakeAnalysisResponse>(
+        "/api/ai-cv/intake-analysis",
+        { method: "POST", body: formData },
+      );
+
+      const record: UploadedCVRecord = {
+        id: `cv-${Date.now()}`,
+        name: intake.filename,
+        size: intake.size,
+        type: intake.content_type || ext,
+        uploadedAt: new Date().toISOString(),
+        textPreview: intake.text.slice(0, 900),
+      };
+
+      setUploaded(record);
       setReport(
         analyseCV(
-          extractedText,
+          intake.text,
           targetRole,
           jobDescription,
           currentAtsScore ?? 0,
+          {
+            fileType: intake.content_type,
+            wordCount: intake.word_count,
+            pageCount: intake.page_count,
+          },
         ),
       );
       setStage("report");
-    }, 900);
+    } catch (uploadError) {
+      setStage("choice");
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "The CV could not be analysed. Please try again.",
+      );
+    }
   }
 
   function handleDrop(event: DragEvent<HTMLDivElement>): void {
@@ -174,7 +195,7 @@ export function CVIntakeRevampCentre({
             <input
               ref={inputRef}
               type="file"
-              accept=".pdf,.doc,.docx,.txt"
+              accept=".pdf,.docx,.txt"
               hidden
               onChange={(event) => {
                 const file = event.target.files?.[0];
@@ -196,7 +217,7 @@ export function CVIntakeRevampCentre({
             >
               <strong>Drag and drop the original CV here</strong>
               <span>or click to choose a file</span>
-              <small>PDF, DOCX, DOC or TXT · Maximum 10 MB</small>
+              <small>PDF, DOCX or TXT · Maximum 10 MB</small>
             </div>
 
             {error ? <p className={styles.error}>{error}</p> : null}
@@ -270,6 +291,42 @@ export function CVIntakeRevampCentre({
                 <span style={{ width: `${report.achievementStrength}%` }} />
               </div>
             </article>
+          </section>
+
+          <section className={checkStyles.checkPanel}>
+            <div className={checkStyles.checkHeading}>
+              <div>
+                <span className={styles.eyebrow}>Transparent ATS diagnostic</span>
+                <h2>
+                  {report.checksPassed} of {report.totalChecks} checks passed
+                </h2>
+                <p>
+                  Every result is tied to a visible check—no unexplained AI score.
+                </p>
+              </div>
+              <strong>
+                {Math.round((report.checksPassed / report.totalChecks) * 100)}%
+              </strong>
+            </div>
+            <div className={checkStyles.checkGrid}>
+              {report.checks.map((check) => (
+                <article
+                  key={check.id}
+                  className={
+                    check.status === "pass"
+                      ? checkStyles.checkPass
+                      : checkStyles.checkImprove
+                  }
+                >
+                  <span>{check.status === "pass" ? "✓" : "!"}</span>
+                  <div>
+                    <small>{check.category}</small>
+                    <h3>{check.label}</h3>
+                    <p>{check.detail}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </section>
 
           <div className={styles.reportGrid}>
