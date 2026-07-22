@@ -13,6 +13,7 @@ import {
 } from "@/lib/cv-intake-revamp";
 import styles from "./CVIntakeRevampCentre.module.css";
 import checkStyles from "./CVIntakeRevampChecks.module.css";
+import { ClientCVRevampWizard } from "./ClientCVRevampWizard";
 
 interface Props {
   targetRole: string;
@@ -319,194 +320,21 @@ export function CVIntakeRevampCentre({
           </section>
 
           {importedDraft ? (
-            <section className={checkStyles.reviewPanel}>
-              <div className={checkStyles.reviewHeader}>
-                <div>
-                  <span className={styles.eyebrow}>10-minute guided CV build</span>
-                  <h2>Review, enrich and create your new CV</h2>
-                  <p>
-                    We extracted the old CV. Confirm the information and add the
-                    evidence recruiters need before generating the new version.
-                  </p>
-                </div>
-                <span className={checkStyles.levelBadge}>
-                  {importedDraft.candidate_level.replace("-", " ")}
-                </span>
-              </div>
-
-              <div className={checkStyles.reviewGrid}>
-                <label>
-                  <span>Career level</span>
-                  <select
-                    value={importedDraft.candidate_level}
-                    onChange={(event) =>
-                      setImportedDraft({
-                        ...importedDraft,
-                        candidate_level: event.target.value as ImportedCVDraft["candidate_level"],
-                      })
-                    }
-                  >
-                    <option value="graduate">Fresh graduate</option>
-                    <option value="early-career">Early career</option>
-                    <option value="mid-career">Mid-career professional</option>
-                    <option value="senior">Senior professional</option>
-                    <option value="executive">Executive</option>
-                  </select>
-                </label>
-                <label>
-                  <span>Professional title or target role</span>
-                  <input
-                    value={importedDraft.professional_title}
-                    onChange={(event) =>
-                      setImportedDraft({
-                        ...importedDraft,
-                        professional_title: event.target.value,
-                      })
-                    }
-                    placeholder="e.g. Chemical Engineer"
-                  />
-                </label>
-                <label>
-                  <span>Full name</span>
-                  <input
-                    value={importedDraft.personal_details.full_name}
-                    onChange={(event) =>
-                      setImportedDraft({
-                        ...importedDraft,
-                        personal_details: {
-                          ...importedDraft.personal_details,
-                          full_name: event.target.value,
-                        },
-                      })
-                    }
-                  />
-                </label>
-                <label>
-                  <span>Telephone</span>
-                  <input
-                    value={importedDraft.personal_details.phone}
-                    onChange={(event) =>
-                      setImportedDraft({
-                        ...importedDraft,
-                        personal_details: {
-                          ...importedDraft.personal_details,
-                          phone: event.target.value,
-                        },
-                      })
-                    }
-                    placeholder="+27..."
-                  />
-                </label>
-                <label className={checkStyles.fullField}>
-                  <span>Professional summary</span>
-                  <textarea
-                    value={importedDraft.professional_summary}
-                    onChange={(event) =>
-                      setImportedDraft({
-                        ...importedDraft,
-                        professional_summary: event.target.value,
-                      })
-                    }
-                    placeholder="Review the imported summary or write a concise verified career overview."
-                  />
-                </label>
-                <label className={checkStyles.fullField}>
-                  <span>Skills — separate with commas</span>
-                  <textarea
-                    value={importedDraft.skills.join(", ")}
-                    onChange={(event) =>
-                      setImportedDraft({
-                        ...importedDraft,
-                        skills: event.target.value
-                          .split(",")
-                          .map((item) => item.trim())
-                          .filter(Boolean),
-                      })
-                    }
-                    placeholder="Process optimisation, AutoCAD, project management..."
-                  />
-                </label>
-              </div>
-
-              <div className={checkStyles.importSummary}>
-                <span><strong>{importedDraft.experience.length}</strong> experience entries</span>
-                <span><strong>{importedDraft.education.length}</strong> education entries</span>
-                <span><strong>{importedDraft.projects.length}</strong> projects</span>
-                <span><strong>{importedDraft.certifications.length}</strong> certifications</span>
-              </div>
-
-              {importedDraft.missing_details.length ? (
-                <div className={checkStyles.verifyBox}>
-                  <strong>AI recommendations - information to add</strong>
-                  <p>
-                    These items were not found in the uploaded CV. Add only
-                    accurate information; the AI will improve wording and
-                    placement but will never invent client facts.
-                  </p>
-                  <ul>
-                    {importedDraft.missing_details.map((detail) => (
-                      <li key={detail}>{detail}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              <div className={checkStyles.guidedQuestions}>
-                <div>
-                  <span className={styles.eyebrow}>Personalised evidence prompts</span>
-                  <h3>Add the details that make this CV competitive</h3>
-                </div>
-                {importedDraft.follow_up_questions.map((question, index) => (
-                  <label key={question}>
-                    <span>{question}</span>
-                    <textarea
-                      value={questionAnswers[index] ?? ""}
-                      onChange={(event) =>
-                        setQuestionAnswers((current) => {
-                          const next = [...current];
-                          next[index] = event.target.value;
-                          return next;
-                        })
-                      }
-                      placeholder="Add only accurate, verifiable information."
-                    />
-                  </label>
-                ))}
-                <label>
-                  <span>Anything else the new CV should include?</span>
-                  <textarea
-                    value={additionalDetails}
-                    onChange={(event) => setAdditionalDetails(event.target.value)}
-                    placeholder="Projects, volunteer work, awards, leadership, systems, budgets, team size or measurable results..."
-                  />
-                </label>
-              </div>
-
-              {importedDraft.facts_to_verify.length ? (
-                <div className={checkStyles.verifyBox}>
-                  <strong>Confirm before generating:</strong>
-                  <ul>
-                    {importedDraft.facts_to_verify.map((fact) => (
-                      <li key={fact}>{fact}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              <button
-                type="button"
-                className={checkStyles.buildButton}
-                onClick={() =>
-                  onUseImportedDraft({
-                    ...importedDraft,
-                    additional_details: additionalDetails.trim(),
-                    intake_answers: questionAnswers.filter((answer) => answer.trim()),
-                  })
-                }
-              >
-                Create my new CV from this information
-              </button>
-            </section>
+            <ClientCVRevampWizard
+              draft={{
+                ...importedDraft,
+                additional_details: additionalDetails,
+                intake_answers: questionAnswers,
+              }}
+              targetRole={targetRole}
+              onDraftChange={(nextDraft) => {
+                setImportedDraft(nextDraft);
+                setAdditionalDetails(nextDraft.additional_details ?? "");
+                setQuestionAnswers(nextDraft.intake_answers ?? []);
+              }}
+              onChooseTemplate={onOpenTemplates}
+              onFinish={onUseImportedDraft}
+            />
           ) : null}
 
           <section className={styles.scorePanel}>
