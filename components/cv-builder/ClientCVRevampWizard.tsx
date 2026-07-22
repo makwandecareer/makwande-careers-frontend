@@ -20,6 +20,7 @@ interface TextImprovementResponse {
 
 type StepId =
   | "direction"
+  | "assessment"
   | "heading"
   | "experience"
   | "education"
@@ -30,13 +31,14 @@ type StepId =
 
 const STEPS: Array<{ id: StepId; label: string; short: string }> = [
   { id: "direction", label: "Career direction", short: "1" },
-  { id: "heading", label: "Contact details", short: "2" },
-  { id: "experience", label: "Work history", short: "3" },
-  { id: "education", label: "Education", short: "4" },
-  { id: "skills", label: "Skills", short: "5" },
-  { id: "summary", label: "Summary", short: "6" },
-  { id: "extras", label: "Additional sections", short: "7" },
-  { id: "finalise", label: "Finalise", short: "8" },
+  { id: "assessment", label: "Import assessment", short: "2" },
+  { id: "heading", label: "Contact details", short: "3" },
+  { id: "experience", label: "Work history", short: "4" },
+  { id: "education", label: "Education", short: "5" },
+  { id: "skills", label: "Skills", short: "6" },
+  { id: "summary", label: "Summary", short: "7" },
+  { id: "extras", label: "Additional sections", short: "8" },
+  { id: "finalise", label: "Finalise", short: "9" },
 ];
 
 const LEVELS: Array<{ value: ImportedCVDraft["candidate_level"]; label: string; detail: string }> = [
@@ -55,6 +57,17 @@ const EDUCATION_LEVELS = [
   "Honours or postgraduate diploma",
   "Master’s degree",
   "Doctoral degree",
+];
+
+const ROLE_SKILL_SUGGESTIONS = [
+  "Communication",
+  "Team collaboration",
+  "Problem solving",
+  "Time management",
+  "Quality assurance",
+  "Health and safety",
+  "Process improvement",
+  "Stakeholder engagement",
 ];
 
 function value(record: Record<string, unknown>, key: string): string {
@@ -97,6 +110,21 @@ export function ClientCVRevampWizard({
   const [educationLevel, setEducationLevel] = useState("");
   const stepIndex = STEPS.findIndex((item) => item.id === step);
   const score = useMemo(() => completeness(draft), [draft]);
+  const importedStrengths = useMemo(() => [
+    draft.personal_details.full_name && draft.personal_details.email
+      ? "Recruiter contact information was identified"
+      : "A candidate identity was identified",
+    draft.experience.length ? `${draft.experience.length} work-history record${draft.experience.length === 1 ? "" : "s"} imported` : "Project or transferable evidence can be added",
+    draft.education.length ? `${draft.education.length} education record${draft.education.length === 1 ? "" : "s"} imported` : "Education can be confirmed in the guided step",
+    draft.skills.length ? `${draft.skills.length} skills extracted for review` : "Skills will be selected against the target role",
+  ], [draft]);
+  const improvementPriorities = useMemo(() => [
+    !draft.professional_title && "Confirm the target job title",
+    draft.skills.length < 6 && "Select 6–12 demonstrable, job-relevant skills",
+    !draft.professional_summary && "Create a concise professional summary",
+    !draft.experience.length && !draft.projects.length && "Add work, project, learnership or volunteer evidence",
+    ...draft.missing_details.slice(0, 3),
+  ].filter(Boolean) as string[], [draft]);
 
   useEffect(() => {
     localStorage.setItem("makwande-client-cv-revamp", JSON.stringify(draft));
@@ -126,6 +154,27 @@ export function ClientCVRevampWizard({
     index: number,
   ): void {
     patch({ [section]: draft[section].filter((_, itemIndex) => itemIndex !== index) });
+  }
+
+  function duplicateRecord(
+    section: "experience" | "education" | "projects" | "certifications",
+    index: number,
+  ): void {
+    const records = [...draft[section]];
+    records.splice(index + 1, 0, { ...records[index] });
+    patch({ [section]: records });
+  }
+
+  function reorderRecord(
+    section: "experience" | "education" | "projects" | "certifications",
+    index: number,
+    direction: -1 | 1,
+  ): void {
+    const target = index + direction;
+    if (target < 0 || target >= draft[section].length) return;
+    const records = [...draft[section]];
+    [records[index], records[target]] = [records[target], records[index]];
+    patch({ [section]: records });
   }
 
   function move(next: number): void {
@@ -226,6 +275,29 @@ export function ClientCVRevampWizard({
                 <small>AI suggestions will align to this role without inventing experience.</small>
               </label>
             </div>
+            <div className={styles.recommendationCard}>
+              <div><span>Recommended CV structure</span><strong>{draft.suggested_template.replace("-", " ")}</strong></div>
+              <p>Selected from the client’s experience level. The template remains changeable before export.</p>
+              <button type="button" onClick={onChooseTemplate}>Preview recommended templates</button>
+            </div>
+          </div>
+        ) : null}
+
+        {step === "assessment" ? (
+          <div className={styles.stepBody}>
+            <h3>You’re off to a strong start</h3>
+            <p className={styles.lead}>Review what was imported correctly and the gaps Makwande will help the client complete.</p>
+            <div className={styles.assessmentGrid}>
+              <article>
+                <h4>Imported successfully</h4>
+                <ul>{importedStrengths.map((item) => <li className={styles.positiveItem} key={item}>{item}</li>)}</ul>
+              </article>
+              <article>
+                <h4>Recommended improvements</h4>
+                {improvementPriorities.length ? <ul>{improvementPriorities.map((item) => <li className={styles.priorityItem} key={item}>{item}</li>)}</ul> : <p>No critical content gaps were detected. Continue to verify every section.</p>}
+              </article>
+            </div>
+            {draft.facts_to_verify.length ? <div className={styles.warningBox}><strong>Facts requiring client confirmation</strong><ul>{draft.facts_to_verify.slice(0, 5).map((fact) => <li key={fact}>{fact}</li>)}</ul></div> : null}
           </div>
         ) : null}
 
@@ -264,7 +336,7 @@ export function ClientCVRevampWizard({
             {!draft.experience.length ? <div className={styles.empty}>No employment was detected. Add internships, learnerships, freelance, volunteer or project experience if accurate.</div> : null}
             {draft.experience.map((record, index) => (
               <article className={styles.recordCard} key={`experience-${index}`}>
-                <div className={styles.recordHeading}><strong>Position {index + 1}</strong><button type="button" onClick={() => removeRecord("experience", index)}>Remove</button></div>
+                <div className={styles.recordHeading}><strong>Position {index + 1}</strong><div className={styles.recordTools}><button type="button" onClick={() => reorderRecord("experience", index, -1)} disabled={index === 0}>↑</button><button type="button" onClick={() => reorderRecord("experience", index, 1)} disabled={index === draft.experience.length - 1}>↓</button><button type="button" onClick={() => duplicateRecord("experience", index)}>Duplicate</button><button type="button" onClick={() => removeRecord("experience", index)}>Remove</button></div></div>
                 <div className={styles.formGrid}>
                   <label><span>Job title</span><input value={value(record, "job_title")} onChange={(e) => patchRecord("experience", index, "job_title", e.target.value)} /></label>
                   <label><span>Employer</span><input value={value(record, "company")} onChange={(e) => patchRecord("experience", index, "company", e.target.value)} /></label>
@@ -287,7 +359,7 @@ export function ClientCVRevampWizard({
             <div className={styles.sectionTitle}><p>Add the most relevant and recent qualifications.</p><button type="button" onClick={() => patch({ education: [...draft.education, { institution: "", qualification: educationLevel, field_of_study: "", start_date: "", end_date: "", description: "" }] })}>+ Add qualification</button></div>
             {draft.education.map((record, index) => (
               <article className={styles.recordCard} key={`education-${index}`}>
-                <div className={styles.recordHeading}><strong>Qualification {index + 1}</strong><button type="button" onClick={() => removeRecord("education", index)}>Remove</button></div>
+                <div className={styles.recordHeading}><strong>Qualification {index + 1}</strong><div className={styles.recordTools}><button type="button" onClick={() => reorderRecord("education", index, -1)} disabled={index === 0}>↑</button><button type="button" onClick={() => reorderRecord("education", index, 1)} disabled={index === draft.education.length - 1}>↓</button><button type="button" onClick={() => duplicateRecord("education", index)}>Duplicate</button><button type="button" onClick={() => removeRecord("education", index)}>Remove</button></div></div>
                 <div className={styles.formGrid}>
                   <label><span>Qualification</span><input value={value(record, "qualification")} onChange={(e) => patchRecord("education", index, "qualification", e.target.value)} /></label>
                   <label><span>Institution</span><input value={value(record, "institution")} onChange={(e) => patchRecord("education", index, "institution", e.target.value)} /></label>
@@ -309,6 +381,10 @@ export function ClientCVRevampWizard({
             </div>
             <div className={styles.skillList}>
               {draft.skills.map((skill) => <button type="button" key={skill} onClick={() => patch({ skills: draft.skills.filter((item) => item !== skill) })}>{skill}<span>×</span></button>)}
+            </div>
+            <div className={styles.suggestionPanel}>
+              <div><strong>Suggested skills to verify</strong><span>Add only skills the client can demonstrate.</span></div>
+              <div className={styles.chipRow}>{ROLE_SKILL_SUGGESTIONS.filter((skill) => !draft.skills.includes(skill)).map((skill) => <button type="button" key={skill} onClick={() => patch({ skills: [...draft.skills, skill] })}>+ {skill}</button>)}</div>
             </div>
             <div className={styles.aiBox}>
               <strong>AI evidence check</strong>
@@ -341,6 +417,7 @@ export function ClientCVRevampWizard({
               <article><strong>Certifications</strong><span>{draft.certifications.length} added</span><button type="button" onClick={() => patch({ certifications: [...draft.certifications, { name: "", issuer: "", date: "" }] })}>+ Add certification</button></article>
               <article><strong>Languages</strong><span>{draft.languages.length ? draft.languages.join(", ") : "None added"}</span><input placeholder="English, isiZulu..." value={draft.languages.join(", ")} onChange={(e) => patch({ languages: e.target.value.split(",").map((item) => item.trim()).filter(Boolean) })} /></article>
               <article><strong>Professional links</strong><span>LinkedIn and portfolio links are managed in Contact details.</span><button type="button" onClick={() => setStep("heading")}>Review links</button></article>
+              <article className={styles.wideExtra}><strong>Achievements, affiliations and additional information</strong><span>Capture verified awards, memberships, licences, community leadership or other relevant evidence.</span><textarea value={draft.additional_details ?? ""} onChange={(e) => patch({ additional_details: e.target.value })} placeholder="One verified item per line. Avoid sensitive or irrelevant personal information." /></article>
             </div>
             {draft.projects.map((record, index) => (
               <article className={styles.recordCard} key={`project-${index}`}><div className={styles.recordHeading}><strong>Project {index + 1}</strong><button type="button" onClick={() => removeRecord("projects", index)}>Remove</button></div><div className={styles.formGrid}><label><span>Project name</span><input value={value(record, "name")} onChange={(e) => patchRecord("projects", index, "name", e.target.value)} /></label><label className={styles.full}><span>Verified contribution and outcome</span><textarea value={value(record, "description")} onChange={(e) => patchRecord("projects", index, "description", e.target.value)} /></label></div></article>
@@ -360,6 +437,14 @@ export function ClientCVRevampWizard({
               <article><span>{draft.experience.length || draft.projects.length ? "✓" : "!"}</span><div><strong>Evidence</strong><p>Work history, learnership, volunteering or projects included.</p></div></article>
               <article><span>{draft.skills.length >= 6 ? "✓" : "!"}</span><div><strong>Skills</strong><p>{draft.skills.length} verified skills selected.</p></div></article>
               <article><span>{draft.professional_summary ? "✓" : "!"}</span><div><strong>Professional summary</strong><p>Targeted opening statement reviewed.</p></div></article>
+            </div>
+            <div className={styles.atsReview}>
+              <div><strong>CV readiness</strong><b>{score}%</b></div>
+              <div><span>Contact & heading</span><i className={draft.personal_details.full_name && draft.personal_details.email ? styles.pass : styles.needsWork} /></div>
+              <div><span>Work evidence</span><i className={draft.experience.length || draft.projects.length ? styles.pass : styles.needsWork} /></div>
+              <div><span>Role keywords</span><i className={draft.skills.length >= 6 ? styles.pass : styles.needsWork} /></div>
+              <div><span>Summary & positioning</span><i className={draft.professional_summary ? styles.pass : styles.needsWork} /></div>
+              <p>This readiness indicator checks completeness and evidence. Run the dedicated ATS analysis against a real job description before applying.</p>
             </div>
             {draft.facts_to_verify.length ? <div className={styles.warningBox}><strong>Client confirmation required</strong><ul>{draft.facts_to_verify.map((fact) => <li key={fact}>{fact}</li>)}</ul></div> : null}
             <div className={styles.finalActions}>
