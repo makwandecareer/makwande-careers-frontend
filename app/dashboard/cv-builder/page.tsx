@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Suspense,
   type FormEvent,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -146,6 +147,40 @@ type WorkspaceTab = (typeof WORKSPACE_TAB_VALUES)[number];
 function isWorkspaceTab(value: string | null): value is WorkspaceTab {
   return value !== null && WORKSPACE_TAB_VALUES.includes(value as WorkspaceTab);
 }
+
+function contentFromImportedDraft(
+  draft: ImportedCVDraft,
+): Record<string, unknown> {
+  const verifiedEvidence = [
+    ...(draft.intake_answers ?? []),
+    draft.additional_details ?? "",
+  ].filter((item) => item.trim());
+  const professionalSummary = [
+    draft.professional_summary,
+    verifiedEvidence.length
+      ? `Additional verified evidence: ${verifiedEvidence.join(" ")}`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
+  return {
+    personal_details: draft.personal_details,
+    professional_title: draft.professional_title,
+    professional_summary: professionalSummary,
+    skills: draft.skills.map((name) => ({ name })),
+    experience: draft.experience,
+    education: draft.education,
+    projects: draft.projects,
+    certifications: draft.certifications,
+    languages: draft.languages.map((name) => ({ name })),
+    references: [],
+    candidate_level: draft.candidate_level,
+    additional_details: draft.additional_details ?? "",
+    intake_answers: draft.intake_answers ?? [],
+  };
+}
+
 function CVBuilderContent() {
   const router = useRouter();
   const workspaceSearchParams = useSearchParams();
@@ -314,35 +349,22 @@ function CVBuilderContent() {
     }
   }
 
-  function useImportedDraft(draft: ImportedCVDraft): void {
-    const verifiedEvidence = [
-      ...(draft.intake_answers ?? []),
-      draft.additional_details ?? "",
-    ].filter((value) => value.trim());
-    const professionalSummary = [
-      draft.professional_summary,
-      verifiedEvidence.length
-        ? `Additional verified evidence: ${verifiedEvidence.join(" ")}`
-        : "",
-    ]
-      .filter(Boolean)
-      .join("\n\n");
+  const previewImportedDraft = useCallback((draft: ImportedCVDraft): void => {
+    const role = draft.professional_title || "Professional";
+    const candidateName = draft.personal_details.full_name || "Candidate";
+    setGenerated({
+      title: `${candidateName} - ${role} CV`,
+      target_role: role,
+      template_key: draft.suggested_template,
+      content: contentFromImportedDraft(draft),
+    });
+    setTargetRole(role);
+    setTemplate(draft.suggested_template);
+  }, []);
 
-    const content: Record<string, unknown> = {
-      personal_details: draft.personal_details,
-      professional_title: draft.professional_title,
-      professional_summary: professionalSummary,
-      skills: draft.skills.map((name) => ({ name })),
-      experience: draft.experience,
-      education: draft.education,
-      projects: draft.projects,
-      certifications: draft.certifications,
-      languages: draft.languages.map((name) => ({ name })),
-      references: "Available upon request",
-      candidate_level: draft.candidate_level,
-      additional_details: draft.additional_details ?? "",
-      intake_answers: draft.intake_answers,
-    };
+  function useImportedDraft(draft: ImportedCVDraft): void {
+    const content = contentFromImportedDraft(draft);
+    const professionalSummary = String(content.professional_summary ?? "");
 
     const role = draft.professional_title || targetRole || "Professional";
     const candidateName = draft.personal_details.full_name || bundle?.user.full_name || "Candidate";
@@ -705,6 +727,7 @@ function CVBuilderContent() {
             onContinueToBuilder={() => setTab("build")}
             onOpenAts={() => setTab("ats")}
             onOpenTemplates={() => router.push("/dashboard/templates")}
+            onPreviewImportedDraft={previewImportedDraft}
             onUseImportedDraft={useImportedDraft}
           />
         ) : tab === "career-operating-system" ? (

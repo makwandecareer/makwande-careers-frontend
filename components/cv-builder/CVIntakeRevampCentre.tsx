@@ -1,6 +1,6 @@
 "use client";
 
-import { DragEvent, useMemo, useRef, useState } from "react";
+import { DragEvent, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "@/lib/client-api";
 import {
   analyseCV,
@@ -22,6 +22,7 @@ interface Props {
   onContinueToBuilder: () => void;
   onOpenAts: () => void;
   onOpenTemplates: () => void;
+  onPreviewImportedDraft: (draft: ImportedCVDraft) => void;
   onUseImportedDraft: (draft: ImportedCVDraft) => void;
 }
 
@@ -85,6 +86,7 @@ export function CVIntakeRevampCentre({
   onContinueToBuilder,
   onOpenAts,
   onOpenTemplates,
+  onPreviewImportedDraft,
   onUseImportedDraft,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -99,6 +101,20 @@ export function CVIntakeRevampCentre({
   const [questionAnswers, setQuestionAnswers] = useState<string[]>([]);
 
   const topIssues = useMemo(() => report?.issues.slice(0, 6) ?? [], [report]);
+
+  useEffect(() => {
+    if (!importedDraft) return;
+    onPreviewImportedDraft({
+      ...importedDraft,
+      additional_details: additionalDetails.trim(),
+      intake_answers: questionAnswers.filter((answer) => answer.trim()),
+    });
+  }, [
+    additionalDetails,
+    importedDraft,
+    onPreviewImportedDraft,
+    questionAnswers,
+  ]);
 
   async function processFile(file: File): Promise<void> {
     setError("");
@@ -418,6 +434,22 @@ export function CVIntakeRevampCentre({
                 <span><strong>{importedDraft.projects.length}</strong> projects</span>
                 <span><strong>{importedDraft.certifications.length}</strong> certifications</span>
               </div>
+
+              {importedDraft.missing_details.length ? (
+                <div className={checkStyles.verifyBox}>
+                  <strong>AI recommendations - information to add</strong>
+                  <p>
+                    These items were not found in the uploaded CV. Add only
+                    accurate information; the AI will improve wording and
+                    placement but will never invent client facts.
+                  </p>
+                  <ul>
+                    {importedDraft.missing_details.map((detail) => (
+                      <li key={detail}>{detail}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
 
               <div className={checkStyles.guidedQuestions}>
                 <div>
