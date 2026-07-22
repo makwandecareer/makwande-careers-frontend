@@ -308,7 +308,10 @@ pre.output {
   color: #526158;
   font-size: 11px;
 }
-.cv-section { margin-top: 23px; }
+.cv-section {
+  margin-top: 20px;
+  break-inside: auto;
+}
 .cv-section h2 {
   margin: 0 0 11px;
   padding-bottom: 5px;
@@ -326,12 +329,17 @@ pre.output {
   line-height: 1.55;
 }
 .cv-section ul { margin: 0; padding-left: 18px; }
-.cv-stack { display: grid; gap: 16px; }
+.cv-stack { display: grid; gap: 14px; }
+.cv-entry {
+  break-inside: auto;
+}
 .cv-entry-heading {
   display: flex;
   justify-content: space-between;
   gap: 22px;
   align-items: flex-start;
+  break-after: avoid;
+  page-break-after: avoid;
 }
 .cv-entry h3 {
   margin: 0;
@@ -345,16 +353,32 @@ pre.output {
   text-align: right;
 }
 .cv-entry-meta span { display: block; margin-bottom: 3px; }
+.cv-duty-list {
+  display: grid;
+  gap: 4px;
+  margin: 7px 0 0 !important;
+  padding-left: 17px !important;
+}
+.cv-duty-list li {
+  margin: 0;
+  padding-left: 2px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
 .cv-skill-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 7px 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 22px;
+  margin: 0 !important;
+  padding-left: 17px !important;
 }
-.cv-skill-grid span {
-  padding: 6px 8px;
-  border-left: 3px solid var(--brand);
-  background: #f5f8f6;
-  font-size: 11px;
+.cv-skill-grid li {
+  margin: 0;
+  padding-left: 2px;
+  background: transparent;
+  font-size: 11.5px;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 .cv-two-column,
 .cv-reference-grid {
@@ -367,7 +391,7 @@ pre.output {
 .cv-template-graduate .cv-header { border-bottom-color: #2869a7; }
 .cv-template-graduate .cv-role,
 .cv-template-graduate .cv-section h2 { color: #1f568a; }
-.cv-template-graduate .cv-skill-grid span { border-left-color: #2869a7; }
+.cv-template-graduate .cv-skill-grid li::marker { color: #2869a7; }
 .cv-template-professional .cv-header {
   padding: 25px;
   border: 0;
@@ -386,10 +410,7 @@ pre.output {
   border-bottom-color: #202020;
   text-align: center;
 }
-.cv-template-executive .cv-skill-grid span {
-  border-left-color: #202020;
-  background: #f4f4f4;
-}
+.cv-template-executive .cv-skill-grid li::marker { color: #202020; }
 .empty-state {
   display: grid;
   justify-items: start;
@@ -873,6 +894,27 @@ pre.output {
   .app-content {
     padding: 20px !important;
   }
+}
+
+.cv-declaration {
+  margin-top: 22px;
+  padding-top: 10px;
+  border-top: 1px solid #9aa7a0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.cv-declaration h2 {
+  margin: 0 0 5px;
+  font-size: 0.9em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cv-declaration p {
+  margin: 0;
+  font-size: 0.78em;
+  line-height: 1.45;
 }
 /* OpenAI career engine and Paystack billing */
 .ai-workspace { align-items: start; }

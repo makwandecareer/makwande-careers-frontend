@@ -1,5 +1,6 @@
 import type { GeneratedCV, ProfileBundle } from "@/lib/types";
 import type { CVSectionKey, CVSettings, CVTemplateKey } from "@/lib/cv-builder";
+import { CV_POPIA_DECLARATION, formatEmploymentPeriod } from "@/lib/cv-standards";
 
 function value(record: Record<string, unknown>, ...keys: string[]): string {
   for (const key of keys) {
@@ -38,6 +39,57 @@ function skillName(item: unknown): string {
   return "";
 }
 
+function cleanPoint(item: unknown): string {
+  if (typeof item === "string") {
+    return item
+      .replace(/^\s*(?:[•●▪◦*-]|\d+[.)])\s*/, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  if (typeof item === "object" && item !== null) {
+    return value(
+      item as Record<string, unknown>,
+      "description",
+      "text",
+      "name",
+      "achievement",
+      "responsibility",
+      "duty",
+    );
+  }
+  return "";
+}
+
+function pointForm(input: unknown): string[] {
+  const candidates = Array.isArray(input)
+    ? input.flatMap((item) => pointForm(item))
+    : typeof input === "string"
+      ? input
+          .replace(/\r/g, "")
+          .split(/\n+|(?<=[.!?])\s+(?=[A-Z])/)
+      : [input];
+
+  const seen = new Set<string>();
+  return candidates
+    .map(cleanPoint)
+    .filter((item) => {
+      const key = item.toLocaleLowerCase();
+      if (!item || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function experiencePoints(item: Record<string, unknown>): string[] {
+  const structured = [
+    item.responsibilities,
+    item.duties,
+    item.achievements,
+    item.key_achievements,
+  ].flatMap(pointForm);
+  return structured.length ? pointForm(structured) : pointForm(item.description);
+}
+
 export function CVPreview({
   bundle,
   generated,
@@ -64,10 +116,11 @@ export function CVPreview({
     profile?.professional_summary ||
     "";
 
-  const skills =
+  const skills = pointForm(
     Array.isArray(content.skills) && content.skills.length
       ? content.skills.map(skillName).filter(Boolean)
-      : bundle.skills.map((item) => value(item, "name", "skill")).filter(Boolean);
+      : bundle.skills.map((item) => value(item, "name", "skill")).filter(Boolean),
+  );
   const experience = records(content.experience, bundle.experience);
   const education = records(content.education, bundle.education);
   const projects = records(content.projects, bundle.projects);
@@ -126,12 +179,16 @@ export function CVPreview({
                     <p>{value(item, "company")}</p>
                   </div>
                   <div className="cv-entry-meta">
-                    <span>{period(item)}</span>
+                    <span>{formatEmploymentPeriod(item)}</span>
                     <span>{value(item, "location")}</span>
                   </div>
                 </div>
-                {value(item, "description") && (
-                  <p>{value(item, "description")}</p>
+                {experiencePoints(item).length > 0 && (
+                  <ul className="cv-duty-list">
+                    {experiencePoints(item).map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
                 )}
               </div>
             ))}
@@ -167,11 +224,11 @@ export function CVPreview({
       {skills.length > 0 && (
         <section className="cv-section">
           <h2>Core Skills</h2>
-          <div className="cv-skill-grid">
+          <ul className="cv-skill-grid">
             {skills.map((skill) => (
-              <span key={skill}>{skill}</span>
+              <li key={skill}>{skill}</li>
             ))}
-          </div>
+          </ul>
         </section>
       )}
 
@@ -252,6 +309,11 @@ export function CVPreview({
           </div>
         </section>
       )}
+
+      <footer className="cv-declaration">
+        <h2>Declaration and POPIA Consent</h2>
+        <p>{CV_POPIA_DECLARATION}</p>
+      </footer>
     </article></div>
   );
 }
