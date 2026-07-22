@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import "./workspace-alignment.css";
 import { useSearchParams } from "next/navigation";
 
@@ -309,8 +309,8 @@ function CVBuilderContent() {
 
   function useImportedDraft(draft: ImportedCVDraft): void {
     const verifiedEvidence = [
-      ...draft.intake_answers,
-      draft.additional_details,
+      ...(draft.intake_answers ?? []),
+      draft.additional_details ?? "",
     ].filter((value) => value.trim());
     const professionalSummary = [
       draft.professional_summary,
@@ -333,7 +333,7 @@ function CVBuilderContent() {
       languages: draft.languages.map((name) => ({ name })),
       references: "Available upon request",
       candidate_level: draft.candidate_level,
-      additional_details: draft.additional_details,
+      additional_details: draft.additional_details ?? "",
       intake_answers: draft.intake_answers,
     };
 
