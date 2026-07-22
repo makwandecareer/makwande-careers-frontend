@@ -2,78 +2,165 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import {
   Bell,
+  BookOpen,
+  BriefcaseBusiness,
   ChevronDown,
-  FileCheck2,
+  CreditCard,
   FileText,
   LayoutTemplate,
-  Menu,
-  ScanSearch,
+  LogOut,
+  Search,
+  Settings,
+  ShieldCheck,
   Sparkles,
   UserRound,
-  X,
 } from "lucide-react";
 
-import styles from "./dashboard-topbar.module.css";
-
-const documentLinks = [
-  { label: "My CVs", detail: "Create, edit and download your CVs", href: "/dashboard/cvs", icon: FileText },
-  { label: "Upload & improve", detail: "Turn an existing CV into an ATS-ready draft", href: "/dashboard/cv-builder?workspace=cv-intake-revamp", icon: Sparkles },
-  { label: "ATS CV check", detail: "Score structure, keywords and readability", href: "/dashboard/cv-builder?workspace=ats", icon: ScanSearch },
-  { label: "Cover letters", detail: "Create job-specific application letters", href: "/dashboard/cover-letter", icon: FileCheck2 },
-  { label: "Templates", detail: "Choose an A4 recruiter-ready design", href: "/dashboard/templates", icon: LayoutTemplate },
+const primaryLinks = [
+  { href: "/dashboard/jobs", label: "Jobs", icon: BriefcaseBusiness },
+  { href: "/dashboard/cvs", label: "Documents", icon: FileText },
+  { href: "/dashboard/templates", label: "Templates", icon: LayoutTemplate },
+  { href: "/dashboard/career", label: "Resources", icon: BookOpen },
+  { href: "/dashboard/ai-engine", label: "AI Tools", icon: Sparkles },
+  { href: "/dashboard/billing", label: "Pricing", icon: CreditCard },
 ];
 
+function isActive(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function DashboardTopbar() {
-  const [documentsOpen, setDocumentsOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    function closeMenu(event: MouseEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false);
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setMenuOpen(false);
+    }
+
+    document.addEventListener("mousedown", closeMenu);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeMenu);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
+
+  async function logout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
-    <header className={styles.topbar}>
-      <Link href="/dashboard" className={styles.brand} aria-label="Makwande Careers dashboard">
-        <Image src="/makwande-careers-logo.jpeg" alt="" width={38} height={38} priority />
-        <span><strong>Makwande</strong><small>Careers</small></span>
+    <header className="dashboard-topbar">
+      <Link className="dashboard-topbar-brand" href="/dashboard" aria-label="Makwande Careers dashboard">
+        <Image
+          src="/makwande-careers-logo.jpeg"
+          alt=""
+          width={40}
+          height={40}
+          priority
+        />
+        <span>
+          <strong>Makwande Careers</strong>
+          <small>Career Platform</small>
+        </span>
       </Link>
 
-      <button className={styles.mobileToggle} type="button" onClick={() => setMobileOpen((value) => !value)} aria-label="Toggle navigation">
-        {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-      </button>
-
-      <nav className={`${styles.nav} ${mobileOpen ? styles.mobileOpen : ""}`} aria-label="Primary dashboard navigation">
-        <Link href="/dashboard/cv-builder?workspace=matching">Jobs</Link>
-        <div className={styles.dropdown}>
-          <button type="button" onClick={() => setDocumentsOpen((value) => !value)} aria-expanded={documentsOpen}>
-            Documents <ChevronDown size={15} />
-          </button>
-          {documentsOpen ? (
-            <div className={styles.menu}>
-              <div className={styles.menuIntro}>
-                <span>Career documents</span>
-                <strong>Everything required for a complete application</strong>
-              </div>
-              <div className={styles.menuGrid}>
-                {documentLinks.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link key={item.label} href={item.href} onClick={() => setDocumentsOpen(false)}>
-                      <Icon size={20} />
-                      <span><strong>{item.label}</strong><small>{item.detail}</small></span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-        </div>
-        <Link href="/dashboard/cv-builder?workspace=career-operating-system">Career tools</Link>
-        <Link href="/dashboard/billing">Pricing</Link>
+      <nav className="dashboard-topbar-links" aria-label="Primary dashboard navigation">
+        {primaryLinks.map(({ href, label, icon: Icon }) => (
+          <Link
+            className={isActive(pathname, href) ? "dashboard-topbar-link is-active" : "dashboard-topbar-link"}
+            href={href}
+            key={href}
+          >
+            <Icon aria-hidden size={16} />
+            <span>{label}</span>
+          </Link>
+        ))}
       </nav>
 
-      <div className={styles.account}>
-        <Link href="/dashboard/notifications" aria-label="Notifications"><Bell size={19} /></Link>
-        <Link href="/dashboard/profile"><UserRound size={19} /><span>My account</span></Link>
+      <div className="dashboard-topbar-actions">
+        <Link
+          aria-label="Search jobs"
+          className="dashboard-icon-button"
+          href="/dashboard/job-matcher"
+          title="Search"
+        >
+          <Search aria-hidden size={20} />
+        </Link>
+
+        <Link
+          aria-label="Notifications"
+          className="dashboard-icon-button"
+          href="/dashboard/notifications"
+          title="Notifications"
+        >
+          <Bell aria-hidden size={20} />
+        </Link>
+
+        <div className="dashboard-account" ref={menuRef}>
+          <button
+            aria-expanded={menuOpen}
+            aria-haspopup="menu"
+            className="dashboard-account-button"
+            onClick={() => setMenuOpen((open) => !open)}
+            type="button"
+          >
+            <span className="dashboard-account-avatar">
+              <UserRound aria-hidden size={18} />
+            </span>
+            <span className="dashboard-account-copy">
+              <strong>My Account</strong>
+              <small>Member</small>
+            </span>
+            <ChevronDown aria-hidden size={17} />
+          </button>
+
+          {menuOpen && (
+            <div className="dashboard-account-menu" role="menu">
+              <Link href="/dashboard/profile" role="menuitem">
+                <UserRound aria-hidden size={17} />
+                Profile
+              </Link>
+              <Link href="/dashboard/settings" role="menuitem">
+                <Settings aria-hidden size={17} />
+                Settings
+              </Link>
+              <Link href="/dashboard/security" role="menuitem">
+                <ShieldCheck aria-hidden size={17} />
+                Security
+              </Link>
+              <Link href="/dashboard/billing" role="menuitem">
+                <CreditCard aria-hidden size={17} />
+                Billing & Plans
+              </Link>
+              <Link href="/contact" role="menuitem">
+                <BookOpen aria-hidden size={17} />
+                Contact Support
+              </Link>
+              <button onClick={logout} role="menuitem" type="button">
+                <LogOut aria-hidden size={17} />
+                Sign out
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
