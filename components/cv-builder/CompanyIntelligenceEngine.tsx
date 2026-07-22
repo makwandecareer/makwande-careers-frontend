@@ -111,7 +111,7 @@ export function CompanyIntelligenceEngine({
             Build a company-specific recruitment brief using the vacancy,
             candidate evidence and verified research. The engine explains why
             the role exists, what success may look like and how to speak to the
-            organisation's priorities.
+            organisation&amp;apos;s priorities.
           </p>
         </div>
 

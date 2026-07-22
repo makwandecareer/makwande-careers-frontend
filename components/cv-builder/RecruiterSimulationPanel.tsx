@@ -112,7 +112,7 @@ export function RecruiterSimulationPanel({
           <span className={styles.eyebrow}>
             Phase 8 · AI Recruiter Simulation
           </span>
-          <h2>See the application through the hiring team's eyes</h2>
+          <h2>See the application through the hiring team&amp;apos;s eyes</h2>
           <p>
             Simulate recruiter, HR, hiring-manager, technical and executive
             reviews using transparent evidence-based scoring.
@@ -290,7 +290,7 @@ export function RecruiterSimulationPanel({
             <h3>How the simulation works</h3>
             <p>
               The system evaluates the application evidence available in the
-              CV and vacancy. It does not claim to know an employer's actual
+              CV and vacancy. It does not claim to know an employer&amp;apos;s actual
               decision and does not use sensitive personal characteristics.
             </p>
             <ol>
