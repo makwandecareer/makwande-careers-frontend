@@ -942,6 +942,7 @@ pre.output {
 .payment-trust { display: flex; align-items: center; gap: 14px; max-width: 980px; margin-top: 22px; }
 .payment-trust svg { color: var(--brand); flex: none; }
 .payment-trust p { margin: 4px 0 0; }
+.billing-includes{display:grid;grid-template-columns:minmax(240px,.8fr) minmax(0,1.4fr);gap:28px;max-width:980px;margin-bottom:22px;padding:24px;border:1px solid #d9e5df;border-radius:18px;background:#fff}.billing-includes h2{margin:6px 0 0;font-size:1.35rem}.billing-shared{display:grid;gap:12px}.billing-shared article{display:flex;gap:12px;align-items:flex-start}.billing-shared svg{color:var(--brand);flex:none}.billing-shared strong{display:block}.billing-shared p{margin:3px 0 0;color:#607168;font-size:.88rem}.checkout-consent{max-width:980px;margin-top:22px}.checkout-consent label{display:flex;align-items:flex-start;gap:12px;font-weight:650;line-height:1.55}.checkout-consent input{width:20px;height:20px;margin-top:2px;accent-color:var(--brand);flex:none}.checkout-consent a,.payment-links a{color:var(--brand);font-weight:800}.checkout-consent small{display:block;margin:8px 0 0 32px;color:#7d5c20}.payment-links{display:flex;flex-wrap:wrap;gap:16px!important;margin-top:10px!important}.pricing-card button:disabled{cursor:not-allowed;opacity:.55}
 .payment-callback-shell { background: radial-gradient(circle at top, #e4f4ea, var(--bg) 48%); }
 .payment-callback-card { width: min(520px, 100%); text-align: center; display: grid; gap: 18px; justify-items: center; }
 .callback-icon { width: 66px; height: 66px; }
@@ -949,4 +950,4 @@ pre.output {
 .error-icon { color: var(--danger); }
 .payment-callback-card h1 { margin: 0; }
 .payment-callback-card .success { width: 100%; overflow-wrap: anywhere; }
-@media (max-width: 760px) { .billing-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .billing-grid,.billing-includes { grid-template-columns: 1fr; } }

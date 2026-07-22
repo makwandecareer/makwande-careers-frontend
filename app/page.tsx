@@ -140,7 +140,7 @@ const coreModules = [
 
 const faqs = [
   ["What is included in 14-day access?", "Candidates receive access to CV creation, ATS analysis, career intelligence, job matching, application preparation and supported exports during the active period."],
-  ["Can I cancel premium?", "Yes. Premium renewal will be cancellable from account settings, with access continuing until the end of the paid period."],
+  ["Does access renew automatically?", "No. The current R45 and R300 plans are once-off access purchases. Access ends after the selected 14-day or 30-day period."],
   ["Does the AI invent experience?", "No. The system is designed to work from candidate-supplied evidence and avoid inventing unsupported achievements, qualifications or company facts."],
   ["Can I download my CV?", "Yes. Supported CVs can be exported in PDF and DOCX formats."],
 ];
@@ -346,11 +346,11 @@ export default function HomePage() {
             <span className="plan">30-Day Premium</span>
             <div className="price"><small>R</small><strong>300</strong></div>
             <p>Complete access for an active job-search month.</p>
-            <ul><li><Check size={16}/>Everything in 14-Day Access</li><li><Check size={16}/>Opportunity Dashboard</li><li><Check size={16}/>Recruiter and interview simulations</li><li><Check size={16}/>Career progress tools</li><li><Check size={16}/>Cancel renewal from settings</li></ul>
+            <ul><li><Check size={16}/>Everything in 14-Day Access</li><li><Check size={16}/>Opportunity Dashboard</li><li><Check size={16}/>Recruiter and interview simulations</li><li><Check size={16}/>Career progress tools</li><li><Check size={16}/>Once-off 30-day access</li></ul>
             <Link href="/register">Start premium access</Link>
           </article>
         </div>
-        <div className="paymentTrust"><LockKeyhole size={18}/>Secure Paystack checkout will be used for subscriptions.</div>
+        <div className="paymentTrust"><LockKeyhole size={18}/>Secure Paystack checkout is used for once-off access payments.</div>
       </section>
 
       <section className="faq" id="faq">
@@ -384,7 +384,7 @@ export default function HomePage() {
           </div>
           <div><strong>Platform</strong><Link href="/register">AI CV Builder</Link><Link href="/register">ATS Intelligence</Link><Link href="/register">Job Matching</Link></div>
           <div><strong>Company</strong><a href="#founder">Founder</a><a href="#testimonials">Testimonials</a><a href="#pricing">Pricing</a></div>
-          <div><strong>Account</strong><Link href="/login">Sign in</Link><Link href="/register">Register</Link><a href="#faq">Terms</a></div>
+          <div><strong>Account</strong><Link href="/login">Sign in</Link><Link href="/register">Register</Link><Link href="/terms">Terms & conditions</Link><Link href="/privacy">Privacy</Link><Link href="/contact">Contact</Link></div>
         </div>
         <div className="footerBottom"><span>© 2026 Makwande Careers.</span><span>Built in South Africa.</span></div>
       </footer>
