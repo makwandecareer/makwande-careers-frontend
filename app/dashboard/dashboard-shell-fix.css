@@ -4,12 +4,19 @@ html, body {
   overflow-x: hidden;
 }
 
+.dashboard-frame {
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #f4f7f5;
+}
+
 .app-shell {
   display: flex !important;
   align-items: stretch;
   width: 100%;
   max-width: 100vw;
-  min-height: 100vh;
+  min-height: calc(100vh - 68px);
   overflow: hidden;
   background: #f4f7f5;
 }
@@ -20,7 +27,7 @@ html, body {
   flex: 0 0 308px;
   width: 308px;
   min-width: 308px;
-  height: 100vh;
+  height: calc(100vh - 68px);
 }
 
 .app-content {
@@ -30,7 +37,7 @@ html, body {
   width: auto !important;
   min-width: 0;
   max-width: calc(100vw - 308px);
-  height: 100vh;
+  height: calc(100vh - 68px);
   overflow-x: hidden;
   overflow-y: auto;
   background: #f4f7f5;
