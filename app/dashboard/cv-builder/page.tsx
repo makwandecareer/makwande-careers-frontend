@@ -111,6 +111,27 @@ const WORKSPACE_TAB_VALUES = [
   "writer",
   "matching",
   "opportunities",
+  "skill-gaps",
+  "career-fit",
+  "coach",
+  "progress",
+  "career-goals",
+  "interview-studio",
+  "recruitment-intelligence",
+  "company-intelligence",
+  "dynamic-interview",
+  "interview-simulation",
+  "experience-interview",
+  "technical-deep-dive",
+  "pressure-interview",
+  "executive-interview",
+  "assessment-centre",
+  "career-copilot",
+  "opportunity-intelligence",
+  "application-command-centre",
+  "recruiter-employer-portal",
+  "career-operating-system",
+  "cv-intake-revamp",
 ] as const;
 
 type WorkspaceTab = (typeof WORKSPACE_TAB_VALUES)[number];
@@ -350,7 +371,7 @@ function CVBuilderContent() {
     <div className="page-header builder-header">
       <div>
         <span className="eyebrow">
-          Phase 13 Â· AI Career Copilot
+          Phase 13 · AI Career Copilot
         </span>
         <h1>Your intelligent career command centre</h1>
         <p className="muted">
