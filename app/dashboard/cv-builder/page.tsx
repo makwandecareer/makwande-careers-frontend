@@ -1,6 +1,6 @@
 "use client";
 import "./workspace-alignment.css";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   Suspense,
@@ -56,6 +56,12 @@ import type {
   GeneratedCV,
   ProfileBundle,
 } from "@/lib/types";
+import { createStudioDraft } from "@/lib/cv-studio";
+import {
+  applyTemplateToDraft,
+  readSelectedTemplate,
+  STUDIO_DRAFT_KEY,
+} from "@/lib/template-process";
 
 type BuilderTab =
   | "build"
@@ -141,6 +147,7 @@ function isWorkspaceTab(value: string | null): value is WorkspaceTab {
   return value !== null && WORKSPACE_TAB_VALUES.includes(value as WorkspaceTab);
 }
 function CVBuilderContent() {
+  const router = useRouter();
   const workspaceSearchParams = useSearchParams();
 
   const [bundle, setBundle] = useState<ProfileBundle | null>(null);
@@ -350,6 +357,38 @@ function CVBuilderContent() {
       template_key: draft.suggested_template,
       content,
     });
+    if (bundle) {
+      let studioDraft = createStudioDraft(bundle);
+      studioDraft = {
+        ...studioDraft,
+        cvTitle: `${candidateName} - ${role} CV`,
+        targetRole: role,
+        profile: {
+          ...studioDraft.profile,
+          fullName: draft.personal_details.full_name || bundle.user.full_name,
+          email: draft.personal_details.email || bundle.user.email,
+          phone: draft.personal_details.phone,
+          location: draft.personal_details.location,
+          linkedin: draft.personal_details.linkedin_url,
+          website: draft.personal_details.portfolio_url,
+          professionalTitle: role,
+          summary: professionalSummary,
+        },
+        experience: draft.experience,
+        education: draft.education,
+        skills: draft.skills.map((name) => ({ name })),
+        projects: draft.projects,
+        certifications: draft.certifications,
+        languages: draft.languages.map((name) => ({ name })),
+      };
+
+      const selectedTemplate = readSelectedTemplate();
+      if (selectedTemplate) {
+        studioDraft = applyTemplateToDraft(studioDraft, selectedTemplate);
+      }
+
+      localStorage.setItem(STUDIO_DRAFT_KEY, JSON.stringify(studioDraft));
+    }
     setMessage("Imported CV reviewed. Complete any final edits, then generate and save.");
     setTab("build");
   }
@@ -665,6 +704,7 @@ function CVBuilderContent() {
             onStartFromScratch={() => setTab("build")}
             onContinueToBuilder={() => setTab("build")}
             onOpenAts={() => setTab("ats")}
+            onOpenTemplates={() => router.push("/dashboard/templates")}
             onUseImportedDraft={useImportedDraft}
           />
         ) : tab === "career-operating-system" ? (

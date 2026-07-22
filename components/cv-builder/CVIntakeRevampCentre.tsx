@@ -21,6 +21,7 @@ interface Props {
   onStartFromScratch: () => void;
   onContinueToBuilder: () => void;
   onOpenAts: () => void;
+  onOpenTemplates: () => void;
   onUseImportedDraft: (draft: ImportedCVDraft) => void;
 }
 
@@ -83,6 +84,7 @@ export function CVIntakeRevampCentre({
   onStartFromScratch,
   onContinueToBuilder,
   onOpenAts,
+  onOpenTemplates,
   onUseImportedDraft,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -627,6 +629,9 @@ export function CVIntakeRevampCentre({
               <div>
                 <button type="button" onClick={onOpenAts}>
                   Open ATS Optimiser
+                </button>
+                <button type="button" onClick={onOpenTemplates}>
+                  Choose A4 template
                 </button>
                 <button
                   type="button"
