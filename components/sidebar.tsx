@@ -16,6 +16,7 @@ import {
   Building2,
   CalendarDays,
   ClipboardList,
+  CreditCard,
   FileText,
   FolderKanban,
   Gauge,
@@ -108,6 +109,7 @@ const navigation: NavSection[] = [
   {
     title: "Account",
     items: [
+      { href: "/dashboard/billing", label: "Billing & Plans", icon: CreditCard },
       { href: "/dashboard/settings", label: "Settings", icon: Settings },
       { href: "/dashboard/security", label: "Security", icon: ShieldCheck },
     ],
