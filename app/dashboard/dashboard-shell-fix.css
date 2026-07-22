@@ -16,7 +16,7 @@ html, body {
   align-items: stretch;
   width: 100%;
   max-width: 100vw;
-  min-height: calc(100vh - 68px);
+  min-height: calc(100vh - 72px);
   overflow: hidden;
   background: #f4f7f5;
 }
@@ -27,7 +27,7 @@ html, body {
   flex: 0 0 308px;
   width: 308px;
   min-width: 308px;
-  height: calc(100vh - 68px);
+  height: calc(100vh - 72px);
 }
 
 .app-content {
@@ -37,7 +37,7 @@ html, body {
   width: auto !important;
   min-width: 0;
   max-width: calc(100vw - 308px);
-  height: calc(100vh - 68px);
+  height: calc(100vh - 72px);
   overflow-x: hidden;
   overflow-y: auto;
   background: #f4f7f5;
