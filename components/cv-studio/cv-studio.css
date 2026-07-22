@@ -3,8 +3,8 @@
 */
 
 .cv-studio-shell {
-  --studio-page-width: 794px;
-  --studio-page-height: 1123px;
+  --studio-page-width: 210mm;
+  --studio-page-height: 297mm;
   --studio-page-gap: 32px;
   --studio-toolbar-height: 72px;
   min-height: calc(100vh - 60px);
@@ -440,6 +440,7 @@
 }
 
 .cv-studio-shell .studio-cv-page {
+  box-sizing: border-box;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -945,6 +946,10 @@
 }
 
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
   body * {
     visibility: hidden !important;
   }

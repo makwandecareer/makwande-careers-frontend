@@ -48,7 +48,7 @@ export function CVPreview({
   const padding = settings.margin === "narrow" ? "34px 38px" : settings.margin === "wide" ? "72px 78px" : "54px 58px";
 
   return (
-    <div style={{transform:`scale(${zoom})`,transformOrigin:"top center"}}><article className={templateClass} aria-label="CV preview" style={{fontFamily:settings.font,fontSize:`${settings.fontSize}px`,lineHeight:settings.lineHeight,padding,width:settings.paperSize==="letter"?"816px":"794px",minHeight:settings.paperSize==="letter"?"1056px":"1123px",["--cv-accent" as string]:settings.accent}}>
+    <div style={{transform:`scale(${zoom})`,transformOrigin:"top center"}}><article className={templateClass} aria-label="A4 CV preview" style={{boxSizing:"border-box",fontFamily:settings.font,fontSize:`${settings.fontSize}px`,lineHeight:settings.lineHeight,padding,width:"210mm",minHeight:"297mm",["--cv-accent" as string]:settings.accent}}>
       <header className="cv-header">
         <h1>{bundle.user.full_name}</h1>
         <p className="cv-role">
