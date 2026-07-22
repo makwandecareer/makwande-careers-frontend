@@ -18,6 +18,26 @@ function period(record: Record<string, unknown>): string {
   return [start, end].filter(Boolean).join(" – ");
 }
 
+function records(
+  candidate: unknown,
+  fallback: Record<string, unknown>[],
+): Record<string, unknown>[] {
+  return Array.isArray(candidate)
+    ? candidate.filter(
+        (item): item is Record<string, unknown> =>
+          typeof item === "object" && item !== null,
+      )
+    : fallback;
+}
+
+function skillName(item: unknown): string {
+  if (typeof item === "string") return item;
+  if (typeof item === "object" && item !== null) {
+    return value(item as Record<string, unknown>, "name", "skill");
+  }
+  return "";
+}
+
 export function CVPreview({
   bundle,
   generated,
@@ -34,6 +54,11 @@ export function CVPreview({
 }) {
   const profile = bundle.profile;
   const content = generated?.content || {};
+  const importedPersonal =
+    typeof content.personal_details === "object" &&
+    content.personal_details !== null
+      ? (content.personal_details as Record<string, unknown>)
+      : {};
   const summary =
     String(content.professional_summary || content.summary || "") ||
     profile?.professional_summary ||
@@ -41,8 +66,27 @@ export function CVPreview({
 
   const skills =
     Array.isArray(content.skills) && content.skills.length
-      ? content.skills.map(String)
+      ? content.skills.map(skillName).filter(Boolean)
       : bundle.skills.map((item) => value(item, "name", "skill")).filter(Boolean);
+  const experience = records(content.experience, bundle.experience);
+  const education = records(content.education, bundle.education);
+  const projects = records(content.projects, bundle.projects);
+  const certifications = records(content.certifications, bundle.certifications);
+  const languages = records(content.languages, bundle.languages);
+  const references = records(content.references, bundle.references);
+  const fullName =
+    value(importedPersonal, "full_name") || bundle.user.full_name;
+  const email = value(importedPersonal, "email") || bundle.user.email;
+  const phone = value(importedPersonal, "phone") || profile?.phone || "";
+  const location = value(importedPersonal, "location") || profile?.location || "";
+  const linkedin =
+    value(importedPersonal, "linkedin_url", "linkedin") ||
+    profile?.linkedin_url ||
+    "";
+  const website =
+    value(importedPersonal, "website_url", "portfolio_url", "website") ||
+    profile?.website_url ||
+    "";
 
   const templateClass = `cv-document cv-template-${template}`;
   const padding = settings.margin === "narrow" ? "34px 38px" : settings.margin === "wide" ? "72px 78px" : "54px 58px";
@@ -50,16 +94,16 @@ export function CVPreview({
   return (
     <div style={{transform:`scale(${zoom})`,transformOrigin:"top center"}}><article className={templateClass} aria-label="A4 CV preview" style={{boxSizing:"border-box",fontFamily:settings.font,fontSize:`${settings.fontSize}px`,lineHeight:settings.lineHeight,padding,width:"210mm",minHeight:"297mm",["--cv-accent" as string]:settings.accent}}>
       <header className="cv-header">
-        <h1>{bundle.user.full_name}</h1>
+        <h1>{fullName}</h1>
         <p className="cv-role">
           {targetRole || profile?.professional_title || "Professional"}
         </p>
         <div className="cv-contact">
-          {profile?.phone && <span>{profile.phone}</span>}
-          <span>{bundle.user.email}</span>
-          {profile?.location && <span>{profile.location}</span>}
-          {profile?.linkedin_url && <span>{profile.linkedin_url}</span>}
-          {profile?.website_url && <span>{profile.website_url}</span>}
+          {phone && <span>{phone}</span>}
+          <span>{email}</span>
+          {location && <span>{location}</span>}
+          {linkedin && <span>{linkedin}</span>}
+          {website && <span>{website}</span>}
         </div>
       </header>
 
@@ -70,11 +114,11 @@ export function CVPreview({
         </section>
       )}
 
-      {bundle.experience.length > 0 && (
+      {experience.length > 0 && (
         <section className="cv-section">
           <h2>Professional Experience</h2>
           <div className="cv-stack">
-            {bundle.experience.map((item, index) => (
+            {experience.map((item, index) => (
               <div className="cv-entry" key={String(item.id || index)}>
                 <div className="cv-entry-heading">
                   <div>
@@ -95,11 +139,11 @@ export function CVPreview({
         </section>
       )}
 
-      {bundle.education.length > 0 && (
+      {education.length > 0 && (
         <section className="cv-section">
           <h2>Education</h2>
           <div className="cv-stack">
-            {bundle.education.map((item, index) => (
+            {education.map((item, index) => (
               <div className="cv-entry" key={String(item.id || index)}>
                 <div className="cv-entry-heading">
                   <div>
@@ -131,11 +175,11 @@ export function CVPreview({
         </section>
       )}
 
-      {bundle.projects.length > 0 && (
+      {projects.length > 0 && (
         <section className="cv-section">
           <h2>Projects</h2>
           <div className="cv-stack">
-            {bundle.projects.map((item, index) => (
+            {projects.map((item, index) => (
               <div className="cv-entry" key={String(item.id || index)}>
                 <div className="cv-entry-heading">
                   <div>
@@ -156,11 +200,11 @@ export function CVPreview({
       )}
 
       <div className="cv-two-column">
-        {bundle.certifications.length > 0 && (
+        {certifications.length > 0 && (
           <section className="cv-section">
             <h2>Certifications</h2>
             <ul>
-              {bundle.certifications.map((item, index) => (
+              {certifications.map((item, index) => (
                 <li key={String(item.id || index)}>
                   <strong>{value(item, "name")}</strong>
                   {value(item, "issuer") && ` — ${value(item, "issuer")}`}
@@ -170,11 +214,11 @@ export function CVPreview({
           </section>
         )}
 
-        {bundle.languages.length > 0 && (
+        {languages.length > 0 && (
           <section className="cv-section">
             <h2>Languages</h2>
             <ul>
-              {bundle.languages.map((item, index) => (
+              {languages.map((item, index) => (
                 <li key={String(item.id || index)}>
                   <strong>{value(item, "name")}</strong>
                   {value(item, "proficiency") &&
@@ -186,11 +230,11 @@ export function CVPreview({
         )}
       </div>
 
-      {bundle.references.length > 0 && (
+      {references.length > 0 && (
         <section className="cv-section">
           <h2>References</h2>
           <div className="cv-reference-grid">
-            {bundle.references.map((item, index) => (
+            {references.map((item, index) => (
               <div key={String(item.id || index)}>
                 <strong>{value(item, "full_name")}</strong>
                 <p>
