@@ -117,3 +117,163 @@
     grid-template-columns: 1fr;
   }
 }
+
+.reviewPanel {
+  padding: 1.25rem;
+  border: 1px solid #bae6fd;
+  border-radius: 1.2rem;
+  background: linear-gradient(145deg, #ffffff, #f0f9ff);
+  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.08);
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.reviewHeader h2 {
+  margin: 0.3rem 0;
+}
+
+.reviewHeader p {
+  max-width: 760px;
+  margin: 0;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+.levelBadge {
+  padding: 0.48rem 0.7rem;
+  border-radius: 999px;
+  background: #0369a1;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.reviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.reviewGrid label,
+.guidedQuestions label {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.reviewGrid label > span,
+.guidedQuestions label > span {
+  color: #334155;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.reviewGrid input,
+.reviewGrid select,
+.reviewGrid textarea,
+.guidedQuestions textarea {
+  width: 100%;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.72rem;
+  background: #fff;
+  color: #0f172a;
+  font: inherit;
+}
+
+.reviewGrid textarea,
+.guidedQuestions textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.fullField {
+  grid-column: 1 / -1;
+}
+
+.importSummary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+
+.importSummary span {
+  padding: 0.7rem;
+  border: 1px solid #dbeafe;
+  border-radius: 0.7rem;
+  background: #fff;
+  color: #475569;
+  font-size: 0.7rem;
+}
+
+.importSummary strong {
+  display: block;
+  color: #0369a1;
+  font-size: 1.2rem;
+}
+
+.guidedQuestions {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dbeafe;
+}
+
+.guidedQuestions h3 {
+  margin: 0.2rem 0;
+}
+
+.verifyBox {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #fde68a;
+  border-radius: 0.8rem;
+  background: #fffbeb;
+  color: #854d0e;
+  font-size: 0.75rem;
+}
+
+.verifyBox ul {
+  margin: 0.45rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.buildButton {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-radius: 0.8rem;
+  background: #006943;
+  color: #fff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.buildButton:hover {
+  background: #005638;
+}
+
+@media (max-width: 720px) {
+  .reviewHeader {
+    display: grid;
+  }
+
+  .reviewGrid,
+  .importSummary {
+    grid-template-columns: 1fr;
+  }
+
+  .fullField {
+    grid-column: auto;
+  }
+}
