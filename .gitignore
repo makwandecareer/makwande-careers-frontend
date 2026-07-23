@@ -6,3 +6,5 @@ out/
 *.log
 cookies.txt
 test-cookies.txt
+__pycache__/
+*.pyc
