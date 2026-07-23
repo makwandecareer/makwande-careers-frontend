@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./admin-dashboard.css";
+import ExecutiveAnalytics from "./executive-analytics";
 
 type UserStatus = "active" | "suspended" | "pending";
 type PaymentStatus = "success" | "pending" | "failed";
@@ -396,6 +397,7 @@ export default function AdminDashboardPage() {
         <>
           {activeTab === "overview" && (
             <>
+              <ExecutiveAnalytics />
               <section className="admin-metrics-grid">
                 {[
                   ["Total users", data.metrics.totalUsers.toLocaleString(), `${activeRate}% active`, "US"],
