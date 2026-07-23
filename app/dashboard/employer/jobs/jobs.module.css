@@ -1,0 +1,23 @@
+.page{display:grid;gap:20px;max-width:1200px;margin:auto;padding:28px}
+.page>header{display:flex;justify-content:space-between;align-items:end;padding:28px;border:1px solid #dbe5ef;border-radius:22px;background:linear-gradient(135deg,#f8fbff,#fff)}
+.page>header span{color:#2563eb;font-size:.78rem;font-weight:800;text-transform:uppercase}
+.page h1{margin:5px 0;font-size:2.4rem}
+.page>header p{margin:0;color:#64748b}
+.page>header>a{display:flex;gap:8px;padding:13px 17px;border-radius:11px;background:#2563eb;color:#fff;text-decoration:none;font-weight:800}
+.toolbar{display:flex;gap:8px;padding:0 12px;border:1px solid #cbd5e1;border-radius:11px;background:#fff}
+.toolbar input{width:100%;padding:12px;border:0;outline:0}
+.page section{display:grid;gap:12px}
+.page article{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:15px;padding:18px;border:1px solid #dce5ee;border-radius:16px;background:#fff}
+.page article>svg{color:#2563eb}
+.page article h2{margin:4px 0;font-size:1rem}
+.page article p{margin:0;color:#7b8796;font-size:.82rem}
+.page article small{color:#2563eb;font-weight:800;text-transform:uppercase}
+.page aside{display:flex;gap:8px}
+.page aside button,.page aside a{display:flex;align-items:center;gap:6px;padding:10px;border:1px solid #d5deea;border-radius:9px;background:#fff;color:#334155;text-decoration:none}
+.error{padding:13px;background:#fef2f2;color:#b91c1c}
+@media(max-width:760px){
+  .page{padding:16px 14px 96px}
+  .page>header{align-items:stretch;flex-direction:column;gap:16px}
+  .page article{grid-template-columns:auto 1fr}
+  .page aside{grid-column:1/-1;flex-wrap:wrap}
+}
