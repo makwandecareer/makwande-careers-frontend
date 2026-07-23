@@ -1,0 +1,243 @@
+.dashboard-frame {
+  min-height: 100vh;
+}
+
+.dashboard-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  display: grid;
+  grid-template-columns: minmax(210px, 260px) minmax(0, 1fr) auto;
+  min-height: 72px;
+  align-items: center;
+  gap: 24px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, .97);
+  box-shadow: 0 5px 20px rgba(3, 71, 44, .07);
+  backdrop-filter: blur(14px);
+}
+
+.dashboard-topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.dashboard-topbar-brand img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+}
+
+.dashboard-topbar-brand span,
+.dashboard-account-copy {
+  display: grid;
+  line-height: 1.2;
+}
+
+.dashboard-topbar-brand strong {
+  color: var(--brand-dark);
+  font-size: 15px;
+}
+
+.dashboard-topbar-brand small,
+.dashboard-account-copy small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.dashboard-topbar-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dashboard-topbar-link {
+  position: relative;
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border-radius: 9px;
+  color: #34473b;
+  font-size: 13px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.dashboard-topbar-link:hover {
+  color: var(--brand-dark);
+  background: var(--brand-light);
+}
+
+.dashboard-topbar-link.is-active {
+  color: var(--brand);
+  background: var(--brand-light);
+}
+
+.dashboard-topbar-link.is-active::after {
+  position: absolute;
+  right: 12px;
+  bottom: -11px;
+  left: 12px;
+  height: 3px;
+  border-radius: 99px 99px 0 0;
+  background: var(--brand);
+  content: "";
+}
+
+.dashboard-topbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.dashboard-icon-button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #385044;
+}
+
+.dashboard-icon-button:hover {
+  border-color: var(--border);
+  background: var(--brand-light);
+  color: var(--brand);
+}
+
+.dashboard-account {
+  position: relative;
+}
+
+.dashboard-account-button {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 9px 4px 5px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  background: white;
+  cursor: pointer;
+}
+
+.dashboard-account-button:hover {
+  border-color: #b9cec1;
+  box-shadow: 0 7px 18px rgba(3, 71, 44, .08);
+}
+
+.dashboard-account-avatar {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 9px;
+  color: white;
+  background: var(--brand);
+}
+
+.dashboard-account-copy {
+  min-width: 84px;
+  text-align: left;
+}
+
+.dashboard-account-copy strong {
+  font-size: 12px;
+}
+
+.dashboard-account-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 100;
+  display: grid;
+  width: 230px;
+  overflow: hidden;
+  padding: 7px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 18px 50px rgba(14, 35, 23, .17);
+}
+
+.dashboard-account-menu a,
+.dashboard-account-menu button {
+  display: flex;
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 9px;
+  color: #273b30;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dashboard-account-menu a:hover,
+.dashboard-account-menu button:hover {
+  color: var(--brand-dark);
+  background: var(--brand-light);
+}
+
+.dashboard-account-menu button {
+  margin-top: 5px;
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 9px 9px;
+  color: #9b2c23;
+}
+
+.dashboard-frame .sidebar {
+  top: 72px;
+  height: calc(100vh - 72px);
+}
+
+@media (max-width: 1180px) {
+  .dashboard-topbar {
+    grid-template-columns: 220px minmax(0, 1fr) auto;
+    gap: 12px;
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .dashboard-topbar-link {
+    padding: 0 8px;
+  }
+
+  .dashboard-topbar-link svg {
+    display: none;
+  }
+
+  .dashboard-account-copy {
+    display: none;
+  }
+}
+
+@media (max-width: 930px) {
+  .dashboard-topbar {
+    display: none;
+  }
+
+  .dashboard-frame .sidebar {
+    top: 0;
+    height: auto;
+  }
+}

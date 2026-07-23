@@ -1,46 +1,25 @@
-# Makwande Careers AI Career Engine v1
+# Makwande Careers — CV Library Dashboard v2
 
-Backend patch for FastAPI using the OpenAI Responses API and structured outputs.
+This package upgrades `/dashboard/cvs` with:
 
-## Features
+- A professional CV workspace hero
+- Saved CV, average completion, recruiter-ready and latest activity metrics
+- Real completion calculations from essential CV sections
+- Responsive CV document cards
+- Clear empty and loading states
+- Recommended next-step guidance
+- Mobile, tablet and desktop layouts
+- Existing `/api/cvs` integration preserved
 
-- Career roadmap generation
-- Skills-gap analysis
-- Interview preparation
-- Cover-letter generation
-- Professional-summary improvement
-- Experience rewriting
-- Job-match analysis
-- Structured JSON responses
-- Uses the authenticated user's source-of-truth profile
-- OpenAI API key remains server-side
+## Installation
 
-## Install
+1. Extract the ZIP.
+2. Double-click `INSTALL-CV-LIBRARY-DASHBOARD-V2.bat`.
+3. Allow lint and production build to complete.
+4. The installer commits and pushes the current Git branch.
 
-1. Copy the supplied `app` folder into the backend project.
-2. Add `openai>=2.0.0` to `requirements.txt`.
-3. Add these environment variables:
+The installer expects the frontend at:
 
-```env
-OPENAI_API_KEY=your-secret-key
-OPENAI_MODEL=gpt-5.4-mini
-```
+`E:\Makwande_Careers_Dashboard_1430`
 
-4. In `app/main.py` add:
-
-```python
-from app.routes import ai_career_engine
-app.include_router(ai_career_engine.router, prefix="/api")
-```
-
-5. Restart the backend.
-
-## Endpoints
-
-- `POST /api/ai-career/roadmap`
-- `POST /api/ai-career/skills-gap`
-- `POST /api/ai-career/interview-prep`
-- `POST /api/ai-career/cover-letter`
-- `POST /api/ai-career/improve-summary`
-- `POST /api/ai-career/improve-experience`
-- `POST /api/ai-career/job-match`
+It will ask for another path when the project is not found there.
