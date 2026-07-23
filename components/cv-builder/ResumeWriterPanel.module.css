@@ -5,10 +5,12 @@
 }
 
 .hero,
+.commandBar,
 .workspace,
 .qualityGrid,
 .comparison,
 .insightGrid,
+.versionHistory,
 .guardrail {
   border: 1px solid #dce6df;
   border-radius: 20px;
@@ -21,12 +23,17 @@
   grid-template-columns: minmax(0, 1fr) 310px;
   gap: 22px;
   padding: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(12, 150, 96, 0.1), transparent 38%),
+    #fff;
 }
 
 .hero h2,
 .rewriteCard h3,
 .insightGrid h3,
-.guardrail h3 {
+.guardrail h3,
+.versionHistory h3,
+.outputIntro h3 {
   margin: 5px 0 9px;
 }
 
@@ -64,6 +71,7 @@
 
 .qualityCard strong {
   font-size: 34px;
+  color: #fff !important;
 }
 
 .qualityCard small {
@@ -71,9 +79,48 @@
   line-height: 1.4;
 }
 
+.commandBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 18px;
+}
+
+.commandBar > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.commandBar strong {
+  color: #203f32;
+}
+
+.commandActions,
+.rewriteActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.commandActions button,
+.rewriteActions button,
+.versionList button {
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid #cfe0d7;
+  border-radius: 9px;
+  background: #fff;
+  color: #24513e;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
 .workspace {
   display: grid;
-  grid-template-columns: minmax(300px, 0.8fr) minmax(0, 1.2fr);
+  grid-template-columns: minmax(310px, 0.82fr) minmax(0, 1.18fr);
   gap: 18px;
   padding: 20px;
 }
@@ -83,6 +130,7 @@
   display: grid;
   gap: 14px;
   align-content: start;
+  min-width: 0;
 }
 
 .inputColumn label {
@@ -90,25 +138,117 @@
   gap: 7px;
 }
 
-.inputColumn label > span {
+.inputColumn label > span,
+.quickActions > span {
   font-size: 12px;
   font-weight: 850;
 }
 
+.fieldHelp {
+  color: #74837b;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
 .inputColumn select,
-.inputColumn textarea {
+.inputColumn textarea,
+.outputEditor {
   width: 100%;
   border: 1px solid #d6e1da;
   border-radius: 11px;
   background: #fff;
   padding: 11px 12px;
   font: inherit;
+  box-sizing: border-box;
 }
 
 .inputColumn textarea {
   min-height: 145px;
   resize: vertical;
   line-height: 1.5;
+}
+
+.inputColumn textarea:focus,
+.outputEditor:focus {
+  border-color: #0d8558;
+  outline: 3px solid rgba(13, 133, 88, 0.11);
+}
+
+.sectionSelector {
+  display: grid;
+  gap: 9px;
+}
+
+.sectionSelector > div {
+  display: grid;
+  gap: 7px;
+}
+
+.sectionSelector button {
+  display: grid;
+  gap: 3px;
+  padding: 11px 12px;
+  border: 1px solid #dce6df;
+  border-radius: 11px;
+  background: #fbfdfc;
+  color: #264437;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sectionSelector button small {
+  color: #708078;
+  line-height: 1.35;
+}
+
+.sectionSelector button.activeSection {
+  border-color: #08754e;
+  background: #edf8f2;
+  box-shadow: 0 8px 18px rgba(8, 117, 78, 0.08);
+}
+
+.quickActions {
+  display: grid;
+  gap: 8px;
+  padding: 13px;
+  border: 1px solid #dce6df;
+  border-radius: 12px;
+  background: #f8fbf9;
+}
+
+.quickActions > div {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.quickActions button {
+  padding: 7px 9px;
+  border: 1px solid #cfe0d7;
+  border-radius: 999px;
+  background: #fff;
+  color: #34604c;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.outputIntro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 13px;
+}
+
+.liveBadge {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #eaf7f0;
+  color: #08754e;
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .toneTabs {
@@ -157,15 +297,10 @@
   border-bottom: 1px solid #e2e9e5;
 }
 
-.rewriteHeader button {
-  align-self: center;
-  padding: 9px 14px;
-  border: 0;
-  border-radius: 9px;
+.rewriteActions button:last-child {
+  border-color: #006943;
   background: #006943;
   color: #fff;
-  font-weight: 850;
-  cursor: pointer;
 }
 
 .rewriteCard pre,
@@ -179,6 +314,15 @@
 .rewriteCard > pre {
   min-height: 190px;
   padding: 18px;
+}
+
+.outputEditor {
+  display: block;
+  min-height: 230px;
+  border: 0;
+  border-radius: 0;
+  resize: vertical;
+  line-height: 1.65;
 }
 
 .rewriteMeta {
@@ -202,6 +346,16 @@
   padding-left: 20px;
   color: #53645b;
   line-height: 1.55;
+}
+
+.message {
+  padding: 10px 12px;
+  border: 1px solid #bfe1cf;
+  border-radius: 10px;
+  background: #eff9f4;
+  color: #176844;
+  font-size: 11px;
+  font-weight: 750;
 }
 
 .qualityGrid {
@@ -341,6 +495,70 @@
   margin-top: 12px;
 }
 
+.versionHistory {
+  display: grid;
+  gap: 15px;
+  padding: 21px;
+}
+
+.versionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.versionHeading > strong {
+  color: #08754e;
+  font-size: 12px;
+}
+
+.versionList {
+  display: grid;
+  gap: 9px;
+}
+
+.versionList article {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  padding: 13px;
+  border: 1px solid #dfe7e2;
+  border-radius: 12px;
+  background: #fbfdfc;
+}
+
+.versionList article > div {
+  display: grid;
+  gap: 3px;
+  text-transform: capitalize;
+}
+
+.versionList article span {
+  color: #76847d;
+  font-size: 10px;
+}
+
+.versionList p {
+  overflow: hidden;
+  margin: 0;
+  color: #53645b;
+  font-size: 11px;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emptyVersions {
+  margin: 0;
+  padding: 18px;
+  border: 1px dashed #cdded5;
+  border-radius: 12px;
+  color: #708078;
+  text-align: center;
+}
+
 .guardrail {
   display: grid;
   grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
@@ -353,6 +571,10 @@
 @media (max-width: 1100px) {
   .qualityGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .versionList article {
+    grid-template-columns: 130px minmax(0, 1fr) auto;
   }
 }
 
@@ -369,11 +591,44 @@
   .qualityGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .commandBar,
+  .versionHeading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .versionList article {
+    grid-template-columns: 1fr;
+  }
+
+  .versionList p {
+    white-space: normal;
+  }
 }
 
 @media (max-width: 560px) {
   .toneTabs,
   .qualityGrid {
     grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .workspace,
+  .insightGrid,
+  .versionHistory,
+  .guardrail {
+    padding: 16px;
+  }
+
+  .rewriteHeader,
+  .outputIntro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rewriteActions,
+  .rewriteActions button {
+    width: 100%;
   }
 }
