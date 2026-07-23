@@ -1,0 +1,114 @@
+.page {
+  display: grid;
+  gap: 24px;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 28px;
+}
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 30px;
+  border: 1px solid #dbe5ef;
+  border-radius: 24px;
+  background: radial-gradient(circle at 90% 20%, rgba(37, 99, 235, 0.14), transparent 32%), linear-gradient(135deg, #f8fbff 0%, #ffffff 60%);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.06);
+}
+.eyebrow { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 10px; color: #2563eb; font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.hero h1 { max-width: 760px; margin: 0; color: #0f172a; font-size: clamp(2rem, 4vw, 3.3rem); line-height: 1.02; letter-spacing: -.05em; }
+.hero p { max-width: 720px; margin: 14px 0 0; color: #5c6b7d; font-size: 1rem; line-height: 1.7; }
+.heroActions { display: flex; gap: 10px; flex-shrink: 0; }
+.primaryButton, .secondaryButton, .setupCard button, .sidePanel button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 17px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+.primaryButton { border: 1px solid #1d4ed8; background: #2563eb; color: #fff; }
+.secondaryButton { border: 1px solid #cbd5e1; background: #fff; color: #1e293b; }
+.setupCard { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 20px 22px; border: 1px solid #cfe0f3; border-radius: 18px; background: #fff; }
+.setupIcon { display: grid; width: 50px; height: 50px; place-items: center; border-radius: 15px; background: #eaf2ff; color: #2563eb; }
+.setupHeading { display: flex; justify-content: space-between; gap: 18px; }
+.setupHeading span, .panelHeader span, .sidePanel header span { color: #718096; font-size: .75rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.setupHeading h2, .panelHeader h2, .sidePanel h2 { margin: 3px 0 0; color: #142033; font-size: 1.15rem; }
+.setupHeading strong { color: #2563eb; }
+.progress { height: 7px; margin: 12px 0 8px; overflow: hidden; border-radius: 999px; background: #e8eef5; }
+.progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.setupCopy p { margin: 0; color: #64748b; font-size: .9rem; }
+.setupCard button { border: 0; background: transparent; color: #2563eb; }
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.metricCard { display: flex; align-items: center; gap: 14px; min-height: 120px; padding: 20px; border: 1px solid #dce5ee; border-radius: 18px; background: #fff; }
+.metricIcon { display: grid; width: 46px; height: 46px; flex: 0 0 auto; place-items: center; border-radius: 14px; }
+.blue { background: #eaf2ff; color: #2563eb; }
+.green { background: #e9f9f0; color: #15945c; }
+.amber { background: #fff6df; color: #c27c08; }
+.violet { background: #f1ebff; color: #7c3aed; }
+.metricCard span { display: block; color: #6b7a8d; font-size: .83rem; font-weight: 700; }
+.metricCard strong { display: block; margin: 3px 0; color: #111827; font-size: 1.75rem; }
+.metricCard small { color: #8290a2; }
+.mainGrid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(280px, .7fr); gap: 18px; }
+.panel, .sidePanel, .jobsPanel { border: 1px solid #dce5ee; border-radius: 20px; background: #fff; box-shadow: 0 10px 32px rgba(15, 23, 42, .04); }
+.panel, .jobsPanel { padding: 22px; }
+.panelHeader { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.panelHeader select { min-height: 39px; padding: 0 34px 0 12px; border: 1px solid #d7e0ea; border-radius: 10px; background: #fff; color: #334155; font-weight: 700; }
+.panelHeader > a { display: inline-flex; align-items: center; gap: 7px; color: #2563eb; font-weight: 800; text-decoration: none; }
+.pipeline { display: grid; gap: 17px; margin-top: 25px; }
+.pipelineItem { display: grid; grid-template-columns: 160px minmax(0, 1fr) 105px; align-items: center; gap: 14px; }
+.pipelineItem > div:first-child { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.pipelineItem span { color: #526174; font-size: .88rem; font-weight: 700; }
+.pipelineItem strong { color: #111827; font-size: 1rem; }
+.pipelineTrack { height: 10px; overflow: hidden; border-radius: 999px; background: #edf2f7; }
+.pipelineTrack span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.pipelineItem small { color: #8290a2; font-size: .76rem; }
+.insight { display: flex; gap: 12px; margin-top: 24px; padding: 15px; border: 1px solid #d8e5ff; border-radius: 14px; background: #f6f9ff; color: #2563eb; }
+.insight strong { color: #1e3a8a; }
+.insight p { margin: 4px 0 0; color: #526174; font-size: .87rem; line-height: 1.55; }
+.sidePanel { padding: 22px; }
+.planPrice { display: flex; align-items: center; gap: 11px; margin: 20px 0; padding: 14px; border-radius: 14px; background: #eff6ff; color: #2563eb; }
+.planPrice div { flex: 1; }
+.planPrice strong, .planPrice small { display: block; }
+.planPrice strong { color: #1e3a8a; }
+.planPrice small { margin-top: 2px; color: #64748b; }
+.sidePanel ul { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.sidePanel li { display: flex; align-items: center; gap: 9px; color: #475569; font-size: .9rem; }
+.sidePanel li svg { color: #16a34a; }
+.sidePanel > button { width: 100%; margin-top: 20px; border: 1px solid #cbd5e1; background: #fff; color: #1e293b; }
+.security { display: flex; gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px solid #e2e8f0; color: #0f766e; }
+.security strong { color: #334155; font-size: .86rem; }
+.security p { margin: 3px 0 0; color: #7b8796; font-size: .76rem; line-height: 1.45; }
+.jobsTable { margin-top: 18px; }
+.tableHeader, .jobsTable article { display: grid; grid-template-columns: minmax(300px, 1.7fr) 100px 100px 90px 38px; align-items: center; gap: 14px; }
+.tableHeader { padding: 0 12px 10px; color: #8491a2; font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.jobsTable article { padding: 15px 12px; border-top: 1px solid #edf1f5; }
+.jobIdentity { display: flex; align-items: center; gap: 12px; }
+.jobIdentity > div { display: grid; width: 40px; height: 40px; place-items: center; border-radius: 12px; background: #edf4ff; color: #2563eb; }
+.jobIdentity strong, .jobIdentity small { display: block; }
+.jobIdentity strong { color: #1e293b; font-size: .9rem; }
+.jobIdentity small { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 4px; color: #7a8797; font-size: .76rem; }
+.jobsTable article > strong { color: #334155; }
+.activeStatus, .draftStatus { width: fit-content; padding: 5px 9px; border-radius: 999px; font-size: .73rem; font-weight: 800; }
+.activeStatus { background: #e9f9f0; color: #15803d; }
+.draftStatus { background: #f1f5f9; color: #64748b; }
+.jobsTable article > button { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid #dce5ee; border-radius: 9px; background: #fff; color: #2563eb; }
+.quickActions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.quickActions a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 94px; padding: 17px; border: 1px solid #dce5ee; border-radius: 17px; background: #fff; color: #2563eb; text-decoration: none; transition: transform 150ms ease, box-shadow 150ms ease; }
+.quickActions a:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(15, 23, 42, .07); }
+.quickActions strong, .quickActions small { display: block; }
+.quickActions strong { color: #273449; font-size: .88rem; }
+.quickActions small { margin-top: 3px; color: #8190a3; font-size: .74rem; line-height: 1.4; }
+@media (max-width: 1100px) {
+  .metrics, .quickActions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mainGrid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .page { gap: 16px; padding: 16px 14px 96px; }
+  .hero { align-items: stretch; flex-direction: column; padding: 22px; }
+  .heroActions { display: grid; grid-template-columns: 1fr 1fr; }
+  .setupCard { grid-template-columns: auto 1fr; }
+  .setupCard > button { grid-column: 1 / -1; justify-self: start; padding-left: 0; }
+  .metrics, .quickActions { grid-template-columns: 1fr; }
+  .pipelineItem { grid-template-columns: 1fr; gap: 7px; }
+  .pipelineItem small { display: none; }
+  .tableHeader { display: none; }
+  .jobsTable article { grid-template-columns: 1fr auto; }
+  .jobsTable article > strong { display: none; }
+  .jobsTable article > span { grid-column: 1; }
+  .jobsTable article > button { grid-column: 2; grid-row: 1; }
+}
