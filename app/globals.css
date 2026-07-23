@@ -1295,3 +1295,44 @@ body {
     display: none !important;
   }
 }
+ 
+/* MAKWANDE ACTIVE ACCESS STATUS V1 */
+.active-access-card{background:radial-gradient(circle at top right,rgba(214,166,65,.18),transparent 32%),linear-gradient(135deg,#063f2a 0%,#07633e 58%,#08744a 100%);color:#fff;border-radius:24px;padding:28px;margin-bottom:24px;box-shadow:0 22px 55px rgba(3,71,44,.22);overflow:hidden}.active-access-top{display:flex;align-items:center;gap:18px}.access-status-icon{width:58px;height:58px;border-radius:18px;flex:0 0 auto;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28)}.access-title{flex:1}.access-title h2{margin:8px 0 4px;font-size:clamp(1.55rem,2.3vw,2.15rem)}.access-title p{margin:0;color:rgba(255,255,255,.82)}.access-pill{display:inline-flex;padding:7px 11px;border-radius:999px;background:#e8fff2;color:#05613c;font-size:.78rem;font-weight:800;letter-spacing:.035em;text-transform:uppercase}.days-remaining{min-width:132px;text-align:center;padding:16px 18px;border-radius:18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}.days-remaining strong{display:block;font-size:2.25rem;line-height:1}.days-remaining span{display:block;margin-top:7px;font-size:.82rem;color:rgba(255,255,255,.8)}.access-detail-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:24px}.access-detail-grid article{min-width:0;padding:16px;border-radius:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)}.access-detail-grid svg{margin-bottom:12px}.access-detail-grid span{display:block;font-size:.76rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.05em}.access-detail-grid strong{display:block;margin-top:5px;overflow-wrap:anywhere}.payment-reference{font-size:.82rem}.access-progress-wrap{margin-top:20px;padding:17px 18px;border-radius:16px;background:rgba(0,0,0,.13)}.access-progress-wrap>div:first-child{display:flex;justify-content:space-between;gap:16px;font-size:.88rem}.access-progress{height:9px;margin-top:12px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.18)}.access-progress span{display:block;height:100%;border-radius:inherit;background:#f2c14e}.active-access-actions{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}.active-access-actions .button-primary{background:#fff;color:#055d39}.active-access-actions .button-secondary{border-color:rgba(255,255,255,.35);color:#fff;background:rgba(255,255,255,.08)}.access-loading,.no-active-access{display:flex;gap:12px;align-items:center;margin-bottom:24px}.no-active-access p{margin:4px 0 0}@media(max-width:1000px){.access-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.active-access-card{padding:20px;border-radius:18px}.active-access-top{align-items:flex-start;flex-wrap:wrap}.days-remaining{width:100%}.access-detail-grid{grid-template-columns:1fr}.access-progress-wrap>div:first-child{flex-direction:column;gap:4px}.active-access-actions .button{width:100%;justify-content:center}}
+
+
+/* WORLD-CLASS SERVICE COMMUNICATION */
+.service-communication {
+  margin-bottom: 24px;
+  padding: 26px;
+  border-radius: 22px;
+}
+.service-communication h2 { margin: 7px 0 6px; }
+.service-communication-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+.service-communication-grid article {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fff 0%, #f8fbf9 100%);
+}
+.service-communication-grid strong {
+  display: block;
+  color: var(--brand-dark);
+  margin-bottom: 7px;
+}
+.service-communication-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .92rem;
+}
+@media (max-width: 1000px) {
+  .service-communication-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 650px) {
+  .service-communication { padding: 20px; }
+  .service-communication-grid { grid-template-columns: 1fr; }
+}
