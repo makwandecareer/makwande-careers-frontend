@@ -1,338 +1,193 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   BadgeCheck,
-  BarChart3,
   BriefcaseBusiness,
   Building2,
-  CalendarDays,
-  CheckCircle2,
-  CircleDollarSign,
-  Clock3,
-  FileSearch,
-  MapPin,
   Plus,
+  RefreshCw,
   Settings,
-  ShieldCheck,
-  Sparkles,
-  TrendingUp,
-  UserPlus,
-  UsersRound,
 } from "lucide-react";
 
+import { api } from "@/lib/client-api";
 import styles from "./employer.module.css";
 
-type Metric = {
-  label: string;
-  value: string;
-  helper: string;
-  icon: typeof Building2;
-  tone: "blue" | "green" | "amber" | "violet";
+type Company = {
+  name: string;
+  industry?: string;
+  location?: string;
+  registration_number?: string;
+  website?: string;
+  email?: string;
+  phone?: string;
+  description?: string;
 };
 
 type Job = {
+  id: string;
   title: string;
-  location: string;
-  type: string;
-  applicants: number;
-  shortlisted: number;
-  status: "Active" | "Draft";
+  location?: string;
+  employment_type: string;
+  workplace_type: string;
+  status: "draft" | "published" | "closed";
 };
 
-const jobs: Job[] = [
-  {
-    title: "Graduate Supply Chain Coordinator",
-    location: "Johannesburg, Gauteng",
-    type: "Full-time",
-    applicants: 48,
-    shortlisted: 9,
-    status: "Active",
-  },
-  {
-    title: "Customer Service Team Leader",
-    location: "Cape Town, Western Cape",
-    type: "Full-time",
-    applicants: 31,
-    shortlisted: 6,
-    status: "Active",
-  },
-  {
-    title: "Junior Financial Administrator",
-    location: "Pretoria, Gauteng",
-    type: "Hybrid",
-    applicants: 0,
-    shortlisted: 0,
-    status: "Draft",
-  },
-];
+type Summary = {
+  company: Company | null;
+  metrics: {
+    total_jobs: number;
+    open_jobs: number;
+    draft_jobs: number;
+    closed_jobs: number;
+  };
+  recent_jobs: Job[];
+};
 
-const pipeline = [
-  { label: "New applicants", value: 79 },
-  { label: "AI screened", value: 54 },
-  { label: "Shortlisted", value: 15 },
-  { label: "Interview", value: 7 },
-  { label: "Offer", value: 2 },
-];
+const emptySummary: Summary = {
+  company: null,
+  metrics: { total_jobs: 0, open_jobs: 0, draft_jobs: 0, closed_jobs: 0 },
+  recent_jobs: [],
+};
+
+function friendly(value: string) {
+  return value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
 
 export default function EmployerPortalPage() {
-  const [period, setPeriod] = useState("30 days");
+  const [summary, setSummary] = useState<Summary>(emptySummary);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const metrics = useMemo<Metric[]>(
-    () => [
-      {
-        label: "Open vacancies",
-        value: "2",
-        helper: "+1 this month",
-        icon: BriefcaseBusiness,
-        tone: "blue",
-      },
-      {
-        label: "Active candidates",
-        value: "79",
-        helper: "Across all vacancies",
-        icon: UsersRound,
-        tone: "green",
-      },
-      {
-        label: "Interviews",
-        value: "7",
-        helper: "3 scheduled this week",
-        icon: CalendarDays,
-        tone: "amber",
-      },
-      {
-        label: "Average match score",
-        value: "82%",
-        helper: "AI-ranked candidates",
-        icon: Sparkles,
-        tone: "violet",
-      },
-    ],
-    [],
-  );
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      setSummary(await api<Summary>("/api/employer/summary"));
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to load employer portal.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const completion = useMemo(() => {
+    if (!summary.company) return 0;
+    const fields = [
+      summary.company.name,
+      summary.company.industry,
+      summary.company.location,
+      summary.company.registration_number,
+      summary.company.website,
+      summary.company.email,
+      summary.company.phone,
+      summary.company.description,
+    ];
+    return Math.round((fields.filter(Boolean).length / fields.length) * 100);
+  }, [summary.company]);
+
+  const metrics = [
+    ["Published vacancies", summary.metrics.open_jobs, "Currently open"],
+    ["Draft vacancies", summary.metrics.draft_jobs, "Waiting for publication"],
+    ["Closed vacancies", summary.metrics.closed_jobs, "Recruitment completed"],
+    ["Total vacancies", summary.metrics.total_jobs, "All company jobs"],
+  ];
 
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
         <div>
           <span className={styles.eyebrow}>
-            <Building2 size={15} />
-            Employer command centre
+            <Building2 size={15} /> Employer command centre
           </span>
-          <h1>Find, evaluate and hire the right people.</h1>
-          <p>
-            Manage vacancies, discover qualified candidates and move every
-            applicant through one intelligent recruitment workspace.
-          </p>
+          <h1>{summary.company ? `Welcome, ${summary.company.name}` : "Build your employer workspace"}</h1>
+          <p>Register your company, create vacancies and manage jobs from one connected workspace.</p>
+          {error ? <p role="alert">{error}</p> : null}
         </div>
 
         <div className={styles.heroActions}>
-          <button className={styles.secondaryButton} type="button">
-            <Settings size={17} />
-            Company profile
+          <button className={styles.secondaryButton} disabled={loading} onClick={() => void load()} type="button">
+            <RefreshCw size={17} /> {loading ? "Refreshing..." : "Refresh"}
           </button>
-          <button className={styles.primaryButton} type="button">
-            <Plus size={18} />
-            Post a job
-          </button>
+          <Link className={styles.secondaryButton} href="/dashboard/employer/company">
+            <Settings size={17} /> Company profile
+          </Link>
+          <Link className={styles.primaryButton} href="/dashboard/employer/jobs/new">
+            <Plus size={18} /> Post a job
+          </Link>
         </div>
       </section>
 
       <section className={styles.setupCard}>
-        <div className={styles.setupIcon}>
-          <BadgeCheck size={26} />
-        </div>
+        <div className={styles.setupIcon}><BadgeCheck size={26} /></div>
         <div className={styles.setupCopy}>
           <div className={styles.setupHeading}>
             <div>
               <span>Employer profile setup</span>
-              <h2>Makwande Careers Recruitment</h2>
+              <h2>{summary.company?.name ?? "Company profile not registered"}</h2>
             </div>
-            <strong>75% complete</strong>
+            <strong>{completion}% complete</strong>
           </div>
-          <div className={styles.progress}>
-            <span style={{ width: "75%" }} />
-          </div>
-          <p>
-            Add your company logo, verified registration details and hiring
-            preferences to build candidate trust.
-          </p>
+          <div className={styles.progress}><span style={{ width: `${completion}%` }} /></div>
+          <p>{summary.company ? "Keep your organisation details accurate." : "Register your company before creating vacancies."}</p>
         </div>
-        <button type="button">Complete profile <ArrowRight size={16} /></button>
+        <Link href="/dashboard/employer/company">
+          {summary.company ? "Update profile" : "Register company"} <ArrowRight size={16} />
+        </Link>
       </section>
 
       <section className={styles.metrics}>
-        {metrics.map(({ label, value, helper, icon: Icon, tone }) => (
-          <article className={styles.metricCard} key={label}>
-            <div className={`${styles.metricIcon} ${styles[tone]}`}>
-              <Icon size={21} />
-            </div>
+        {metrics.map(([label, value, helper]) => (
+          <article className={styles.metricCard} key={String(label)}>
+            <div className={styles.metricIcon}><BriefcaseBusiness size={21} /></div>
             <div>
               <span>{label}</span>
-              <strong>{value}</strong>
+              <strong>{loading ? "—" : value}</strong>
               <small>{helper}</small>
             </div>
           </article>
         ))}
       </section>
 
-      <section className={styles.mainGrid}>
-        <div className={styles.panel}>
-          <header className={styles.panelHeader}>
-            <div>
-              <span>Recruitment pipeline</span>
-              <h2>Candidate progress</h2>
-            </div>
-            <select
-              aria-label="Select reporting period"
-              onChange={(event) => setPeriod(event.target.value)}
-              value={period}
-            >
-              <option>7 days</option>
-              <option>30 days</option>
-              <option>90 days</option>
-            </select>
-          </header>
-
-          <div className={styles.pipeline}>
-            {pipeline.map((stage, index) => (
-              <div className={styles.pipelineItem} key={stage.label}>
-                <div>
-                  <span>{stage.label}</span>
-                  <strong>{stage.value}</strong>
-                </div>
-                <div className={styles.pipelineTrack}>
-                  <span
-                    style={{
-                      width: `${Math.max(12, (stage.value / pipeline[0].value) * 100)}%`,
-                    }}
-                  />
-                </div>
-                {index < pipeline.length - 1 ? (
-                  <small>
-                    {Math.round((pipeline[index + 1].value / stage.value) * 100)}%
-                    conversion
-                  </small>
-                ) : (
-                  <small>Final-stage candidates</small>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className={styles.insight}>
-            <Sparkles size={19} />
-            <div>
-              <strong>AI recruitment insight</strong>
-              <p>
-                Candidates with verified achievements are moving to shortlist
-                2.4 times faster than candidates with task-only CVs.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <aside className={styles.sidePanel}>
-          <header>
-            <span>Subscription</span>
-            <h2>Professional Employer</h2>
-          </header>
-          <div className={styles.planPrice}>
-            <CircleDollarSign size={22} />
-            <div><strong>Active plan</strong><small>Renews monthly</small></div>
-            <BadgeCheck size={20} />
-          </div>
-          <ul>
-            <li><CheckCircle2 size={16} /> Up to 10 active jobs</li>
-            <li><CheckCircle2 size={16} /> AI candidate ranking</li>
-            <li><CheckCircle2 size={16} /> 5 recruiter seats</li>
-            <li><CheckCircle2 size={16} /> Recruitment analytics</li>
-          </ul>
-          <button type="button">Manage employer plan</button>
-
-          <div className={styles.security}>
-            <ShieldCheck size={21} />
-            <div>
-              <strong>Candidate data protected</strong>
-              <p>Access is controlled and activity is securely recorded.</p>
-            </div>
-          </div>
-        </aside>
-      </section>
-
       <section className={styles.jobsPanel}>
         <header className={styles.panelHeader}>
-          <div>
-            <span>Vacancy management</span>
-            <h2>Current job openings</h2>
-          </div>
-          <Link href="/dashboard/employer/jobs">
-            View all jobs <ArrowRight size={16} />
-          </Link>
+          <div><span>Vacancy management</span><h2>Recent jobs</h2></div>
+          <Link href="/dashboard/employer/jobs">View all jobs <ArrowRight size={16} /></Link>
         </header>
 
         <div className={styles.jobsTable}>
-          <div className={styles.tableHeader}>
-            <span>Vacancy</span>
-            <span>Applicants</span>
-            <span>Shortlisted</span>
-            <span>Status</span>
-            <span />
-          </div>
-
-          {jobs.map((job) => (
-            <article key={job.title}>
+          {summary.recent_jobs.length === 0 ? (
+            <div>
+              <h3>No vacancies yet</h3>
+              <p>Create your first vacancy to begin.</p>
+              <Link href="/dashboard/employer/jobs/new">Create vacancy</Link>
+            </div>
+          ) : summary.recent_jobs.map((job) => (
+            <article key={job.id}>
               <div className={styles.jobIdentity}>
                 <div><BriefcaseBusiness size={19} /></div>
                 <span>
                   <strong>{job.title}</strong>
-                  <small>
-                    <MapPin size={13} /> {job.location}
-                    <Clock3 size={13} /> {job.type}
-                  </small>
+                  <small>{job.location || "Location not set"} • {friendly(job.employment_type)}</small>
                 </span>
               </div>
-              <strong>{job.applicants}</strong>
-              <strong>{job.shortlisted}</strong>
-              <span
-                className={
-                  job.status === "Active" ? styles.activeStatus : styles.draftStatus
-                }
-              >
-                {job.status}
+              <strong>{friendly(job.workplace_type)}</strong>
+              <strong>—</strong>
+              <span className={job.status === "published" ? styles.activeStatus : styles.draftStatus}>
+                {friendly(job.status)}
               </span>
-              <button aria-label={`Open ${job.title}`} type="button">
+              <Link aria-label={`Open ${job.title}`} href={`/dashboard/employer/jobs/${job.id}`}>
                 <ArrowRight size={17} />
-              </button>
+              </Link>
             </article>
           ))}
         </div>
-      </section>
-
-      <section className={styles.quickActions}>
-        <Link href="/dashboard/employer/jobs">
-          <BriefcaseBusiness size={22} />
-          <span><strong>Manage jobs</strong><small>Create, edit and close vacancies.</small></span>
-          <ArrowRight size={18} />
-        </Link>
-        <Link href="/dashboard/employer/candidates">
-          <FileSearch size={22} />
-          <span><strong>Search candidates</strong><small>Discover profiles ranked by job fit.</small></span>
-          <ArrowRight size={18} />
-        </Link>
-        <Link href="/dashboard/employer/team">
-          <UserPlus size={22} />
-          <span><strong>Invite your team</strong><small>Add recruiters and hiring managers.</small></span>
-          <ArrowRight size={18} />
-        </Link>
-        <Link href="/dashboard/employer/reports">
-          <BarChart3 size={22} />
-          <span><strong>Recruitment reports</strong><small>Track hiring speed and conversion.</small></span>
-          <TrendingUp size={18} />
-        </Link>
       </section>
     </main>
   );
